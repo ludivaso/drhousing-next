@@ -1,0 +1,356 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* DR Housing Design System - Costa Rica Real Estate
+   Tropical luxury: forest greens, warm sand, ocean accents
+   Trustworthy, modern, clean, mobile-first
+*/
+
+@layer base {
+  :root {
+    /* Core palette - Tropical Luxury */
+    --background: 40 20% 98%;
+    --foreground: 160 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 160 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 25% 15%;
+
+    /* Primary - Deep Forest Green */
+    --primary: 158 35% 25%;
+    --primary-foreground: 40 30% 97%;
+
+    /* Secondary - Warm Sand */
+    --secondary: 38 30% 92%;
+    --secondary-foreground: 160 25% 20%;
+
+    /* Muted - Light sage */
+    --muted: 140 15% 94%;
+    --muted-foreground: 160 10% 45%;
+
+    /* Accent - Ocean Teal */
+    --accent: 180 35% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders and inputs */
+    --border: 140 15% 88%;
+    --input: 140 15% 88%;
+    --ring: 158 35% 25%;
+
+    --radius: 0.5rem;
+
+    /* Sidebar */
+    --sidebar-background: 160 25% 15%;
+    --sidebar-foreground: 40 30% 95%;
+    --sidebar-primary: 45 60% 55%;
+    --sidebar-primary-foreground: 160 25% 10%;
+    --sidebar-accent: 160 25% 20%;
+    --sidebar-accent-foreground: 40 30% 95%;
+    --sidebar-border: 160 20% 25%;
+    --sidebar-ring: 45 60% 55%;
+
+    /* Extended palette */
+    --gold: 45 60% 55%;
+    --gold-foreground: 160 25% 10%;
+    --ocean: 195 45% 50%;
+    --ocean-foreground: 0 0% 100%;
+    --sand: 38 35% 85%;
+    --sand-foreground: 160 25% 20%;
+    --forest-light: 158 25% 45%;
+    --forest-dark: 160 30% 12%;
+
+    /* Status colors */
+    --sale: 158 35% 30%;
+    --rent: 195 45% 45%;
+    --both: 45 55% 50%;
+
+    /* Tier colors */
+    --tier-mid: 160 20% 50%;
+    --tier-high: 45 50% 50%;
+    --tier-ultra: 280 30% 35%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(160 25% 15% / 0.9), hsl(158 35% 25% / 0.8));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(40 20% 98%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 60% 55%), hsl(38 50% 45%));
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px hsl(160 25% 15% / 0.05);
+    --shadow-md: 0 4px 12px hsl(160 25% 15% / 0.08);
+    --shadow-lg: 0 8px 30px hsl(160 25% 15% / 0.12);
+    --shadow-card: 0 2px 8px hsl(160 25% 15% / 0.06);
+    --shadow-hover: 0 8px 25px hsl(160 25% 15% / 0.15);
+  }
+
+  .dark {
+    --background: 160 25% 8%;
+    --foreground: 40 20% 95%;
+
+    --card: 160 20% 12%;
+    --card-foreground: 40 20% 95%;
+
+    --popover: 160 20% 12%;
+    --popover-foreground: 40 20% 95%;
+
+    --primary: 158 30% 50%;
+    --primary-foreground: 160 25% 8%;
+
+    --secondary: 160 15% 18%;
+    --secondary-foreground: 40 20% 90%;
+
+    --muted: 160 15% 18%;
+    --muted-foreground: 140 10% 60%;
+
+    --accent: 180 30% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 55% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 160 15% 20%;
+    --input: 160 15% 20%;
+    --ring: 158 30% 50%;
+
+    --sidebar-background: 160 25% 6%;
+    --sidebar-foreground: 40 20% 95%;
+    --sidebar-primary: 45 55% 50%;
+    --sidebar-primary-foreground: 160 25% 8%;
+    --sidebar-accent: 160 20% 15%;
+    --sidebar-accent-foreground: 40 20% 95%;
+    --sidebar-border: 160 15% 15%;
+    --sidebar-ring: 45 55% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply font-medium tracking-tight;
+  }
+}
+
+@layer components {
+  .container-narrow {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto px-6 sm:px-8 lg:px-12;
+  }
+
+  .section-padding {
+    @apply py-20 md:py-28;
+  }
+
+  .card-elevated {
+    @apply bg-card rounded border border-border;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .card-elevated:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .badge-sale {
+    @apply bg-sale text-white text-xs font-medium tracking-wide px-2.5 py-1 rounded;
+  }
+
+  .badge-rent {
+    @apply bg-ocean text-white text-xs font-medium tracking-wide px-2.5 py-1 rounded;
+  }
+
+  .badge-both {
+    @apply bg-gold text-forest-dark text-xs font-medium tracking-wide px-2.5 py-1 rounded;
+  }
+
+  .link-underline {
+    @apply relative inline-block;
+  }
+
+  .link-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+  }
+
+  .link-underline:hover::after {
+    @apply w-full;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(45 60% 55%), hsl(38 50% 45%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .animate-slide-up {
+    opacity: 0;
+    animation: slideUp 0.6s ease-out both;
+  }
+
+  .animate-scale-in {
+    opacity: 0;
+    animation: scaleIn 0.4s ease-out both;
+  }
+
+  /* Ensure animations run on all devices including reduced-motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-slide-up,
+    .animate-scale-in {
+      opacity: 1;
+      animation: none;
+      transform: none;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    0% { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    100% { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  @keyframes scaleIn {
+    0% { 
+      opacity: 0; 
+      transform: scale(0.95); 
+    }
+    100% { 
+      opacity: 1; 
+      transform: scale(1); 
+    }
+  }
+
+  /* Leaflet Map Customizations */
+  .leaflet-popup-content-wrapper {
+    @apply bg-card text-card-foreground rounded-xl shadow-lg border border-border p-0 overflow-hidden;
+  }
+
+  .leaflet-popup-content {
+    @apply m-0 p-3;
+    width: auto !important;
+  }
+
+  .leaflet-popup-tip {
+    @apply bg-card border-l border-b border-border;
+  }
+
+  .leaflet-popup-close-button {
+    @apply text-muted-foreground hover:text-foreground !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 10;
+  }
+
+  .leaflet-container {
+    font-family: inherit;
+  }
+
+  .custom-marker {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  /* Marker Cluster Styles */
+  .custom-cluster-icon {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .cluster-marker {
+    @apply bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold shadow-lg border-2 border-background;
+  }
+
+  .cluster-marker span {
+    @apply text-sm;
+  }
+
+  .cluster-small {
+    width: 36px;
+    height: 36px;
+  }
+
+  .cluster-medium {
+    width: 42px;
+    height: 42px;
+    @apply text-base;
+  }
+
+  .cluster-large {
+    width: 48px;
+    height: 48px;
+    @apply text-lg;
+  }
+
+  .cluster-marker:hover {
+    @apply scale-110 transition-transform;
+  }
+
+  /* Custom scrollbar for split view */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border));
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+}

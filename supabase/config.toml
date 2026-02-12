@@ -1,0 +1,37 @@
+project_id = "vtmesmtcnazoqaputoqs"
+
+[functions.chat]
+verify_jwt = false
+
+[functions.share]
+verify_jwt = false
+
+[functions.og-share]
+verify_jwt = false
+
+[functions.translate]
+verify_jwt = false
+
+[functions.create-admin-user]
+verify_jwt = false
+
+[functions.admin-user-update]
+verify_jwt = false
+
+[functions.submit-lead]
+verify_jwt = false
+
+[functions.translate-property]
+verify_jwt = false
+
+[functions.import-properties-csv]
+verify_jwt = false
+
+[functions.property-share]
+verify_jwt = false
+
+[functions.og-test]
+verify_jwt = false
+
+[functions.import-listing-url]
+verify_jwt = false

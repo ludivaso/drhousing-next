@@ -1,0 +1,1258 @@
+{
+  "common": {
+    "learnMore": "Más Información",
+    "contactUs": "Contáctenos",
+    "talkToUs": "Hablemos",
+    "viewAll": "Ver Todo",
+    "callNow": "Llamar Ahora",
+    "scheduleConsultation": "Agendar Consulta",
+    "browseProperties": "Ver Propiedades",
+    "subscribe": "Suscribirse",
+    "yourEmail": "Su correo electrónico",
+    "back": "Volver",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "saving": "Guardando...",
+    "viewDetails": "Ver Detalles"
+  },
+  "header": {
+    "tagline": "Su socio de confianza para bienes raíces en Costa Rica",
+    "home": "Inicio",
+    "properties": "Propiedades",
+    "agents": "Agentes",
+    "toolsInsights": "Herramientas",
+    "services": "Servicios",
+    "contact": "Contacto",
+    "familyAffairs": "Asuntos Familiares"
+  },
+  "footer": {
+    "brand": "DR Housing",
+    "description": "Su socio de confianza para bienes raíces en Costa Rica. Ayudando a familias a reubicarse e inversionistas a encontrar oportunidades desde 2008.",
+    "quickLinks": "Enlaces Rápidos",
+    "ourServices": "Nuestros Servicios",
+    "stayInformed": "Manténgase Informado",
+    "newsletterText": "Reciba análisis de mercado y nuevas propiedades en su correo.",
+    "copyright": "© {{year}} DR Housing. Todos los derechos reservados.",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio",
+    "buySell": "Compra y Venta",
+    "propertyManagement": "Administración de Propiedades",
+    "legalImmigration": "Legal e Inmigración",
+    "development": "Desarrollo",
+    "location": "Escazú, San José, Costa Rica"
+  },
+  "home": {
+    "hero": {
+      "badge": "Asesoría Inmobiliaria en Costa Rica",
+      "title": "El Próximo Capítulo de Su Familia",
+      "titleHighlight": "Comienza Aquí",
+      "description": "Guiamos a familias exigentes en cada aspecto de su reubicación—desde identificar la residencia ideal hasta navegar los requisitos legales. Experimente el estilo Pura Vida con asesoría de confianza.",
+      "relocationGuidance": "Asesoría de Reubicación",
+      "investorServices": "Soluciones de Inversión",
+      "calculatorsTools": "Recursos de Planificación",
+      "advisoryCta": "Solicitar una Consulta Privada"
+    },
+    "featured": {
+      "title": "Propiedades Destacadas",
+      "subtitle": "Hogares seleccionados y oportunidades de inversión"
+    },
+    "howWeHelp": {
+      "title": "Cómo Ayudamos",
+      "description": "Ya sea que esté reubicando a su familia, invirtiendo en propiedades o planificando el futuro, brindamos apoyo integral en cada etapa.",
+      "realEstate": "Bienes Raíces",
+      "realEstateDesc": "Compre, venda o alquile propiedades residenciales y comerciales en Costa Rica.",
+      "legalImmigration": "Legal e Inmigración",
+      "legalImmigrationDesc": "Navegue residencias, visas y requisitos legales con orientación experta.",
+      "development": "Desarrollo",
+      "developmentDesc": "Construcciones personalizadas, renovaciones y gestión de proyectos.",
+      "interiorDesign": "Diseño de Interiores",
+      "interiorDesignDesc": "Staging de alta gama, gabinetes personalizados, cocinas y asesoría en electrodomésticos premium.",
+      "propertyManagement": "Administración de Propiedades",
+      "propertyManagementDesc": "Gestión sin complicaciones para propietarios extranjeros con reportes transparentes.",
+      "familyAffairs": "Asuntos Familiares",
+      "familyAffairsDesc": "Asesoría privada para estructuración patrimonial y planificación a largo plazo."
+    },
+    "trust": {
+      "title": "Experiencia en la que Puede Confiar",
+      "description": "Hemos ayudado a cientos de familias a hacer de Costa Rica su hogar. Nuestro enfoque combina profundo conocimiento local con estándares internacionales de servicio.",
+      "experience": "15+ Años de Experiencia",
+      "experienceDesc": "Profunda experiencia local y relaciones establecidas en toda Costa Rica.",
+      "families": "Familias Primero",
+      "familiesDesc": "Nos especializamos en ayudar a familias a reubicarse con confianza y claridad.",
+      "local": "Presencia Local",
+      "localDesc": "Equipo en el terreno con conocimiento íntimo de cada región.",
+      "meetTeam": "Conozca Nuestro Equipo"
+    },
+    "cta": {
+      "title": "¿Listo para Comenzar Su Viaje?",
+      "description": "Conversemos sobre sus metas y encontremos el camino perfecto."
+    }
+  },
+  "agents": {
+    "title": "Nuestro Equipo",
+    "description": "Conozca a los profesionales dedicados que hacen su experiencia inmobiliaria en Costa Rica fluida y exitosa.",
+    "joinTeam": "Únase a Nuestro Equipo",
+    "joinTeamDesc": "Siempre buscamos profesionales inmobiliarios talentosos que compartan nuestro compromiso con la excelencia."
+  },
+  "services": {
+    "title": "Nuestros Servicios",
+    "description": "Servicios integrales de bienes raíces y reubicación diseñados para hacer su experiencia en Costa Rica fluida y exitosa.",
+    "inquire": "Consultar Sobre Este Servicio",
+    "privateAdvisory": "¿Busca Servicios de Asesoría Privada?",
+    "privateAdvisoryDesc": "Explore nuestra oferta de Asuntos Familiares para estructuración patrimonial.",
+    "readyStart": "¿Listo para Comenzar?",
+    "readyStartDesc": "Conversemos sobre sus necesidades y creemos un plan a medida para sus metas en Costa Rica.",
+    "brokerage": {
+      "title": "Corretaje Inmobiliario",
+      "subtitle": "Compra, Venta y Alquiler",
+      "description": "Ya sea que compre su hogar soñado, venda su propiedad o busque oportunidades de alquiler, nuestro equipo experimentado le guía en cada paso.",
+      "feature1": "Búsqueda integral de propiedades según sus criterios",
+      "feature2": "Valuaciones profesionales y análisis de mercado",
+      "feature3": "Experiencia en negociación y gestión de transacciones",
+      "feature4": "Due diligence y coordinación legal",
+      "feature5": "Soporte post-compra y orientación"
+    },
+    "legal": {
+      "title": "Legal e Inmigración",
+      "subtitle": "Residencia y Orientación Legal",
+      "description": "Navegar el panorama legal e inmigratorio de Costa Rica puede ser complejo. Le conectamos con profesionales legales de confianza.",
+      "feature1": "Opciones de visa de residencia (Pensionado, Rentista, Inversionista)",
+      "feature2": "Estructuración de propiedad",
+      "feature3": "Revisión de contratos y due diligence legal",
+      "feature4": "Consideraciones de planificación fiscal",
+      "feature5": "Formación corporativa para tenencias de propiedad"
+    },
+    "development": {
+      "title": "Desarrollo y Remodelación",
+      "subtitle": "Construya Su Visión",
+      "description": "Desde construcción de casas personalizadas hasta proyectos de renovación, gestionamos todo el proceso.",
+      "feature1": "Diseño y construcción de casas personalizadas",
+      "feature2": "Proyectos de renovación y remodelación",
+      "feature3": "Gestión y supervisión de proyectos",
+      "feature4": "Adquisición de permisos y cumplimiento",
+      "feature5": "Gestión de presupuesto y control de calidad"
+    },
+    "interiorDesign": {
+      "title": "Diseño de Interiores",
+      "subtitle": "Interiores de Lujo y Staging",
+      "description": "Transforme su espacio con nuestros servicios de diseño de interiores de alta gama. Desde renovaciones completas hasta staging para venta.",
+      "feature1": "Renovaciones y rediseños interiores completos",
+      "feature2": "Staging profesional para ventas más rápidas",
+      "feature3": "Diseño de gabinetes y ebanistería personalizada",
+      "feature4": "Planificación e instalación de cocinas de diseñador",
+      "feature5": "Curación y selección de muebles premium",
+      "feature6": "Asesoría en electrodomésticos de alta gama (Sub-Zero, Wolf, Miele)"
+    },
+    "management": {
+      "title": "Administración de Propiedades",
+      "subtitle": "Propiedad Sin Complicaciones",
+      "description": "¿Tiene propiedad en Costa Rica pero vive en otro lugar? Nuestros servicios mantienen su inversión en óptimas condiciones.",
+      "feature1": "Inspecciones regulares y mantenimiento",
+      "feature2": "Pago de facturas y gestión administrativa",
+      "feature3": "Administración de alquileres vacacionales (opcional)",
+      "feature4": "Respuesta de emergencia y coordinación",
+      "feature5": "Reportes mensuales y actualizaciones fotográficas"
+    }
+  },
+  "tools": {
+    "title": "Herramientas y Recursos",
+    "description": "Use nuestras calculadoras para planificar su inversión inmobiliaria en Costa Rica. Todas las estimaciones son aproximaciones—consulte con nuestro equipo para cifras exactas.",
+    "needGuidance": "¿Necesita Orientación Personalizada?",
+    "needGuidanceDesc": "Estas calculadoras proporcionan estimaciones. Para cifras exactas adaptadas a su situación específica, agende una consulta con nuestro equipo.",
+    "mortgage": {
+      "title": "Estimador de Hipoteca",
+      "description": "Estime su pago mensual de hipoteca",
+      "price": "Precio de Compra (USD)",
+      "downPayment": "Enganche (%)",
+      "interestRate": "Tasa de Interés (%)",
+      "term": "Plazo (años)",
+      "years": "años",
+      "monthlyPayment": "Pago Mensual Estimado",
+      "loanAmount": "Monto del Préstamo",
+      "disclaimer": "Esto es solo una estimación. Los términos reales dependen del prestamista y su situación financiera."
+    },
+    "closing": {
+      "title": "Estimador de Costos de Cierre",
+      "description": "Estime los costos típicos de cierre en Costa Rica",
+      "transferTax": "Impuesto de Traspaso (1.5%)",
+      "registrationFee": "Tarifa de Registro (~0.5%)",
+      "legalFees": "Honorarios Legales (1-1.5%)",
+      "notaryFees": "Honorarios Notariales (~1%)",
+      "stampDuties": "Timbres Fiscales (~0.3%)",
+      "totalRange": "Rango Total Estimado",
+      "ofPurchase": "del precio de compra",
+      "disclaimer": "Solo estimaciones. Los costos reales varían según la propiedad y los detalles de la transacción. Consulte con nosotros para cifras exactas."
+    },
+    "remodeling": {
+      "title": "Estimador de Remodelación",
+      "description": "Estime costos de renovación por metro cuadrado",
+      "qualityTier": "Nivel de Calidad",
+      "areaToRemodel": "Área a Remodelar (m²)",
+      "costRange": "Rango de Costo Estimado",
+      "midRange": "Gama Media ($400-600/m²)",
+      "highEnd": "Alta Gama ($700-1000/m²)",
+      "ultraLuxury": "Ultra Lujo ($1200-2000/m²)",
+      "disclaimer": "Las estimaciones varían según el alcance, materiales y ubicación. Contáctenos para una cotización detallada."
+    },
+    "construction": {
+      "title": "Estimador de Construcción Nueva",
+      "description": "Estime costos de construcción nueva por metro cuadrado",
+      "constructionSize": "Tamaño de Construcción (m²)",
+      "midRange": "Gama Media ($800-1200/m²)",
+      "highEnd": "Alta Gama ($1400-2000/m²)",
+      "ultraLuxury": "Ultra Lujo ($2500-4000/m²)",
+      "disclaimer": "Terreno, permisos y honorarios de diseño son adicionales. Las estimaciones varían según ubicación y especificaciones."
+    }
+  },
+  "familyAffairs": {
+    "badge": "Asesoría Privada",
+    "title": "Asuntos Familiares",
+    "subtitle": "Servicios discretos y personalizados para familias e individuos que buscan apoyo integral para sus intereses en Costa Rica.",
+    "intro": "Asuntos Familiares es nuestra división de asesoría privada, diseñada para clientes que valoran la discreción, relaciones a largo plazo y apoyo integral. Ya sea que esté administrando propiedades significativas, planificando para la próxima generación, o explorando opciones sofisticadas de estructuración, proporcionamos la experiencia y presencia local que necesita.",
+    "offerings": {
+      "familyOffice": {
+        "title": "Asesoría Estilo Family Office",
+        "description": "Supervisión coordinada de sus intereses en Costa Rica, desde propiedades hasta administración local. Servimos como su socio local de confianza, asegurando que sus activos y asuntos sean manejados con discreción y cuidado."
+      },
+      "financing": {
+        "title": "Financiamiento Privado y Estructuración de Capital",
+        "description": "Acceso a soluciones de financiamiento y estructuración de capital adaptadas para inversionistas internacionales. Facilitamos conexiones con instituciones establecidas y fuentes alternativas de capital."
+      },
+      "assetStrategy": {
+        "title": "Estrategia de Activos y Planificación a Largo Plazo",
+        "description": "Orientación estratégica para construir y proteger patrimonio a través de generaciones. Le ayudamos a pensar en sucesión, diversificación y posicionamiento a largo plazo de su portafolio en Costa Rica."
+      },
+      "tokenization": {
+        "title": "Tokenización de Activos Reales",
+        "description": "Para clientes interesados en estructuras de propiedad innovadoras, ofrecemos orientación sobre tokenización de activos inmobiliarios. Esto se aborda de manera conservadora y es adecuado para inversionistas sofisticados que buscan propiedad fraccionada o opciones mejoradas de liquidez."
+      }
+    },
+    "approach": {
+      "title": "Nuestro Enfoque",
+      "description": "Creemos en construir relaciones duraderas basadas en confianza, transparencia e intereses alineados.",
+      "understand": "Comprender",
+      "understandDesc": "Comenzamos con una escucha profunda para entender sus metas, cronograma y prioridades.",
+      "advise": "Asesorar",
+      "adviseDesc": "Proporcionamos orientación clara e imparcial adaptada a su situación específica.",
+      "execute": "Ejecutar",
+      "executeDesc": "Coordinamos todos los aspectos de la implementación con socios de confianza."
+    },
+    "cta": {
+      "title": "Agende una Conversación Privada",
+      "description": "Agradecemos la oportunidad de conocer sus intereses y explorar cómo podemos servirle. Todas las conversaciones son confidenciales.",
+      "requestMeeting": "Solicitar una Reunión"
+    }
+  },
+  "contactPage": {
+    "title": "Contáctenos",
+    "description": "¿Listo para comenzar su viaje a Costa Rica? Comuníquese y discutamos cómo podemos ayudarle.",
+    "getInTouch": "Póngase en Contacto",
+    "phone": "Teléfono",
+    "phoneHours": "Lun-Vie, 8am-6pm CST",
+    "email": "Correo",
+    "emailResponse": "Respondemos en 24 horas",
+    "whatsapp": "WhatsApp",
+    "whatsappResponse": "Respuestas rápidas en horario laboral",
+    "office": "Oficina",
+    "sendMessage": "Envíenos un Mensaje",
+    "sendMessageDesc": "Cuéntenos sobre sus metas y le responderemos con orientación personalizada.",
+    "fullName": "Nombre Completo",
+    "emailLabel": "Correo Electrónico",
+    "phoneLabel": "Teléfono",
+    "preferredContact": "Método de Contacto Preferido",
+    "interestedIn": "Me Interesa",
+    "countryOfOrigin": "País de Origen",
+    "timeline": "Cronograma",
+    "minBudget": "Presupuesto Mínimo (USD)",
+    "maxBudget": "Presupuesto Máximo (USD)",
+    "areasOfInterest": "Áreas de Interés",
+    "message": "Mensaje",
+    "messagePlaceholder": "Cuéntenos sobre sus metas, preguntas, o cómo podemos ayudarle...",
+    "sending": "Enviando...",
+    "sendBtn": "Enviar Mensaje",
+    "successTitle": "¡Mensaje Enviado!",
+    "successDesc": "Nos pondremos en contacto en 24 horas.",
+    "select": "Seleccionar..."
+  },
+  "propertyDetail": {
+    "backToProperties": "Volver a Propiedades",
+    "notFound": "Propiedad No Encontrada",
+    "notFoundDesc": "La propiedad que busca no existe.",
+    "browseAll": "Ver Todas las Propiedades",
+    "viewAllPhotos": "Ver Todas las Fotos",
+    "beds": "Habitaciones",
+    "baths": "Baños",
+    "garage": "Garaje",
+    "sqmBuilt": "m² Construidos",
+    "sqmLand": "m² Terreno",
+    "overview": "Descripción",
+    "features": "Características",
+    "amenities": "Amenidades",
+    "location": "Ubicación",
+    "perMonth": "/mes",
+    "scheduleViewing": "Agendar Visita",
+    "listingAgent": "Agente de Listado",
+    "listed": "Publicado",
+    "similarProperties": "Propiedades Similares"
+  },
+  "contact": {
+    "title": "Contáctenos",
+    "description": "Póngase en contacto con nuestro equipo para discutir sus necesidades inmobiliarias en Costa Rica.",
+    "name": "Su Nombre",
+    "namePlaceholder": "Juan Pérez",
+    "email": "Correo Electrónico",
+    "emailPlaceholder": "juan@ejemplo.com",
+    "phone": "Teléfono",
+    "phonePlaceholder": "+506 8888-1234",
+    "preferredContact": "Método de Contacto Preferido",
+    "methodEmail": "Correo Electrónico",
+    "methodPhone": "Teléfono",
+    "methodWhatsApp": "WhatsApp",
+    "message": "Mensaje",
+    "messagePlaceholder": "Me interesa conocer más sobre...",
+    "send": "Enviar Mensaje",
+    "sending": "Enviando...",
+    "successTitle": "¡Mensaje Enviado!",
+    "successMessage": "Nos pondremos en contacto pronto.",
+    "errorTitle": "Error",
+    "errorMessage": "No se pudo enviar el mensaje. Por favor intente de nuevo.",
+    "thankYou": "¡Gracias!",
+    "willRespond": "Responderemos a su consulta pronto.",
+    "sendAnother": "Enviar Otro Mensaje"
+  },
+  "properties": {
+    "title": "Portafolio",
+    "description": "Explore una selección curada de residencias e inversiones en Costa Rica.",
+    "searchPlaceholder": "Buscar por ubicación o título...",
+    "loading": "Cargando propiedades…",
+    "loadError": "No se pudieron cargar las propiedades. Por favor actualice.",
+    "filters": {
+      "status": "Estado",
+      "allStatus": "Todos",
+      "type": "Tipo",
+      "allTypes": "Todos",
+      "tier": "Nivel",
+      "allTiers": "Todos",
+      "clear": "Limpiar",
+      "any": "Cualquiera",
+      "minBedrooms": "Mín. Habitaciones",
+      "minBathrooms": "Mín. Baños",
+      "minPrice": "Precio Mín.",
+      "minPricePlaceholder": "$0",
+      "maxPrice": "Precio Máx.",
+      "maxPricePlaceholder": "Sin máximo"
+    },
+    "viewModes": {
+      "grid": "Vista de Cuadrícula",
+      "split": "Vista Dividida",
+      "map": "Vista de Mapa"
+    },
+    "split": {
+      "listTitle": "Propiedades",
+      "resultsCount": "{{count}} resultado",
+      "resultsCount_other": "{{count}} resultados"
+    },
+    "map": {
+      "title": "Mapa de Propiedades",
+      "count": "{{shown}} de {{total}} propiedades mostradas"
+    }
+  },
+  "property": {
+    "featured": "Destacada",
+    "perMonth": "/mes",
+    "bedrooms": "Hab",
+    "bathrooms": "Baños",
+    "status": {
+      "for_sale": "En Venta",
+      "for_rent": "En Alquiler",
+      "both": "Venta y Alquiler",
+      "under_contract": "Bajo Contrato",
+      "sold": "Vendida",
+      "rented": "Alquilada"
+    },
+    "type": {
+      "house": "Casa",
+      "condo": "Condominio",
+      "land": "Terreno",
+      "commercial": "Comercial",
+      "other": "Otro"
+    },
+    "tier": {
+      "mid": "Gama Media",
+      "high_end": "Alta Gama",
+      "ultra_luxury": "Lujo"
+    }
+  },
+  "propertyGrid": {
+    "featuredTitle": "Propiedades Destacadas",
+    "featuredShort": "Destacadas",
+    "allTitle": "Todas las Propiedades",
+    "allListingsTitle": "Todos los Listados",
+    "noneTitle": "No se encontraron propiedades",
+    "noMatches": "No hay propiedades que coincidan con sus criterios.",
+    "clearFilters": "Limpiar Filtros",
+    "count": "{{count}} propiedad",
+    "count_other": "{{count}} propiedades"
+  },
+  "agentCard": {
+    "scheduleCall": "Agendar una Llamada",
+    "email": "Correo",
+    "viewProfile": "Ver Perfil"
+  },
+  "chat": {
+    "title": "Asistente de Propiedades",
+    "subtitle": "Pregúnteme sobre Costa Rica",
+    "placeholder": "Escriba su mensaje...",
+    "open": "Abrir chat",
+    "close": "Cerrar chat"
+  },
+  "amenities": {
+    "pool": "Piscina",
+    "garden": "Jardín",
+    "security_system": "Sistema de Seguridad",
+    "central_ac": "Aire Acondicionado Central",
+    "smart_home": "Casa Inteligente",
+    "gym": "Gimnasio",
+    "sauna": "Sauna",
+    "home_theater": "Cine en Casa",
+    "wine_cellar": "Cava de Vinos",
+    "staff_quarters": "Habitaciones de Servicio",
+    "solar_panels": "Paneles Solares",
+    "backup_generator": "Generador de Respaldo",
+    "gated_entry": "Entrada con Portón",
+    "concierge": "Conserje",
+    "rooftop_terrace": "Terraza en Azotea",
+    "outdoor_kitchen": "Cocina Exterior",
+    "fire_pit": "Fogata",
+    "private_beach_access": "Acceso Privado a Playa",
+    "boat_dock": "Muelle para Botes",
+    "helipad": "Helipuerto",
+    "infinity_pool": "Piscina Infinita",
+    "spa": "Spa",
+    "private_terrace": "Terraza Privada",
+    "business_center": "Centro de Negocios",
+    "restaurant": "Restaurante",
+    "yoga_pavilion": "Pabellón de Yoga",
+    "surf_equipment": "Equipo de Surf",
+    "microwave": "Microondas",
+    "dishwasher": "Lavavajillas",
+    "washer_dryer": "Lavadora/Secadora",
+    "air_conditioning": "Aire Acondicionado",
+    "heating": "Calefacción",
+    "elevator": "Ascensor",
+    "parking": "Estacionamiento"
+  },
+  "features": {
+    "ocean_views": "Vista al Mar",
+    "mountain_views": "Vista a la Montaña",
+    "city_views": "Vista a la Ciudad",
+    "park_views": "Vista al Parque",
+    "jungle_setting": "Entorno de Selva",
+    "gated_community": "Comunidad Cerrada",
+    "near_international_schools": "Cerca de Escuelas Internacionales",
+    "walking_distance_shops": "A Pie de Tiendas",
+    "pet_friendly": "Acepta Mascotas",
+    "furnished": "Amueblado",
+    "high_ceilings": "Techos Altos",
+    "open_floor_plan": "Planta Abierta",
+    "chefs_kitchen": "Cocina de Chef",
+    "premium_finishes": "Acabados Premium",
+    "eco_certified": "Certificado Ecológico",
+    "recently_renovated": "Recientemente Renovado",
+    "direct_ocean_views": "Vista Directa al Mar",
+    "tropical_gardens": "Jardines Tropicales",
+    "road_access": "Acceso por Carretera",
+    "utilities_available": "Servicios Disponibles",
+    "beachfront": "Frente a la Playa",
+    "established_business": "Negocio Establecido",
+    "staff_housing": "Vivienda para Personal"
+  },
+  "admin": {
+    "language": "Idioma",
+    "english": "Inglés",
+    "spanish": "Español",
+    "backToSite": "Volver al Sitio",
+    "signOut": "Cerrar Sesión",
+    "nav": {
+      "dashboard": "Panel",
+      "listings": "Propiedades",
+      "agents": "Agentes",
+      "users": "Usuarios",
+      "leads": "Contactos",
+      "activity": "Registro de Actividad",
+      "hero": "Controles Hero"
+    },
+    "auditLogs": {
+      "title": "Registro de Actividad",
+      "description": "Seguimiento de todas las acciones administrativas y cambios.",
+      "noLogs": "No hay actividad registrada aún.",
+      "admin": "Administrador",
+      "action": "Acción",
+      "target": "Objetivo",
+      "details": "Detalles",
+      "time": "Tiempo"
+    },
+    "users": {
+      "title": "Gestión de Usuarios",
+      "description": "Administra cuentas de usuario, roles y permisos.",
+      "searchPlaceholder": "Buscar usuarios...",
+      "user": "Usuario",
+      "email": "Correo",
+      "roles": "Roles",
+      "language": "Idioma",
+      "joined": "Registro",
+      "actions": "Acciones",
+      "noName": "Sin nombre",
+      "noRoles": "Sin roles",
+      "noUsers": "No se encontraron usuarios.",
+      "makeAdmin": "Hacer Admin",
+      "removeAdmin": "Quitar Admin",
+      "edit": "Editar",
+      "roleAdded": "Rol agregado",
+      "roleAddedDesc": "Rol {{role}} agregado a {{user}}.",
+      "roleRemoved": "Rol eliminado",
+      "roleRemovedDesc": "Rol {{role}} eliminado de {{user}}.",
+      "confirmAddRole": "¿Agregar rol de administrador?",
+      "confirmAddRoleDesc": "Esto dará a {{user}} acceso administrativo completo al panel.",
+      "confirmRemoveRole": "¿Eliminar rol de administrador?",
+      "confirmRemoveRoleDesc": "Esto revocará el acceso administrativo de {{user}}.",
+      "error": "Error",
+      "editUser": "Editar Usuario",
+      "editUserDesc": "Actualiza los detalles de la cuenta del usuario.",
+      "fullName": "Nombre Completo",
+      "fullNamePlaceholder": "Ingresa el nombre completo",
+      "emailAddress": "Correo Electrónico",
+      "emailPlaceholder": "Ingresa el correo electrónico",
+      "password": "Contraseña",
+      "sendPasswordReset": "Enviar Correo de Restablecimiento",
+      "sendPasswordResetDesc": "Envía un enlace de restablecimiento de contraseña al correo del usuario.",
+      "saveChanges": "Guardar Cambios",
+      "updateSuccess": "Usuario actualizado",
+      "updateSuccessDesc": "Los detalles del usuario se han actualizado correctamente.",
+      "passwordResetSent": "Restablecimiento enviado",
+      "passwordResetSentDesc": "Se ha enviado un enlace de restablecimiento a {{email}}.",
+      "delete": "Eliminar",
+      "deleting": "Eliminando...",
+      "confirmDelete": "¿Eliminar cuenta de usuario?",
+      "confirmDeleteDesc": "¿Estás seguro de que deseas eliminar permanentemente la cuenta de {{user}}? Esta acción no se puede deshacer y eliminará todos los datos asociados.",
+      "deleteSuccess": "Usuario eliminado",
+      "deleteSuccessDesc": "La cuenta de {{user}} ha sido eliminada permanentemente.",
+      "addUser": "Agregar Usuario",
+      "createUser": "Crear Nuevo Usuario",
+      "createUserDesc": "Crear una nueva cuenta de usuario con correo y contraseña.",
+      "createUserBtn": "Crear Usuario",
+      "creating": "Creando...",
+      "passwordPlaceholder": "Ingrese contraseña",
+      "passwordHint": "Crea una contraseña segura",
+      "pwStrength": "Fortaleza de la Contraseña",
+      "pwStrengthWeak": "Débil",
+      "pwStrengthFair": "Regular",
+      "pwStrengthGood": "Buena",
+      "pwStrengthStrong": "Fuerte",
+      "pwStrengthExcellent": "Excelente",
+      "pwReqMinLength": "Al menos 8 caracteres",
+      "pwReqUppercase": "Una letra mayúscula",
+      "pwReqLowercase": "Una letra minúscula",
+      "pwReqNumber": "Un número",
+      "pwReqSpecial": "Un carácter especial (!@#$%...)",
+      "assignRole": "Asignar Rol",
+      "roleUser": "Usuario",
+      "roleAdmin": "Administrador",
+      "roleHint": "Los administradores tienen acceso completo al panel de gestión.",
+      "createSuccess": "Usuario creado",
+      "createSuccessDesc": "Cuenta creada para {{email}}."
+    },
+    "imageUpload": {
+      "dragDrop": "Arrastra y suelta imágenes aquí o busca en tu dispositivo",
+      "dropHere": "¡Suelta las imágenes aquí!",
+      "supportedFormats": "JPG, PNG, WebP • Máximo 10MB por imagen",
+      "cropEnabled": "Las imágenes se recortarán antes de subir • Máximo 10MB",
+      "browseFiles": "Buscar en Dispositivo",
+      "pasteUrl": "Pegar URL",
+      "urlPlaceholder": "Pega la URL de la imagen aquí...",
+      "add": "Agregar",
+      "uploading": "Subiendo...",
+      "invalidType": "Tipo de archivo inválido",
+      "notImage": "no es un archivo de imagen.",
+      "tooLarge": "Archivo muy grande",
+      "exceedsLimit": "excede el límite de 10MB.",
+      "uploadFailed": "Error al subir",
+      "failedToUpload": "No se pudo subir",
+      "uploadSuccess": "Imágenes subidas",
+      "imagesUploaded": "imagen(es) subida(s) correctamente.",
+      "errorOccurred": "Ocurrió un error al subir las imágenes.",
+      "propertyImage": "Imagen de propiedad",
+      "cover": "Portada",
+      "hint": "Sube imágenes desde tu dispositivo o pega URLs. La primera imagen será la portada.",
+      "reorderHint": "Arrastra las imágenes para reordenarlas. La primera será la portada.",
+      "reorderSuccess": "Imágenes reordenadas",
+      "setCover": "Nueva imagen de portada establecida.",
+      "imagesMoved": "Orden de imágenes actualizado.",
+      "setAsCover": "Portada"
+    },
+    "imageCropper": {
+      "title": "Recortar Imagen",
+      "apply": "Aplicar Recorte",
+      "processing": "Procesando...",
+      "imageCropped": "Imagen recortada y subida."
+    },
+    "dashboard": {
+      "title": "Panel",
+      "totalListings": "Total de Propiedades",
+      "agents": "Agentes",
+      "activeLeads": "Contactos Activos",
+      "welcome": "Bienvenido al panel de administración de DR Housing. Use la barra lateral para gestionar propiedades y contactos.",
+      "diagnostic": "Ejecutar Diagnóstico"
+    },
+    "listings": {
+      "title": "Propiedades",
+      "searchPlaceholder": "Buscar propiedades...",
+      "noProperties": "No se encontraron propiedades",
+      "addFirstProperty": "Agregar Su Primera Propiedad",
+      "addListing": "Agregar Propiedad",
+      "exportAll": "Exportar Todo",
+      "export": "Exportar",
+      "migrateImages": "Migrar Imágenes",
+      "migrating": "Migrando...",
+      "importCsv": "Importar CSV",
+      "importing": "Importando...",
+      "importUrl": "Importar URL",
+      "delete": "Eliminar",
+      "deleting": "Eliminando...",
+      "deleteProperty": "Eliminar Propiedad",
+      "deletePropertyDesc": "¿Está seguro de que desea eliminar \"{{title}}\"? Esta acción no se puede deshacer.",
+      "bulkDeleteTitle": "Eliminar {{count}} Propiedades",
+      "bulkDeleteDesc": "¿Está seguro de que desea eliminar {{count}} propiedades seleccionadas? Esta acción no se puede deshacer.",
+      "deleteCount": "Eliminar {{count}} Propiedades",
+      "importTitle": "Importar Propiedades desde CSV",
+      "importDesc": "¿Desea borrar todas las propiedades existentes antes de importar, o agregar las nuevas junto a las existentes?",
+      "addToExisting": "Agregar a Existentes",
+      "clearAndImport": "Borrar e Importar",
+      "exportComplete": "Exportación completa",
+      "exportCompleteDesc": "Se exportaron {{count}} propiedades a CSV.",
+      "migrationComplete": "Migración de Imágenes Completa",
+      "migrationFailed": "Error en Migración",
+      "importComplete": "Importación Completa",
+      "importFailed": "Error en Importación",
+      "propertyDeleted": "Propiedad eliminada",
+      "propertyDeletedDesc": "\"{{title}}\" ha sido eliminada.",
+      "propertiesDeleted": "Propiedades eliminadas",
+      "propertiesDeletedDesc": "{{count}} propiedades han sido eliminadas.",
+      "propertiesUpdated": "Propiedades actualizadas",
+      "error": "Error",
+      "backToListings": "Volver a Propiedades",
+      "addNewProperty": "Agregar Nueva Propiedad",
+      "addNewPropertyDesc": "Complete los detalles a continuación para crear un nuevo listado de propiedad.",
+      "editProperty": "Editar Propiedad",
+      "editPropertyDesc": "Actualice los detalles de la propiedad a continuación.",
+      "propertyNotFound": "Propiedad no encontrada"
+    },
+    "table": {
+      "photo": "Foto",
+      "property": "Propiedad",
+      "type": "Tipo",
+      "status": "Estado",
+      "salePrice": "Precio Venta",
+      "rentPrice": "Precio Alquiler",
+      "date": "Fecha",
+      "actions": "Acciones",
+      "photos": "fotos"
+    },
+    "filters": {
+      "label": "Filtros:",
+      "allStatuses": "Todos los Estados",
+      "allTypes": "Todos los Tipos",
+      "allTiers": "Todos los Niveles",
+      "dateAdded": "Fecha de creación",
+      "clear": "Limpiar"
+    },
+    "featured": {
+      "title": "Orden de Propiedades Destacadas",
+      "description": "Arrastre para reordenar. Las primeras 4 aparecen en la página de inicio.",
+      "loading": "Cargando propiedades destacadas...",
+      "empty": "No hay propiedades destacadas. Marque propiedades como destacadas desde la tabla de listados.",
+      "cancel": "Cancelar",
+      "saveOrder": "Guardar Orden",
+      "homepage": "Inicio",
+      "orderSaved": "Orden guardado",
+      "orderSavedDesc": "El orden de propiedades destacadas se actualizó."
+    },
+    "bulk": {
+      "title": "Acciones Masivas",
+      "markFeatured": "Marcar como Destacada",
+      "removeFeatured": "Quitar Destacada",
+      "hideListings": "Ocultar Propiedades",
+      "showListings": "Mostrar Propiedades",
+      "changeStatus": "Cambiar Estado",
+      "changeTier": "Cambiar Nivel",
+      "setSource": "Establecer Fuente"
+    },
+    "leads": {
+      "title": "Contactos",
+      "count": "{{filtered}} de {{total}} contactos",
+      "exportCsv": "Exportar CSV",
+      "searchPlaceholder": "Buscar por nombre, correo o teléfono...",
+      "activeLeads": "Contactos Activos",
+      "allIncArchived": "Todos (incl. Archivados)",
+      "archivedOnly": "Solo Archivados",
+      "allTypes": "Todos los Tipos",
+      "allAgents": "Todos los Agentes",
+      "unassigned": "Sin Asignar",
+      "noLeadsYet": "Sin contactos aún. Los contactos aparecerán aquí cuando los visitantes envíen el formulario de contacto.",
+      "noLeadsMatch": "Ningún contacto coincide con sus filtros.",
+      "view": "Ver",
+      "errorLoading": "Error al cargar contactos. Intente de nuevo.",
+      "newLead": "Nuevo Contacto",
+      "createLead": "Crear Nuevo Contacto",
+      "fullName": "Nombre Completo",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "preferredContact": "Contacto Preferido",
+      "leadType": "Tipo de Contacto",
+      "timeline": "Cronograma",
+      "countryOfOrigin": "País de Origen",
+      "propertyTypeInterest": "Tipo de Propiedad de Interés",
+      "minBudget": "Presupuesto Mín. ($)",
+      "maxBudget": "Presupuesto Máx. ($)",
+      "assignToAgent": "Asignar a Agente",
+      "notesMessage": "Notas / Mensaje",
+      "createBtn": "Crear Contacto"
+    },
+    "leadDetail": {
+      "call": "Llamar",
+      "whatsApp": "WhatsApp",
+      "sms": "SMS",
+      "email": "Correo",
+      "contactInfo": "Información de Contacto",
+      "prefers": "Prefiere: {{method}}",
+      "leadDetails": "Detalles del Contacto",
+      "type": "Tipo",
+      "timeline": "Cronograma",
+      "budget": "Presupuesto",
+      "submitted": "Enviado",
+      "propertyType": "Tipo de Propiedad",
+      "interestedAreas": "Áreas de Interés",
+      "sourceProperty": "Propiedad de Origen",
+      "clickToView": "Clic para ver listado",
+      "message": "Mensaje",
+      "crmManagement": "Gestión CRM",
+      "status": "Estado",
+      "assignedAgent": "Agente Asignado",
+      "notes": "Notas",
+      "notesPlaceholder": "Agregar notas sobre este contacto...",
+      "saveChanges": "Guardar Cambios",
+      "saving": "Guardando...",
+      "lastContacted": "Último contacto: {{date}}",
+      "notSpecified": "No especificado",
+      "budgetFrom": "Desde ${{amount}}",
+      "budgetUpTo": "Hasta ${{amount}}"
+    },
+    "agentsPage": {
+      "title": "Agentes",
+      "addAgent": "Agregar Agente",
+      "searchPlaceholder": "Buscar agentes...",
+      "noAgents": "No se encontraron agentes",
+      "addFirstAgent": "Agregar Su Primer Agente",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteAgent": "Eliminar Agente",
+      "deleteAgentDesc": "¿Está seguro de que desea eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+      "deleting": "Eliminando...",
+      "backToAgents": "Volver a Agentes",
+      "addNewAgent": "Agregar Nuevo Agente",
+      "addNewAgentDesc": "Complete los detalles a continuación para agregar un nuevo miembro del equipo.",
+      "editAgent": "Editar Agente",
+      "editAgentDesc": "Actualice los detalles del agente a continuación.",
+      "agentNotFound": "Agente no encontrado"
+    },
+    "pagination": {
+      "showing": "Mostrando {{start}}-{{end}} de {{total}} propiedades",
+      "perPage": "por página"
+    },
+    "roles": {
+      "manageRoles": "Gestionar Roles",
+      "active": "Activo",
+      "listingEditor": "Editor de Propiedades",
+      "agent": "Agente",
+      "admin": "Administrador",
+      "user": "Usuario",
+      "propertyAdvisor": "Asesor de Propiedades",
+      "clientAdvisor": "Asesor de Clientes",
+      "administrator": "Administrador",
+      "fullAccess": "Acceso completo a todas las funciones",
+      "canManageListings": "Puede gestionar listados de propiedades",
+      "canViewListingsLeads": "Puede ver listados y gestionar contactos"
+    },
+    "leadStatus": {
+      "new": "Nuevo",
+      "contacted": "Contactado",
+      "qualified": "Calificado",
+      "negotiating": "En Negociación",
+      "closed_won": "Cerrado Ganado",
+      "closed_lost": "Cerrado Perdido",
+      "archived": "Archivado"
+    },
+    "leadType": {
+      "relocation": "Reubicación Familiar",
+      "investor": "Asesoría de Inversión",
+      "property_management": "Administración de Propiedades",
+      "development": "Desarrollo y Remodelación",
+      "legal_immigration": "Legal y Residencia",
+      "family_affairs": "Asesoría Privada",
+      "general": "Consulta General"
+    },
+    "timelineLabel": {
+      "asap": "Lo antes posible",
+      "1_3_months": "1-3 meses",
+      "3_6_months": "3-6 meses",
+      "6_12_months": "6-12 meses",
+      "exploring": "Solo explorando"
+    },
+    "contactMethod": {
+      "email": "Correo Electrónico",
+      "phone": "Llamada Telefónica",
+      "whatsapp": "WhatsApp"
+    },
+    "login": {
+      "title": "Inicio de Sesión Admin",
+      "description": "Inicie sesión para acceder al panel de administración",
+      "email": "Correo Electrónico",
+      "password": "Contraseña",
+      "signIn": "Iniciar Sesión",
+      "signingIn": "Iniciando sesión...",
+      "orContinueWith": "O continuar con",
+      "loginFailed": "Error de Inicio de Sesión",
+      "welcomeBack": "¡Bienvenido de nuevo!",
+      "redirecting": "Redirigiendo al panel...",
+      "googleFailed": "Error con Google",
+      "appleFailed": "Error con Apple",
+      "backToWebsite": "← Volver al sitio web"
+    },
+    "hero": {
+      "title": "Controles Hero",
+      "globalSettings": "Configuración Global",
+      "perPageMedia": "Medios por Página",
+      "height": "Altura",
+      "unit": "Unidad",
+      "value": "Valor",
+      "viewportHeight": "Altura del Viewport (vh)",
+      "pixels": "Píxeles (px)",
+      "overlay": "Superposición",
+      "type": "Tipo",
+      "solid": "Sólido",
+      "gradient": "Degradado",
+      "opacity": "Opacidad",
+      "direction": "Dirección",
+      "topToBottom": "Arriba → Abajo",
+      "bottomToTop": "Abajo → Arriba",
+      "leftToRight": "Izquierda → Derecha",
+      "rightToLeft": "Derecha → Izquierda",
+      "startColor": "Color Inicial",
+      "endColor": "Color Final",
+      "startStop": "Parada Inicial",
+      "endStop": "Parada Final",
+      "livePreview": "Vista Previa en Vivo",
+      "heroPreview": "Vista Previa del Hero",
+      "saveGlobalSettings": "Guardar Configuración Global",
+      "settingsSaved": "Configuración global del hero guardada",
+      "settingsFailed": "Error al guardar configuración",
+      "enabled": "Habilitado",
+      "disabled": "Deshabilitado",
+      "edit": "Editar",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "mediaType": "Tipo de Medio",
+      "video": "Video",
+      "image": "Imagen",
+      "videoSource": "Fuente de Video",
+      "currentDefault": "Predeterminado Actual",
+      "upload": "Subir",
+      "externalUrl": "URL Externa",
+      "uploadVideo": "Subir Video (MP4/WebM, máx 20MB, 720p–1080p recomendado, loop de 6–12s, sin audio)",
+      "videoUrl": "URL del Video",
+      "uploadImage": "Subir Imagen (máx 10MB)",
+      "posterImage": "Poster / Imagen de Respaldo",
+      "altText": "Texto Alternativo",
+      "headline": "Titular (opcional)",
+      "subheadline": "Subtitular (opcional)",
+      "ctaLabel": "Etiqueta CTA (opcional)",
+      "ctaUrl": "URL CTA (opcional)",
+      "previewWithOverlay": "Vista previa (con superposición global)",
+      "videoTooLarge": "El video debe ser menor a 20MB",
+      "imageTooLarge": "La imagen debe ser menor a 10MB",
+      "uploadFailed": "Error al subir",
+      "fileUploaded": "Archivo subido",
+      "heroSaved": "Hero para \"{{slug}}\" guardado",
+      "heroSaveFailed": "Error al guardar",
+      "pageHome": "Inicio",
+      "pageServices": "Servicios",
+      "pageWestGam": "Guía GAM Oeste"
+    }
+  },
+  "profile": {
+    "title": "Configuración de Perfil",
+    "description": "Administra tu cuenta y preferencias.",
+    "photo": "Foto de Perfil",
+    "photoDesc": "Esta se mostrará en toda la plataforma.",
+    "basicInfo": "Información Básica",
+    "fullName": "Nombre Completo",
+    "fullNamePlaceholder": "Ingresa tu nombre completo",
+    "email": "Correo Electrónico",
+    "emailHint": "El correo no puede cambiarse. Contacta soporte si es necesario.",
+    "language": "Preferencia de Idioma",
+    "languageDesc": "Elige tu idioma preferido para la interfaz.",
+    "roles": "Tus Roles",
+    "rolesDesc": "Los roles son asignados por administradores.",
+    "noRoles": "Sin roles asignados",
+    "saveChanges": "Guardar Cambios",
+    "saveSuccess": "Perfil actualizado",
+    "saveSuccessDesc": "Tu perfil ha sido guardado exitosamente.",
+    "saveError": "Error al actualizar"
+  },
+  "westGamGuide": {
+    "badge": "Inteligencia de Mercado Definitiva",
+    "title": "Guía de Vida y Estilo de Lujo del GAM Oeste: Sabana a La Guácima",
+    "heroDescription": "La autoridad integral sobre el corredor de inversión residencial premier de Costa Rica—cubriendo mercados inmobiliarios, infraestructura de estilo de vida e información estratégica para inversores de alto patrimonio, ejecutivos en reubicación y familias internacionales.",
+    "explorePortfolio": "Explorar Portafolio Disponible",
+    "requestBriefing": "Solicitar Informe Privado de Mercado",
+    "nav": {
+      "navigate": "Navegar:",
+      "whyWestGam": "Por Qué el GAM Oeste",
+      "residentialAreas": "Áreas Residenciales",
+      "lifestyleCommerce": "Estilo de Vida y Comercio",
+      "investmentInsight": "Perspectiva de Inversión",
+      "whyWorkWithUs": "Por Qué Trabajar con Nosotros"
+    },
+    "whyWestGam": {
+      "title": "Por Qué el GAM Oeste Es el Corredor de Lujo Premier de Costa Rica",
+      "intro1": "El Área Metropolitana Occidental—desde La Sabana hasta La Guácima—constituye el corredor de riqueza más concentrado de Centroamérica. Esto no es coincidencia; es el resultado de décadas de inversión deliberada en infraestructura, establecimiento de escuelas internacionales, desarrollo del sistema de salud y formación orgánica de comunidades por parte de las familias más exitosas de Costa Rica y los ejecutivos internacionales que atraen.",
+      "intro2": "Para inversores y familias que evalúan bienes raíces de lujo en Costa Rica, el corredor del GAM Oeste ofrece ventajas críticas que ningún otro mercado centroamericano—y pocos mercados emergentes globales—pueden igualar. Comprender estos fundamentos es esencial para tomar decisiones sólidas de inversión y reubicación.",
+      "legalCertainty": {
+        "title": "Certeza Legal",
+        "description": "El marco de derechos de propiedad de Costa Rica proporciona registro claro de títulos, protecciones constitucionales para propiedad extranjera y un sistema legal alineado con estándares internacionales—crítico para transacciones de alto valor."
+      },
+      "securityInfrastructure": {
+        "title": "Infraestructura de Seguridad",
+        "description": "Comunidades cerradas establecidas, seguridad profesional 24/7 y los índices de criminalidad más bajos de Costa Rica crean un ambiente donde familias y activos están protegidos."
+      },
+      "multinationalPresence": {
+        "title": "Presencia Multinacional",
+        "description": "Amazon, Intel, Microsoft, Boston Scientific y docenas de empresas Fortune 500 mantienen operaciones regionales en el GAM Oeste, anclando demanda consistente de vivienda ejecutiva."
+      },
+      "marketLiquidity": {
+        "title": "Liquidez de Mercado",
+        "description": "La demanda internacional consistente asegura que las propiedades puedan venderse en plazos razonables a valuaciones justas—una consideración crítica para planificación de inversiones."
+      },
+      "investmentLogic": {
+        "title": "Lógica de Inversión y Razón de Reubicación",
+        "description": "La concentración de infraestructura, servicios y desarrollo residencial de calidad institucional en el GAM Oeste crea un ecosistema autorreforzante. Residentes de alto patrimonio atraen servicios premium; servicios premium atraen residentes adicionales de alto patrimonio. Esta dinámica, combinada con terreno limitado para desarrollo y zonificación estricta, apoya la apreciación sostenida del valor de propiedades mientras proporciona las comodidades diarias que hacen que la reubicación internacional sea exitosa en lugar de simplemente sobrevivible."
+      }
+    },
+    "residentialAreas": {
+      "title": "Bienes Raíces Residenciales por Área",
+      "subtitle": "Análisis integral de cada vecindario del GAM Oeste—dinámicas de mercado, tipos de propiedades, características de estilo de vida y perfiles óptimos de compradores para toma de decisiones informada.",
+      "areaGuide": "Guía de Áreas",
+      "personalizedGuidance": "¿Necesita orientación personalizada?",
+      "speakSpecialist": "Hable con un Especialista",
+      "marketProfile": "Perfil de Mercado y Demanda de Compradores",
+      "propertyTypes": "Tipos de Propiedades de Lujo Disponibles",
+      "condominiums": "Condominios de Alta Gama",
+      "townhouses": "Townhouses y Comunidades Cerradas",
+      "singleFamily": "Casas de Lujo Unifamiliares",
+      "developments": "Desarrollos Emblemáticos",
+      "lifestyle": "Estilo de Vida y Comodidad Diaria",
+      "pricePosition": "Posicionamiento Relativo de Precios",
+      "rentalAppeal": "Atractivo de Alquiler y Reventa",
+      "idealBuyer": "Perfil de Comprador Ideal",
+      "viewProperties": "Ver Propiedades en {{area}}",
+      "requestBriefing": "Solicitar Informe Específico del Área"
+    },
+    "areas": {
+      "sabanaRohrmoser": {
+        "title": "La Sabana y Rohrmoser",
+        "subtitle": "Sofisticación Urbana con Conveniencia Metropolitana"
+      },
+      "nunciatura": {
+        "title": "Nunciatura",
+        "subtitle": "Prestigio Diplomático y Exclusividad Tranquila"
+      },
+      "escazu": {
+        "title": "Escazú",
+        "subtitle": "El Referente de Costa Rica para la Vida de Lujo"
+      },
+      "santaAna": {
+        "title": "Santa Ana",
+        "subtitle": "Comunidades de Estilo de Vida Moderno con Potencial de Inversión"
+      },
+      "belen": {
+        "title": "Belén y La Ribera",
+        "subtitle": "Posición Estratégica con Proximidad al Aeropuerto"
+      },
+      "laGuacima": {
+        "title": "La Guácima",
+        "subtitle": "Vida de Hacienda y Herencia Ecuestre"
+      }
+    },
+    "lifestyleEcosystem": {
+      "title": "Ecosistema de Estilo de Vida y Comercio",
+      "subtitle": "Más allá de las especificaciones de propiedades, la inversión y reubicación exitosas dependen de la infraestructura circundante. La concentración de servicios de calidad del GAM Oeste crea ventajas medibles para propietarios y residentes.",
+      "hospitality": {
+        "title": "Hospitalidad y Hoteles",
+        "escazu": {
+          "title": "Escazú y Santa Ana",
+          "description": "El Marriott Costa Rica y el Real InterContinental anclan el segmento de hospitalidad premium, ofreciendo instalaciones de negocios completas y salas de reuniones ejecutivas. Propiedades boutique como Hotel & Spa Nau proporcionan alternativas íntimas para estadías extendidas.",
+          "features": "Alojamiento ejecutivo • Instalaciones de negocios • Soporte de turismo médico"
+        },
+        "sabana": {
+          "title": "Sabana y Rohrmoser",
+          "description": "El Crowne Plaza Corobicí y DoubleTree by Hilton Cariari hospedan viajeros de negocios que requieren proximidad al distrito comercial de San José evitando la congestión del centro.",
+          "features": "Instalaciones de conferencias • Eventos diplomáticos • Acceso central"
+        },
+        "belen": {
+          "title": "Belén y Corredor del Aeropuerto",
+          "description": "El Costa Rica Marriott Hacienda Belén y Wyndham San José posicionan a viajeros y negocios dependientes de conectividad internacional.",
+          "features": "Proximidad al aeropuerto • Alojamiento de tránsito • Soporte de vivienda corporativa"
+        },
+        "investorRelevance": "Las grandes marcas hoteleras invierten solo en mercados que demuestran viabilidad a largo plazo. Su presencia señala infraestructura madura, apoya mercados de alquiler a corto plazo y permite a compradores potenciales experimentar vecindarios antes de comprometerse."
+      },
+      "dining": {
+        "title": "Restaurantes y Gastronomía",
+        "escazu": {
+          "title": "Distrito Gastronómico de Escazú",
+          "description": "Avenida Escazú y calles aledañas albergan la concentración más densa de alta cocina de Costa Rica—cocina latina contemporánea, excelencia pan-asiática, trattorias italianas y steakhouses ejecutivos para entretenimiento de negocios.",
+          "features": "Cultura de almuerzo ejecutivo • Programas de vinos • Comedores privados"
+        },
+        "santaAna": {
+          "title": "Santa Ana y Forum",
+          "description": "El complejo Forum y los desarrollos City Place han cultivado un ecosistema gastronómico de negocios sirviendo a la fuerza laboral multinacional—servicio profesional, tiempos predecibles y ambientes discretos para conversaciones comerciales.",
+          "features": "Entretenimiento de negocios • Variedad internacional • Cuentas corporativas"
+        },
+        "sabana": {
+          "title": "Sabana y Rohrmoser",
+          "description": "Park Café se ubica entre los mejores restaurantes de Centroamérica, mientras que el área más amplia ofrece opciones libanesas, peruanas, japonesas y contemporáneas a distancia caminable de torres residenciales.",
+          "features": "Hitos de alta cocina • Cocinas diversas • Caminable desde torres"
+        }
+      },
+      "shopping": {
+        "title": "Compras, Salud y Servicios Profesionales",
+        "premiumRetail": "Comercio Premium",
+        "multiplaza": {
+          "title": "Multiplaza Escazú",
+          "description": "El destino de compras premier de Costa Rica—marcas internacionales de lujo, tiendas departamentales premium y gastronomía sofisticada."
+        },
+        "avenida": {
+          "title": "Avenida Escazú",
+          "description": "Centro de estilo de vida combinando comercio, gastronomía, entretenimiento y torres residenciales en un ambiente peatonal de estilo europeo."
+        },
+        "cityPlace": {
+          "title": "City Place Santa Ana",
+          "description": "Desarrollo de uso mixto sirviendo a la población corporativa con comercio, restaurantes, cine y entretenimiento."
+        },
+        "healthcare": "Salud",
+        "cima": {
+          "title": "Hospital CIMA",
+          "description": "Instalación acreditada por JCI representando el referente de salud de Centroamérica. Médicos entrenados en EE.UU., imagenología avanzada, servicios especializados integrales."
+        },
+        "clinicaBiblica": {
+          "title": "Clínica Bíblica Escazú",
+          "description": "Extensión de la prestigiosa Clínica Bíblica de Costa Rica con servicios de emergencia, diagnósticos y atención ambulatoria."
+        },
+        "medicalTourism": {
+          "title": "Impacto del Turismo Médico",
+          "description": "La excelencia en salud genera demanda significativa de alquiler de turistas médicos—una fuente de ingresos consistente para inversores de propiedades cercanas."
+        },
+        "professionalServices": "Servicios Profesionales",
+        "privateBanking": {
+          "title": "Banca Privada",
+          "description": "BAC Credomatic, Scotiabank y Banco Nacional mantienen sucursales premium con personal de habla inglesa y gestión patrimonial."
+        },
+        "legal": {
+          "title": "Legal y Notarial",
+          "description": "Concentración de firmas legales enfocadas en el mercado internacional especializadas en bienes raíces, estructuración corporativa e inmigración."
+        },
+        "consulates": {
+          "title": "Consulados y Embajadas",
+          "description": "Proximidad a la Embajada de EE.UU. y múltiples consulados facilitan procesamiento de visas y autenticación de documentos."
+        }
+      },
+      "education": {
+        "title": "Infraestructura Educativa y Empresarial",
+        "internationalSchools": "Escuelas Internacionales",
+        "schoolsDescription": "La concentración de escuelas internacionales acreditadas del GAM Oeste representa el elemento de infraestructura más importante para familias en reubicación—y el estabilizador más fuerte de valores de propiedades residenciales.",
+        "countryDay": {
+          "title": "Country Day School",
+          "description": "La institución premier de currículo americano de Costa Rica, certificada IB, K-12. La ubicación en Escazú ancla la demanda residencial circundante."
+        },
+        "blueValley": {
+          "title": "Blue Valley School",
+          "description": "Institución bilingüe con fuerte colocación en universidades de EE.UU. Genera demanda consistente de vivienda familiar en Escazú."
+        },
+        "lincoln": {
+          "title": "Lincoln School",
+          "description": "Acreditada americana con fuerte enfoque STEM. Accesible a Belén, Santa Ana y Escazú este."
+        },
+        "european": {
+          "title": "European School",
+          "description": "Currículo alemán y europeo para familias que requieren continuidad educativa continental."
+        },
+        "investmentImplication": "Las propiedades dentro de zonas de escuelas internacionales obtienen primas de alquiler del 15-25% y experimentan tasas de vacancia significativamente menores.",
+        "corporateZones": "Zonas Corporativas y Empresariales",
+        "corporateDescription": "Costa Rica ha emergido como la ubicación preferida de sede para operaciones multinacionales en Centroamérica, y el GAM Oeste concentra esta presencia corporativa.",
+        "forum": {
+          "title": "Forum Business Park",
+          "description": "Hito corporativo de Santa Ana que alberga Amazon, Intel, Microsoft—genera demanda significativa de vivienda ejecutiva en Lindora y Pozos."
+        },
+        "coyol": {
+          "title": "Zona Franca COYOL",
+          "description": "Centro de dispositivos médicos (Boston Scientific, Abbott) creando demanda especializada de vivienda en Belén y La Guácima."
+        },
+        "ultrapark": {
+          "title": "Ultrapark y La Sabana",
+          "description": "Centros de tecnología y servicios compartidos impulsando demanda de vivienda urbana en apartamentos en Sabana y Rohrmoser."
+        },
+        "zonaFranca": {
+          "title": "Zona Franca America",
+          "description": "Corredor tecnológico de Heredia accesible al norte del GAM Oeste, albergando operaciones tecnológicas importantes."
+        },
+        "demandStability": "Las reubicaciones corporativas típicamente involucran asignaciones de 2-3 años con subsidios de vivienda, creando grupos de inquilinos predecibles y de alta calidad."
+      },
+      "connectivity": {
+        "title": "Conectividad y Movilidad",
+        "description": "La infraestructura de transporte determina la calidad de vida diaria y los valores de propiedades. El posicionamiento del GAM Oeste proporciona ventajas de acceso que ningún otro corredor de lujo de Costa Rica puede igualar.",
+        "route27": {
+          "title": "Corredor Ruta 27",
+          "description": "La autopista moderna conecta el GAM Oeste con playas del Pacífico en menos de una hora, habilitando estilos de vida costeros de fin de semana imposibles desde otras áreas metropolitanas."
+        },
+        "airport": {
+          "title": "Proximidad al Aeropuerto",
+          "description": "El Aeropuerto Internacional Juan Santamaría es accesible en 15-35 minutos. Belén: 10 minutos. Escazú/Santa Ana: 20-25 minutos vía Ruta 27."
+        },
+        "intraCorridor": {
+          "title": "Conectividad Intra-Corredor",
+          "description": "Los residentes acceden a hospitales, escuelas, comercios y distritos de negocios sin salir de la zona oeste—ventaja significativa de calidad de tiempo."
+        },
+        "comparison": {
+          "title": "Por Qué el GAM Oeste Supera las Zonas de Playa",
+          "westGam": "GAM Oeste",
+          "westGamFeatures": ["20-35 min al aeropuerto internacional", "5-15 min a hospitales de clase mundial", "Vuelos internacionales el mismo día", "Servicios completos todo el año", "Anclas de empleo multinacional"],
+          "beachCorridors": "Corredores de Playa",
+          "beachFeatures": ["3-5 horas al aeropuerto principal", "Instalaciones médicas limitadas", "Vuelo doméstico requerido", "Disponibilidad de servicios estacional", "Economía dependiente del turismo"]
+        }
+      }
+    },
+    "investmentInsight": {
+      "title": "Perspectiva de Inversión y Reubicación",
+      "subtitle": "La concentración de infraestructura de estilo de vida, seguridad y anclas económicas en el GAM Oeste se traduce directamente en ventajas de inversión medibles y resultados exitosos de reubicación.",
+      "capitalPreservation": {
+        "title": "Preservación de Capital",
+        "description": "La infraestructura establecida protege contra ciclos de auge y caída. Las propiedades del GAM Oeste mantienen valor durante correcciones más amplias del mercado, apoyadas por demanda internacional consistente y terreno limitado para desarrollo."
+      },
+      "rentalDemand": {
+        "title": "Estabilidad de Demanda de Alquiler",
+        "description": "Las reubicaciones corporativas, turismo médico y familias de escuelas internacionales crean grupos de inquilinos consistentes y de alta calidad. Tarifas premium con baja vacancia comparado con mercados estacionales de playa."
+      },
+      "appreciation": {
+        "title": "Apreciación a Largo Plazo",
+        "description": "La inversión continua en infraestructura y el creciente reconocimiento internacional posicionan al GAM Oeste para apreciación sostenida como el corredor residencial premier de Costa Rica."
+      },
+      "connectingLifestyle": {
+        "title": "Conectando Estilo de Vida con Resultados Financieros",
+        "forInvestors": "Para Inversores",
+        "investorPoints": [
+          "Las propiedades rodeadas de servicios de calidad obtienen tarifas de alquiler premium",
+          "La proximidad a escuelas reduce vacancia y atrae arrendamientos multi-anuales",
+          "Las anclas de empleo corporativo aseguran demanda consistente independiente de ciclos turísticos"
+        ],
+        "forFamilies": "Para Familias en Reubicación",
+        "familyPoints": [
+          "Acceso a salud de estándar internacional proporciona tranquilidad",
+          "Continuidad educativa a través de escuelas internacionales acreditadas",
+          "El ecosistema de servicios profesionales apoya necesidades de negocios y personales"
+        ]
+      }
+    },
+    "whySpecialist": {
+      "title": "Por Qué Trabajar con un Especialista del GAM Oeste",
+      "subtitle": "Navegar el mercado inmobiliario de lujo de Costa Rica requiere más que acceso a propiedades—demanda experiencia legal, relaciones locales y la capacidad de identificar oportunidades que nunca llegan a listados públicos.",
+      "legalIntegration": {
+        "title": "Integración Legal e Inmobiliaria",
+        "description": "La experiencia combinada asegura que las transacciones estén estructuradas para seguridad, eficiencia fiscal y título claro—crítico para compradores internacionales."
+      },
+      "localKnowledge": {
+        "title": "Conocimiento Local Profundo",
+        "description": "Entendimiento a nivel de calle de cada vecindario, trayectoria de desarrollo y oportunidades de valor ocultas a través de todo el corredor del GAM Oeste."
+      },
+      "internationalExperience": {
+        "title": "Experiencia Internacional",
+        "description": "Amplia trayectoria con clientes norteamericanos, europeos y globales navegando inversión y reubicación en Costa Rica."
+      },
+      "profitFocused": {
+        "title": "Decisiones Enfocadas en Rentabilidad",
+        "description": "Cada recomendación considera estrategia de salida, rendimiento de alquiler, potencial de apreciación y mitigación de riesgo—no solo características."
+      },
+      "requestBriefing": "Solicitar un Informe Privado de Mercado",
+      "explorePortfolio": "Explorar Portafolio Disponible"
+    },
+    "continueResearch": {
+      "title": "Continúe Su Investigación",
+      "exploreProperties": {
+        "title": "Explorar Propiedades de Lujo",
+        "description": "Navegue listados actuales en vecindarios del GAM Oeste con especificaciones detalladas y métricas de inversión.",
+        "cta": "Ver Portafolio"
+      },
+      "requestConsultation": {
+        "title": "Solicitar Consulta de Reubicación",
+        "description": "Orientación personalizada sobre vecindarios, escuelas y propiedades que coinciden con sus requisitos específicos.",
+        "cta": "Iniciar Conversación"
+      },
+      "investmentTools": {
+        "title": "Acceder a Herramientas de Inversión",
+        "description": "Analice rendimientos de alquiler, pagos de hipoteca y retornos de inversión para propiedades en Costa Rica.",
+        "cta": "Ver Calculadoras"
+      }
+    },
+    "finalCta": {
+      "title": "¿Listo para Explorar Oportunidades del GAM Oeste?",
+      "description": "Conéctese con nuestro equipo de asesores para orientación personalizada sobre el corredor de lujo premier de Costa Rica.",
+      "button": "Hablar con un Especialista del GAM Oeste"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Asesoría Inmobiliaria en Costa Rica",
+      "description": "Asesoría inmobiliaria privada para familias que se reubican en Costa Rica. Adquisición de propiedades, orientación legal y soluciones de inversión."
+    },
+    "properties": {
+      "title": "Portafolio de Propiedades",
+      "description": "Explore residencias e inversiones seleccionadas en Costa Rica. Casas de lujo, condominios y terrenos en Escazú, Santa Ana, Guanacaste y más."
+    },
+    "agents": {
+      "title": "Nuestros Asesores",
+      "description": "Conozca a los profesionales inmobiliarios que guían a familias e inversionistas en transacciones de propiedades en Costa Rica."
+    },
+    "services": {
+      "title": "Soluciones Inmobiliarias",
+      "description": "Servicios integrales de bienes raíces en Costa Rica: corretaje, legal e inmigración, desarrollo, diseño de interiores y administración de propiedades."
+    },
+    "contact": {
+      "title": "Contáctenos",
+      "description": "Comuníquese con DR Housing para orientación personalizada en bienes raíces en Costa Rica. Agende una consulta privada hoy."
+    },
+    "tools": {
+      "title": "Recursos y Calculadoras de Planificación",
+      "description": "Estime pagos hipotecarios, costos de cierre, remodelación y construcción para inversiones inmobiliarias en Costa Rica."
+    },
+    "familyAffairs": {
+      "title": "Asesoría Privada — Asuntos Familiares",
+      "description": "Asesoría discreta para estructuración patrimonial, estrategia de activos y planificación a largo plazo para familias con intereses en Costa Rica."
+    },
+    "westGamGuide": {
+      "title": "Guía de Vida de Lujo del GAM Oeste",
+      "description": "La guía definitiva del corredor de lujo de Costa Rica: Escazú, Santa Ana, Sabana, Rohrmoser, Belén y La Guácima."
+    },
+    "profile": {
+      "title": "Configuración de Perfil",
+      "description": "Administre sus preferencias de cuenta e información de perfil en DR Housing."
+    }
+  }
+}
