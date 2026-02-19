@@ -12,7 +12,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export type PropertyRecord = {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   slug: string;
   featured_images: unknown;
   price_sale: number | null;
@@ -22,40 +22,45 @@ export type PropertyRecord = {
 };
 
 async function fetchPropertyBySlug(slug: string): Promise<PropertyRecord | null> {
-  const params = new URLSearchParams();
-  params.set('slug', `eq.${slug}`);
-  params.set('select', [
-    'id',
-    'slug',
-    'title',
-    'description',
-    'featured_images',
-    'price_sale',
-    'price_rent_monthly',
-    'currency',
-    'price_note',
-  ].join(','));
-  params.set('limit', '1');
+  try {
+    const params = new URLSearchParams();
+    params.set('slug', `eq.${slug}`);
+    params.set('select', [
+      'id',
+      'slug',
+      'title',
+      'description',
+      'featured_images',
+      'price_sale',
+      'price_rent_monthly',
+      'currency',
+      'price_note',
+    ].join(','));
+    params.set('limit', '1');
 
-  const resp = await fetch(`${supabaseUrl}/rest/v1/properties?${params.toString()}`, {
-    headers: {
-      apikey: supabaseAnonKey,
-      Authorization: `Bearer ${supabaseAnonKey}`,
-      Accept: 'application/json',
-    },
-    next: { revalidate: 60 },
-  });
+    const resp = await fetch(`${supabaseUrl}/rest/v1/properties?${params.toString()}`, {
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
+        Accept: 'application/json',
+      },
+      next: { revalidate: 60 },
+    });
 
-  if (!resp.ok) {
-    throw new Error(`Supabase request failed: ${resp.status} ${resp.statusText}`);
+    if (!resp.ok) {
+      console.error(`Supabase request failed: ${resp.status} ${resp.statusText}`);
+      return null;
+    }
+
+    const data = (await resp.json()) as PropertyRecord[];
+    return data[0] ?? null;
+  } catch (error) {
+    console.error('Error fetching property by slug:', error);
+    return null;
   }
-
-  const data = (await resp.json()) as PropertyRecord[];
-  return data[0] ?? null;
 }
 
-function normalizeFeaturedImages(raw: PropertyRecord['featured_images']): Array<{ src: string }>
- | Array<{ url: string }> {
+function normalizeFeaturedImages(raw: PropertyRecord['featured_images']): Array<{ src: string }> | Array<{ url: string }> {
   if (!raw) return [] as any;
   try {
     const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
@@ -84,39 +89,75 @@ function formatPrice(property: PropertyRecord): string {
   return '';
 }
 
-export async function generateMetadata({ params }: { params: { slug: string; lang: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const property = await fetchPropertyBySlug(params.slug);
+  
   if (!property) {
-    return { title: 'Property not found' };
+    return {
+      title: 'Property not found',
+    };
   }
 
-  const hero = getHeroImageUrl(property);
-  const url = `${siteUrl}/${params.lang}/properties/${property.slug}`;
+  const heroImage = getHeroImageUrl(property);
+  const url = `${siteUrl}/en/properties/${property.slug}`;
+  const description = property.description ? property.description.slice(0, 160) : 'Property for sale or rent in Costa Rica';
 
   return {
     title: property.title,
-    description: property.description,
-    alternates: { canonical: url },
+    description,
+    alternates: { 
+      canonical: url 
+    },
     openGraph: {
       url,
+      type: 'website',
       title: property.title,
-      description: property.description,
-      images: hero ? [{ url: hero }] : undefined,
+      description,
+      images: heroImage 
+        ? [
+            {
+              url: heroImage,
+              width: 1200,
+              height: 630,
+              alt: property.title,
+            },
+          ]
+        : [
+            {
+              url: `${siteUrl}/og-fallback.jpg`,
+              width: 1200,
+              height: 630,
+              alt: 'DR Housing',
+            },
+          ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: property.title,
+      description,
+      images: heroImage ? [heroImage] : [`${siteUrl}/og-fallback.jpg`],
     },
   };
 }
 
-export default async function PropertyPage({ params }: { params: { slug: string; lang: string } }) {
+export default async function PropertyPage({ params }: { params: { slug: string } }) {
   const property = await fetchPropertyBySlug(params.slug);
-  if (!property) notFound();
+  
+  if (!property) {
+    notFound();
+  }
 
-  const hero = getHeroImageUrl(property);
+  const heroImage = getHeroImageUrl(property);
   const price = formatPrice(property);
 
   return (
     <main>
-      {hero ? (
-        <img src={hero} alt={property.title} style={{ width: '100%', height: 500, objectFit: 'cover' }} />
+      {heroImage ? (
+        <img 
+          src={heroImage} 
+          alt={property.title} 
+          style={{ width: '100%', height: 500, objectFit: 'cover' }} 
+        />
       ) : (
         <div style={{ width: '100%', height: 500, background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: '#777' }}>No hero image</span>
