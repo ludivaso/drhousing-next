@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "next-app/next.config.ts", "use": "@vercel/next" }
+  ],
+  "ignoreCommand": "git diff --quiet HEAD"
+}
