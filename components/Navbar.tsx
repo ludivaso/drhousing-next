@@ -27,7 +27,7 @@ export default function Navbar() {
 
   const navigation = [
     { name: t('header.home'), href: '/' },
-    { name: t('header.properties'), href: '/property' },
+    { name: t('header.properties'), href: '/propiedades' },
     { name: t('header.agents'), href: '/agentes' },
     { name: t('header.services'), href: '/servicios' },
     { name: t('header.contact'), href: '/contacto' },
@@ -90,9 +90,9 @@ export default function Navbar() {
               : 'Bienes Raíces de Lujo · Escazú · Santa Ana · Costa Rica'}
           </span>
           <div className="flex items-center gap-6">
-            <a href="tel:+50686540888" className="flex items-center gap-2 hover:text-gold transition-colors">
+            <a href="tel:+50660775000" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Phone className="w-4 h-4" />
-              +506 8654 0888
+              +506 6077-5000
             </a>
             <a href="mailto:info@drhousing.net" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Mail className="w-4 h-4" />
@@ -256,9 +256,9 @@ export default function Navbar() {
                   <Globe className="w-4 h-4" />
                   {lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
                 </button>
-                <a href="tel:+50686540888" className="flex items-center gap-2 text-muted-foreground text-sm">
+                <a href="tel:+50660775000" className="flex items-center gap-2 text-muted-foreground text-sm">
                   <Phone className="w-4 h-4" />
-                  +506 8654 0888
+                  +506 6077-5000
                 </a>
                 <Link
                   href="/contacto"

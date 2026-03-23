@@ -54,7 +54,8 @@
     },
     "featured": {
       "title": "Propiedades Destacadas",
-      "subtitle": "Hogares seleccionados y oportunidades de inversión"
+      "subtitle": "Hogares seleccionados y oportunidades de inversión",
+      "noProperties": "No hay propiedades destacadas en este momento."
     },
     "howWeHelp": {
       "title": "Cómo Ayudamos",
@@ -85,7 +86,8 @@
     },
     "cta": {
       "title": "¿Listo para Comenzar Su Viaje?",
-      "description": "Conversemos sobre sus metas y encontremos el camino perfecto."
+      "description": "Conversemos sobre sus metas y encontremos el camino perfecto.",
+      "noCommitment": "Hablemos. Sin compromisos ni presión."
     }
   },
   "agents": {
@@ -293,7 +295,19 @@
     "scheduleViewing": "Agendar Visita",
     "listingAgent": "Agente de Listado",
     "listed": "Publicado",
-    "similarProperties": "Propiedades Similares"
+    "similarProperties": "Propiedades Similares",
+    "askAboutProperty": "Preguntar sobre esta propiedad",
+    "interested": "¿Le interesa esta propiedad?",
+    "contactForVisit": "Contáctenos para más información o para agendar una visita.",
+    "mainFeatures": "Características Principales",
+    "description": "Descripción",
+    "investmentPerspective": "Perspectiva de Inversión",
+    "neighborhoodMap": "Mapa del Barrio",
+    "advisor": "DR Housing · +506 6077-5000",
+    "construction": "Construcción",
+    "land": "Terreno",
+    "bedroom": "Habitación",
+    "bathroom": "Baño"
   },
   "contact": {
     "title": "Contáctenos",

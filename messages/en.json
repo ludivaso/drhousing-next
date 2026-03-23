@@ -54,7 +54,8 @@
     },
     "featured": {
       "title": "Selected Properties",
-      "subtitle": "Curated residences and investment opportunities"
+      "subtitle": "Curated residences and investment opportunities",
+      "noProperties": "No featured properties at the moment."
     },
     "howWeHelp": {
       "title": "Our Solutions",
@@ -85,7 +86,8 @@
     },
     "cta": {
       "title": "Ready to Begin?",
-      "description": "We welcome the opportunity to understand your goals and explore the path forward."
+      "description": "We welcome the opportunity to understand your goals and explore the path forward.",
+      "noCommitment": "Let's talk. No commitments, no pressure."
     }
   },
   "agents": {
@@ -293,7 +295,19 @@
     "scheduleViewing": "Request Private Viewing",
     "listingAgent": "Your Advisor",
     "listed": "Listed",
-    "similarProperties": "Related Properties"
+    "similarProperties": "Related Properties",
+    "askAboutProperty": "Ask about this property",
+    "interested": "Interested in this property?",
+    "contactForVisit": "Contact us for more information or to schedule a viewing.",
+    "mainFeatures": "Key Features",
+    "description": "Description",
+    "investmentPerspective": "Investment Perspective",
+    "neighborhoodMap": "Neighborhood Map",
+    "advisor": "DR Housing · +506 6077-5000",
+    "construction": "Built",
+    "land": "Land",
+    "bedroom": "Bedroom",
+    "bathroom": "Bathroom"
   },
   "contact": {
     "title": "Begin a Conversation",

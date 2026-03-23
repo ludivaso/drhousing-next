@@ -1,110 +1,39 @@
-import type { Metadata } from 'next'
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { Home, Scale, Building2, Briefcase, ArrowRight, Phone, Palette } from 'lucide-react'
+import { useI18n } from '@/lib/i18n/context'
 
-export const metadata: Metadata = {
-  title: 'Servicios | DR Housing',
-  description:
-    'Servicios inmobiliarios completos: corretaje, legal, desarrollo, diseño y administración de propiedades en Costa Rica.',
-}
-
-const services = [
-  {
-    id: 'brokerage',
-    icon: Home,
-    image: '/services/real-estate-brokerage.jpg',
-    subtitle: 'Compra · Venta · Inversión',
-    title: 'Corretaje Inmobiliario',
-    description:
-      'Acceso exclusivo a las mejores propiedades residenciales y comerciales del Corredor Oeste. Nuestra red de contactos y conocimiento profundo del mercado le da ventaja competitiva.',
-    features: [
-      'Representación exclusiva de compradores y vendedores',
-      'Valuación y análisis de mercado comparativo',
-      'Negociación estratégica para maximizar su inversión',
-      'Acceso a propiedades off-market',
-      'Cierre y coordinación notarial completa',
-    ],
-  },
-  {
-    id: 'legal',
-    icon: Scale,
-    image: '/services/legal-immigration.jpg',
-    subtitle: 'Residencia · Contratos · Cumplimiento',
-    title: 'Legal e Inmigración',
-    description:
-      'Navegamos el sistema legal costarricense por usted. Desde contratos de compra hasta trámites de residencia — todo bajo un mismo techo de confianza.',
-    features: [
-      'Due diligence y revisión de títulos de propiedad',
-      'Contratos de compraventa y arrendamiento',
-      'Trámites de residencia y visa inversionista',
-      'Constitución de sociedades y estructuración fiscal',
-      'Coordinación con notarios y registro público',
-    ],
-  },
-  {
-    id: 'development',
-    icon: Building2,
-    image: '/services/development-remodeling.jpg',
-    subtitle: 'Construcción · Remodelación · Proyectos',
-    title: 'Desarrollos y Remodelaciones',
-    description:
-      'De la idea al proyecto terminado. Coordinamos arquitectos, contratistas y diseñadores para entregar su propiedad a tiempo y dentro del presupuesto.',
-    features: [
-      'Gestión integral de proyectos de construcción',
-      'Remodelaciones y mejoras para maximizar valor',
-      'Coordinación de permisos y aprobaciones',
-      'Control de calidad y supervisión en sitio',
-      'Entrega llave en mano',
-    ],
-  },
-  {
-    id: 'interior-design',
-    icon: Palette,
-    image: '/services/interior-design.jpg',
-    subtitle: 'Diseño · Decoración · Staging',
-    title: 'Diseño de Interiores',
-    description:
-      'Espacios que reflejan su estilo de vida y maximizan el valor de su propiedad. Nuestro equipo crea ambientes de lujo funcionales y atemporales.',
-    features: [
-      'Diseño interior completo para proyectos residenciales',
-      'Selección de materiales y acabados premium',
-      'Coordinación de proveedores y artesanos',
-      'Home staging para propiedades en venta',
-      'Iluminación arquitectónica y diseño de espacios',
-      'Gestión de compras y logística',
-    ],
-  },
-  {
-    id: 'management',
-    icon: Briefcase,
-    image: '/services/property-management.jpg',
-    subtitle: 'Alquiler · Mantenimiento · Rendimiento',
-    title: 'Administración de Propiedades',
-    description:
-      'Su propiedad, nuestra responsabilidad. Maximizamos su rendimiento gestionando cada aspecto de la operación — sin que usted tenga que preocuparse por nada.',
-    features: [
-      'Selección y gestión de inquilinos de largo plazo',
-      'Administración de alquileres vacacionales (Airbnb, VRBO)',
-      'Mantenimiento preventivo y correctivo',
-      'Informes financieros mensuales y anuales',
-      'Coordinación de seguros y servicios',
-    ],
-  },
+const SERVICE_DEFS = [
+  { id: 'brokerage',     icon: Home,      image: '/services/real-estate-brokerage.jpg', featureCount: 5 },
+  { id: 'legal',         icon: Scale,     image: '/services/legal-immigration.jpg',     featureCount: 5 },
+  { id: 'development',   icon: Building2, image: '/services/development-remodeling.jpg',featureCount: 5 },
+  { id: 'interiorDesign',icon: Palette,   image: '/services/interior-design.jpg',       featureCount: 6 },
+  { id: 'management',    icon: Briefcase, image: '/services/property-management.jpg',   featureCount: 5 },
 ]
 
 export default function ServiciosPage() {
+  const { t } = useI18n()
+
+  const services = SERVICE_DEFS.map((s) => ({
+    ...s,
+    subtitle:    t(`services.${s.id}.subtitle`),
+    title:       t(`services.${s.id}.title`),
+    description: t(`services.${s.id}.description`),
+    features:    Array.from({ length: s.featureCount }, (_, i) => t(`services.${s.id}.feature${i + 1}`)),
+  }))
+
   return (
     <>
       {/* Hero */}
       <section className="bg-forest-dark text-primary-foreground py-16">
         <div className="container-wide">
           <h1 className="font-serif text-4xl sm:text-5xl font-semibold mb-4">
-            Nuestros Servicios
+            {t('services.title')}
           </h1>
           <p className="text-primary-foreground/80 text-lg max-w-2xl">
-            Una firma boutique con capacidades completas para acompañarle en cada
-            etapa de su proyecto inmobiliario en Costa Rica.
+            {t('services.description')}
           </p>
         </div>
       </section>
@@ -139,8 +68,8 @@ export default function ServiciosPage() {
                 </p>
 
                 <ul className="space-y-4 mb-8">
-                  {service.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-4">
+                  {service.features.map((feature, fi) => (
+                    <li key={fi} className="flex items-start gap-4">
                       <div className="w-1.5 h-1.5 rounded-full bg-gold mt-2.5 flex-shrink-0" />
                       <span className="text-muted-foreground leading-relaxed">
                         {feature}
@@ -153,7 +82,7 @@ export default function ServiciosPage() {
                   href="/contacto"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
-                  Consultar sobre este servicio
+                  {t('services.inquire')}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -181,17 +110,17 @@ export default function ServiciosPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
-                Asesoría Privada Integral
+                {t('services.privateAdvisory')}
               </h3>
               <p className="text-muted-foreground">
-                Para familias que buscan más que solo una propiedad — una vida completa en Costa Rica.
+                {t('services.privateAdvisoryDesc')}
               </p>
             </div>
             <Link
               href="/family-affairs"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-border text-foreground text-sm font-medium hover:bg-secondary/80 transition-colors"
             >
-              Family Affairs
+              {t('header.familyAffairs')}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -204,10 +133,10 @@ export default function ServiciosPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="font-serif text-2xl font-semibold mb-2">
-                ¿Listo para comenzar?
+                {t('services.readyStart')}
               </h3>
               <p className="text-primary-foreground/80">
-                Contáctenos hoy para una consulta sin costo ni compromiso.
+                {t('services.readyStartDesc')}
               </p>
             </div>
             <div className="flex flex-wrap gap-4">
@@ -215,14 +144,14 @@ export default function ServiciosPage() {
                 href="/contacto"
                 className="inline-flex items-center px-6 py-3 rounded bg-gold text-forest-dark font-medium text-sm hover:bg-gold/90 transition-colors"
               >
-                Agendar Consulta
+                {t('common.scheduleConsultation')}
               </Link>
               <a
-                href="tel:+50686540888"
+                href="tel:+50660775000"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded border border-primary-foreground/30 text-primary-foreground text-sm font-medium hover:bg-primary-foreground/10 transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                Llamar Ahora
+                {t('common.callNow')}
               </a>
             </div>
           </div>

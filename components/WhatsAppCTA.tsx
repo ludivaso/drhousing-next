@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const WHATSAPP_NUMBER = '50686540888'
+const WHATSAPP_NUMBER = '50660775000'
 
 interface WhatsAppCTAProps {
   /** Pre-filled message text */

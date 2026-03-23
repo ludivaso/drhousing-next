@@ -1,17 +1,14 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { Bed, Bath, Maximize } from 'lucide-react'
 import type { PropertyRow } from '@/src/integrations/supabase/types'
 import { formatPrice, getHeroImage } from '@/lib/supabase/queries'
+import { useI18n } from '@/lib/i18n/context'
 
 interface ListingBriefProps {
   property: PropertyRow
-}
-
-function getStatusLabel(p: PropertyRow): string {
-  if (p.price_sale && p.price_rent_monthly) return 'Venta / Alquiler'
-  if (p.price_rent_monthly && !p.price_sale) return 'Alquiler'
-  return 'En Venta'
 }
 
 function getStatusClass(p: PropertyRow): string {
@@ -20,15 +17,26 @@ function getStatusClass(p: PropertyRow): string {
   return 'badge-sale'
 }
 
-function getDisplayPrice(p: PropertyRow): string | null {
-  if (p.price_sale) return formatPrice(p.price_sale)
-  if (p.price_rent_monthly) return `${formatPrice(p.price_rent_monthly)}/mes`
-  return null
+function getDisplayPrice(p: PropertyRow, lang: string): string | null {
+  const price = p.price_sale ?? p.price_rent_monthly
+  if (!price) return null
+  const formatted = formatPrice(price)
+  return p.price_rent_monthly && !p.price_sale
+    ? `${formatted}${lang === 'en' ? '/mo' : '/mes'}`
+    : formatted
 }
 
 export default function ListingBrief({ property: p }: ListingBriefProps) {
+  const { lang, t } = useI18n()
   const heroImage = getHeroImage(p)
-  const price = getDisplayPrice(p)
+  const price = getDisplayPrice(p, lang)
+  const title = (lang === 'en' && (p as any).title_en) ? (p as any).title_en : p.title
+
+  const statusLabel = (() => {
+    if (p.price_sale && p.price_rent_monthly) return t('property.status.both')
+    if (p.price_rent_monthly && !p.price_sale) return t('property.status.for_rent')
+    return t('property.status.for_sale')
+  })()
 
   return (
     <Link
@@ -40,7 +48,7 @@ export default function ListingBrief({ property: p }: ListingBriefProps) {
         {heroImage ? (
           <Image
             src={heroImage}
-            alt={p.title || ''}
+            alt={title || ''}
             width={128}
             height={96}
             className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
@@ -54,52 +62,36 @@ export default function ListingBrief({ property: p }: ListingBriefProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            {/* Status badge + location */}
             <div className="flex items-center gap-2 mb-1.5">
-              <span className={getStatusClass(p)}>{getStatusLabel(p)}</span>
+              <span className={getStatusClass(p)}>{statusLabel}</span>
               {p.property_type && (
-                <span className="text-xs text-muted-foreground">
-                  {p.property_type}
-                </span>
+                <span className="text-xs text-muted-foreground">{p.property_type}</span>
               )}
             </div>
 
-            {/* Title */}
             <h3 className="font-serif text-base sm:text-lg font-medium text-foreground line-clamp-1 group-hover:text-primary transition-colors">
-              {p.title}
+              {title}
             </h3>
 
-            {/* Location */}
             {p.location_name && (
               <p className="text-xs text-muted-foreground tracking-wide uppercase mt-0.5">
                 {p.location_name}
               </p>
             )}
 
-            {/* Specs */}
             <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
               {p.bedrooms != null && (
-                <span className="flex items-center gap-1">
-                  <Bed className="w-3.5 h-3.5" />
-                  {p.bedrooms}
-                </span>
+                <span className="flex items-center gap-1"><Bed className="w-3.5 h-3.5" />{p.bedrooms}</span>
               )}
               {p.bathrooms != null && (
-                <span className="flex items-center gap-1">
-                  <Bath className="w-3.5 h-3.5" />
-                  {p.bathrooms}
-                </span>
+                <span className="flex items-center gap-1"><Bath className="w-3.5 h-3.5" />{p.bathrooms}</span>
               )}
               {p.construction_size_sqm != null && (
-                <span className="flex items-center gap-1">
-                  <Maximize className="w-3.5 h-3.5" />
-                  {p.construction_size_sqm} m²
-                </span>
+                <span className="flex items-center gap-1"><Maximize className="w-3.5 h-3.5" />{p.construction_size_sqm} m²</span>
               )}
             </div>
           </div>
 
-          {/* Price */}
           {price && (
             <div className="text-right flex-shrink-0">
               <p className="font-serif text-base sm:text-lg font-semibold text-foreground whitespace-nowrap">

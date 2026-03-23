@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Phone, Mail, MapPin, MessageSquare, Send, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { useI18n } from '@/lib/i18n/context'
 
 const COSTA_RICA_AREAS = [
   'Escazú', 'Santa Ana', 'Lindora', 'Ciudad Colón', 'Belén',
@@ -13,39 +14,12 @@ const COSTA_RICA_AREAS = [
   'Guanacaste', 'Jacó',
 ]
 
-const LEAD_TYPE_LABELS: Record<string, string> = {
-  general: 'Consulta General',
-  buying: 'Comprar Propiedad',
-  selling: 'Vender Propiedad',
-  relocation: 'Relocalización',
-  legal_immigration: 'Legal / Inmigración',
-  property_management: 'Administración de Propiedad',
-}
-
-const TIMELINE_LABELS: Record<string, string> = {
-  exploring: 'Solo explorando',
-  within_3_months: 'En los próximos 3 meses',
-  within_6_months: 'En los próximos 6 meses',
-  within_year: 'En el próximo año',
-  over_year: 'Más de un año',
-}
-
-const CONTACT_METHOD_LABELS: Record<string, string> = {
-  email: 'Correo Electrónico',
-  phone: 'Teléfono',
-  whatsapp: 'WhatsApp',
-}
-
 const contactFormSchema = z.object({
-  fullName: z.string().trim().min(1, 'El nombre es requerido').max(100),
-  email: z.string().trim().email('Ingrese un correo válido').max(255),
-  phone: z.string().trim().min(1, 'El teléfono es requerido').max(30),
-  preferredContactMethod: z.enum(['email', 'phone', 'whatsapp'] as const, {
-    required_error: 'Seleccione un método de contacto',
-  }),
-  leadType: z.enum(['general', 'buying', 'selling', 'relocation', 'legal_immigration', 'property_management'] as const, {
-    required_error: 'Seleccione su interés',
-  }),
+  fullName: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(255),
+  phone: z.string().trim().min(1).max(30),
+  preferredContactMethod: z.enum(['email', 'phone', 'whatsapp'] as const),
+  leadType: z.enum(['general', 'buying', 'selling', 'relocation', 'legal_immigration', 'property_management'] as const),
   countryOfOrigin: z.string().trim().max(100).optional().or(z.literal('')),
   timeline: z.enum(['exploring', 'within_3_months', 'within_6_months', 'within_year', 'over_year']).optional(),
   budgetMin: z.string().optional(),
@@ -57,6 +31,7 @@ const contactFormSchema = z.object({
 type ContactFormData = z.infer<typeof contactFormSchema>
 
 export default function ContactoPage() {
+  const { t, lang } = useI18n()
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
@@ -104,9 +79,32 @@ export default function ContactoPage() {
       setSubmitted(true)
       reset()
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error al enviar. Inténtelo de nuevo.'
+      const msg = err instanceof Error ? err.message : (lang === 'en' ? 'Error sending. Please try again.' : 'Error al enviar. Inténtelo de nuevo.')
       setSubmitError(msg)
     }
+  }
+
+  const LEAD_TYPE_OPTIONS: Record<string, string> = {
+    general:             lang === 'en' ? 'General Inquiry'         : 'Consulta General',
+    buying:              lang === 'en' ? 'Buy Property'            : 'Comprar Propiedad',
+    selling:             lang === 'en' ? 'Sell Property'           : 'Vender Propiedad',
+    relocation:          lang === 'en' ? 'Relocation'              : 'Relocalización',
+    legal_immigration:   lang === 'en' ? 'Legal / Immigration'     : 'Legal / Inmigración',
+    property_management: lang === 'en' ? 'Property Management'     : 'Administración de Propiedad',
+  }
+
+  const TIMELINE_OPTIONS: Record<string, string> = {
+    exploring:       lang === 'en' ? 'Just exploring'         : 'Solo explorando',
+    within_3_months: lang === 'en' ? 'Within 3 months'        : 'En los próximos 3 meses',
+    within_6_months: lang === 'en' ? 'Within 6 months'        : 'En los próximos 6 meses',
+    within_year:     lang === 'en' ? 'Within a year'          : 'En el próximo año',
+    over_year:       lang === 'en' ? 'More than a year'       : 'Más de un año',
+  }
+
+  const CONTACT_METHOD_OPTIONS: Record<string, string> = {
+    email:    lang === 'en' ? 'Email'    : 'Correo Electrónico',
+    phone:    lang === 'en' ? 'Phone'    : 'Teléfono',
+    whatsapp: 'WhatsApp',
   }
 
   return (
@@ -115,11 +113,10 @@ export default function ContactoPage() {
       <section className="bg-forest-dark text-primary-foreground py-16">
         <div className="container-wide">
           <h1 className="font-serif text-4xl sm:text-5xl font-semibold mb-4">
-            Contáctenos
+            {t('contactPage.title')}
           </h1>
           <p className="text-primary-foreground/80 text-lg max-w-2xl">
-            Estamos aquí para ayudarle. Sin presiones, solo asesoría honesta para
-            encontrar la propiedad perfecta en Costa Rica.
+            {t('contactPage.description')}
           </p>
         </div>
       </section>
@@ -130,18 +127,18 @@ export default function ContactoPage() {
             {/* Contact Info */}
             <div className="lg:col-span-1">
               <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">
-                Escríbanos o Llámenos
+                {t('contactPage.getInTouch')}
               </h2>
 
               <div className="space-y-8 mb-10">
-                <a href="tel:+50686540888" className="flex items-start gap-4 group">
+                <a href="tel:+50660775000" className="flex items-start gap-4 group">
                   <div className="w-14 h-14 rounded bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
                     <Phone className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-foreground">Teléfono</h4>
-                    <p className="text-muted-foreground">+506 8654 0888</p>
-                    <p className="text-sm text-muted-foreground/70">Lun–Vie 8am–6pm (Costa Rica)</p>
+                    <h4 className="font-medium text-foreground">{t('contactPage.phone')}</h4>
+                    <p className="text-muted-foreground">+506 6077-5000</p>
+                    <p className="text-sm text-muted-foreground/70">{t('contactPage.phoneHours')}</p>
                   </div>
                 </a>
 
@@ -150,14 +147,14 @@ export default function ContactoPage() {
                     <Mail className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-foreground">Correo</h4>
+                    <h4 className="font-medium text-foreground">{t('contactPage.email')}</h4>
                     <p className="text-muted-foreground">info@drhousing.net</p>
-                    <p className="text-sm text-muted-foreground/70">Respondemos en 24 horas</p>
+                    <p className="text-sm text-muted-foreground/70">{t('contactPage.emailResponse')}</p>
                   </div>
                 </a>
 
                 <a
-                  href="https://wa.me/50686540888"
+                  href="https://wa.me/50660775000"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-4 group"
@@ -166,9 +163,9 @@ export default function ContactoPage() {
                     <MessageSquare className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-foreground">WhatsApp</h4>
-                    <p className="text-muted-foreground">+506 8654 0888</p>
-                    <p className="text-sm text-muted-foreground/70">Respuesta inmediata</p>
+                    <h4 className="font-medium text-foreground">{t('contactPage.whatsapp')}</h4>
+                    <p className="text-muted-foreground">+506 6077-5000</p>
+                    <p className="text-sm text-muted-foreground/70">{t('contactPage.whatsappResponse')}</p>
                   </div>
                 </a>
 
@@ -177,7 +174,7 @@ export default function ContactoPage() {
                     <MapPin className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-foreground">Oficina</h4>
+                    <h4 className="font-medium text-foreground">{t('contactPage.office')}</h4>
                     <p className="text-muted-foreground">Escazú, San José</p>
                     <p className="text-sm text-muted-foreground/70">Costa Rica</p>
                   </div>
@@ -200,14 +197,14 @@ export default function ContactoPage() {
 
               <div className="space-y-3">
                 <a
-                  href="tel:+50686540888"
+                  href="tel:+50660775000"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
                   <Phone className="w-4 h-4" />
-                  Llamar Ahora
+                  {t('common.callNow')}
                 </a>
                 <a
-                  href="https://wa.me/50686540888"
+                  href="https://wa.me/50660775000"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded border border-border text-foreground text-sm font-medium hover:bg-secondary transition-colors"
@@ -227,25 +224,25 @@ export default function ContactoPage() {
                       <Send className="w-8 h-8 text-primary" />
                     </div>
                     <h2 className="font-serif text-2xl font-semibold text-foreground mb-3">
-                      ¡Mensaje Enviado!
+                      {t('contactPage.successTitle')}
                     </h2>
                     <p className="text-muted-foreground mb-6">
-                      Gracias por contactarnos. Le responderemos en menos de 24 horas.
+                      {t('contactPage.successDesc')}
                     </p>
                     <button
                       onClick={() => setSubmitted(false)}
                       className="text-sm text-primary hover:underline"
                     >
-                      Enviar otro mensaje
+                      {t('contact.sendAnother')}
                     </button>
                   </div>
                 ) : (
                   <>
                     <h2 className="font-serif text-2xl font-semibold text-foreground mb-3">
-                      Envíenos un Mensaje
+                      {t('contactPage.sendMessage')}
                     </h2>
                     <p className="text-muted-foreground mb-8">
-                      Complete el formulario y nos pondremos en contacto con usted a la brevedad.
+                      {t('contactPage.sendMessageDesc')}
                     </p>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -253,11 +250,11 @@ export default function ContactoPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            Nombre Completo *
+                            {t('contactPage.fullName')} *
                           </label>
                           <input
                             {...register('fullName')}
-                            placeholder="Juan García"
+                            placeholder={lang === 'en' ? 'John Smith' : 'Juan García'}
                             className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                           />
                           {errors.fullName && (
@@ -266,12 +263,12 @@ export default function ContactoPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            Correo Electrónico *
+                            {t('contactPage.emailLabel')} *
                           </label>
                           <input
                             {...register('email')}
                             type="email"
-                            placeholder="juan@ejemplo.com"
+                            placeholder={lang === 'en' ? 'john@example.com' : 'juan@ejemplo.com'}
                             className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                           />
                           {errors.email && (
@@ -283,7 +280,7 @@ export default function ContactoPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            Teléfono *
+                            {t('contactPage.phoneLabel')} *
                           </label>
                           <input
                             {...register('phone')}
@@ -296,14 +293,14 @@ export default function ContactoPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            Método de Contacto Preferido *
+                            {t('contactPage.preferredContact')} *
                           </label>
                           <select
                             {...register('preferredContactMethod')}
                             className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                           >
-                            <option value="">Seleccionar…</option>
-                            {Object.entries(CONTACT_METHOD_LABELS).map(([v, l]) => (
+                            <option value="">{t('contactPage.select')}</option>
+                            {Object.entries(CONTACT_METHOD_OPTIONS).map(([v, l]) => (
                               <option key={v} value={v}>{l}</option>
                             ))}
                           </select>
@@ -316,14 +313,14 @@ export default function ContactoPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            Me Interesa *
+                            {t('contactPage.interestedIn')} *
                           </label>
                           <select
                             {...register('leadType')}
                             className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                           >
-                            <option value="">Seleccionar…</option>
-                            {Object.entries(LEAD_TYPE_LABELS).map(([v, l]) => (
+                            <option value="">{t('contactPage.select')}</option>
+                            {Object.entries(LEAD_TYPE_OPTIONS).map(([v, l]) => (
                               <option key={v} value={v}>{l}</option>
                             ))}
                           </select>
@@ -333,11 +330,11 @@ export default function ContactoPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            País de Origen
+                            {t('contactPage.countryOfOrigin')}
                           </label>
                           <input
                             {...register('countryOfOrigin')}
-                            placeholder="Estados Unidos"
+                            placeholder={lang === 'en' ? 'United States' : 'Estados Unidos'}
                             className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                           />
                         </div>
@@ -347,21 +344,21 @@ export default function ContactoPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            Horizonte de Tiempo
+                            {t('contactPage.timeline')}
                           </label>
                           <select
                             {...register('timeline')}
                             className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                           >
-                            <option value="">Seleccionar…</option>
-                            {Object.entries(TIMELINE_LABELS).map(([v, l]) => (
+                            <option value="">{t('contactPage.select')}</option>
+                            {Object.entries(TIMELINE_OPTIONS).map(([v, l]) => (
                               <option key={v} value={v}>{l}</option>
                             ))}
                           </select>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            Presupuesto Mínimo
+                            {t('contactPage.minBudget')}
                           </label>
                           <input
                             {...register('budgetMin')}
@@ -372,7 +369,7 @@ export default function ContactoPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-foreground mb-1.5">
-                            Presupuesto Máximo
+                            {t('contactPage.maxBudget')}
                           </label>
                           <input
                             {...register('budgetMax')}
@@ -386,7 +383,7 @@ export default function ContactoPage() {
                       {/* Areas */}
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Zonas de Interés
+                          {t('contactPage.areasOfInterest')}
                         </label>
                         <div className="flex flex-wrap gap-2">
                           {COSTA_RICA_AREAS.map((area) => (
@@ -409,12 +406,12 @@ export default function ContactoPage() {
                       {/* Message */}
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-1.5">
-                          Mensaje
+                          {t('contactPage.message')}
                         </label>
                         <textarea
                           {...register('message')}
                           rows={4}
-                          placeholder="Cuéntenos más sobre lo que busca…"
+                          placeholder={t('contactPage.messagePlaceholder')}
                           className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm resize-none"
                         />
                       </div>
@@ -431,12 +428,12 @@ export default function ContactoPage() {
                         {isSubmitting ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
-                            Enviando…
+                            {t('contactPage.sending')}
                           </>
                         ) : (
                           <>
                             <Send className="w-4 h-4" />
-                            Enviar Mensaje
+                            {t('contactPage.sendBtn')}
                           </>
                         )}
                       </button>
