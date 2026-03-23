@@ -13,36 +13,39 @@ import {
   BookOpen,
   Calculator,
   MapPin,
+  Globe,
 } from 'lucide-react'
-
-const navigation = [
-  { name: 'Inicio', href: '/' },
-  { name: 'Propiedades', href: '/property' },
-  { name: 'Agentes', href: '/agentes' },
-  { name: 'Servicios', href: '/servicios' },
-  { name: 'Contacto', href: '/contacto' },
-]
-
-const resourcesItems = [
-  {
-    name: 'Guía West GAM',
-    href: '/guia-west-gam',
-    description: 'Guía completa de vida de lujo',
-    icon: MapPin,
-  },
-  {
-    name: 'Herramientas y Calculadoras',
-    href: '/herramientas',
-    description: 'Calculadora de hipotecas y más',
-    icon: Calculator,
-  },
-]
+import { useI18n } from '@/lib/i18n/context'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [resourcesOpen, setResourcesOpen] = useState(false)
   const pathname = usePathname()
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const { t, lang, setLang } = useI18n()
+
+  const navigation = [
+    { name: t('header.home'), href: '/' },
+    { name: t('header.properties'), href: '/property' },
+    { name: t('header.agents'), href: '/agentes' },
+    { name: t('header.services'), href: '/servicios' },
+    { name: t('header.contact'), href: '/contacto' },
+  ]
+
+  const resourcesItems = [
+    {
+      name: lang === 'en' ? 'West GAM Guide' : 'Guía West GAM',
+      href: '/guia-west-gam',
+      description: lang === 'en' ? 'Complete luxury living guide' : 'Guía completa de vida de lujo',
+      icon: MapPin,
+    },
+    {
+      name: lang === 'en' ? 'Tools & Calculators' : 'Herramientas y Calculadoras',
+      href: '/herramientas',
+      description: lang === 'en' ? 'Mortgage calculator and more' : 'Calculadora de hipotecas y más',
+      icon: Calculator,
+    },
+  ]
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
@@ -69,20 +72,16 @@ export default function Navbar() {
       <div className="hidden md:block bg-primary text-primary-foreground">
         <div className="container-wide py-2 flex items-center justify-between text-sm">
           <span className="font-medium">
-            Bienes Raíces de Lujo · Escazú · Santa Ana · Costa Rica
+            {lang === 'en'
+              ? 'Luxury Real Estate · Escazú · Santa Ana · Costa Rica'
+              : 'Bienes Raíces de Lujo · Escazú · Santa Ana · Costa Rica'}
           </span>
           <div className="flex items-center gap-6">
-            <a
-              href="tel:+50686540888"
-              className="flex items-center gap-2 hover:text-gold transition-colors"
-            >
+            <a href="tel:+50686540888" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Phone className="w-4 h-4" />
               +506 8654 0888
             </a>
-            <a
-              href="mailto:info@drhousing.net"
-              className="flex items-center gap-2 hover:text-gold transition-colors"
-            >
+            <a href="mailto:info@drhousing.net" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Mail className="w-4 h-4" />
               info@drhousing.net
             </a>
@@ -95,17 +94,9 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo.png"
-              alt="DR Housing"
-              width={56}
-              height={56}
-              className="h-14 w-auto"
-            />
+            <Image src="/logo.png" alt="DR Housing" width={56} height={56} className="h-14 w-auto" />
             <div>
-              <span className="font-serif text-xl font-semibold text-foreground tracking-tight">
-                DR Housing
-              </span>
+              <span className="font-serif text-xl font-semibold text-foreground tracking-tight">DR Housing</span>
               <span className="hidden sm:block text-xs text-muted-foreground tracking-wide">
                 Costa Rica Real Estate
               </span>
@@ -116,12 +107,10 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-8">
             {navigation.map((item) => (
               <Link
-                key={item.name}
+                key={item.href}
                 href={item.href}
                 className={`text-sm font-medium transition-colors link-underline ${
-                  isActive(item.href)
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
+                  isActive(item.href) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {item.name}
@@ -133,18 +122,12 @@ export default function Navbar() {
               <button
                 onClick={() => setResourcesOpen((v) => !v)}
                 className={`text-sm font-medium transition-colors link-underline flex items-center gap-1 ${
-                  isResourcesActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
+                  isResourcesActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <BookOpen className="w-4 h-4" />
-                Recursos
-                <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform ${
-                    resourcesOpen ? 'rotate-180' : ''
-                  }`}
-                />
+                {t('header.toolsInsights')}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${resourcesOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {resourcesOpen && (
@@ -154,18 +137,12 @@ export default function Navbar() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setResourcesOpen(false)}
-                      className={`flex items-start gap-3 p-3 hover:bg-secondary transition-colors ${
-                        isActive(item.href) ? 'bg-secondary' : ''
-                      }`}
+                      className={`flex items-start gap-3 p-3 hover:bg-secondary transition-colors ${isActive(item.href) ? 'bg-secondary' : ''}`}
                     >
                       <item.icon className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                       <div>
-                        <div className="font-medium text-foreground text-sm">
-                          {item.name}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {item.description}
-                        </div>
+                        <div className="font-medium text-foreground text-sm">{item.name}</div>
+                        <div className="text-xs text-muted-foreground">{item.description}</div>
                       </div>
                     </Link>
                   ))}
@@ -174,19 +151,28 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Desktop CTA */}
+          {/* Desktop CTA + Lang Toggle */}
           <div className="hidden lg:flex items-center gap-4">
+            {/* Language toggle */}
+            <button
+              onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded px-2 py-1"
+              title="Switch language"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              {lang === 'es' ? 'EN' : 'ES'}
+            </button>
             <Link
               href="/family-affairs"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Family Affairs
+              {t('header.familyAffairs')}
             </Link>
             <Link
               href="/contacto"
               className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              Háblenos
+              {t('common.talkToUs')}
             </Link>
           </div>
 
@@ -196,11 +182,7 @@ export default function Navbar() {
             className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
@@ -210,13 +192,11 @@ export default function Navbar() {
             <div className="flex flex-col gap-4">
               {navigation.map((item) => (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`text-base font-medium py-2 ${
-                    isActive(item.href)
-                      ? 'text-primary'
-                      : 'text-muted-foreground hover:text-foreground'
+                    isActive(item.href) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {item.name}
@@ -227,7 +207,7 @@ export default function Navbar() {
               <div className="py-2">
                 <div className="flex items-center gap-2 text-base font-medium text-foreground mb-2">
                   <BookOpen className="w-4 h-4" />
-                  Recursos
+                  {t('header.toolsInsights')}
                 </div>
                 <div className="pl-6 flex flex-col gap-2">
                   {resourcesItems.map((item) => (
@@ -236,9 +216,7 @@ export default function Navbar() {
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className={`text-sm py-1.5 flex items-center gap-2 ${
-                        isActive(item.href)
-                          ? 'text-primary'
-                          : 'text-muted-foreground hover:text-foreground'
+                        isActive(item.href) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       <item.icon className="w-4 h-4" />
@@ -253,14 +231,19 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-base font-medium py-2 text-muted-foreground hover:text-foreground"
               >
-                Family Affairs
+                {t('header.familyAffairs')}
               </Link>
 
               <div className="pt-4 border-t border-border flex flex-col gap-3">
-                <a
-                  href="tel:+50686540888"
+                {/* Mobile lang toggle */}
+                <button
+                  onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
                   className="flex items-center gap-2 text-muted-foreground text-sm"
                 >
+                  <Globe className="w-4 h-4" />
+                  {lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+                </button>
+                <a href="tel:+50686540888" className="flex items-center gap-2 text-muted-foreground text-sm">
                   <Phone className="w-4 h-4" />
                   +506 8654 0888
                 </a>
@@ -269,7 +252,7 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center px-4 py-3 rounded bg-primary text-primary-foreground text-sm font-medium"
                 >
-                  Háblenos
+                  {t('common.talkToUs')}
                 </Link>
               </div>
             </div>
