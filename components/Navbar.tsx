@@ -14,6 +14,7 @@ import {
   Calculator,
   MapPin,
   Globe,
+  Building2,
 } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
 
@@ -33,6 +34,18 @@ export default function Navbar() {
   ]
 
   const resourcesItems = [
+    {
+      name: lang === 'en' ? 'Blog & Insights' : 'Blog & Market Insights',
+      href: '/blog',
+      description: lang === 'en' ? 'Market analysis and guides' : 'Análisis de mercado y guías',
+      icon: BookOpen,
+    },
+    {
+      name: lang === 'en' ? 'Developments' : 'Desarrollos & Preventa',
+      href: '/desarrollos',
+      description: lang === 'en' ? 'New construction & pre-sales' : 'Nueva construcción y preventa',
+      icon: Building2,
+    },
     {
       name: lang === 'en' ? 'West GAM Guide' : 'Guía West GAM',
       href: '/guia-west-gam',

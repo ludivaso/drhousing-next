@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Phone, Mail, Star } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 
@@ -14,12 +15,13 @@ export const metadata: Metadata = {
 const staticAgents = [
   {
     id: 'dr',
-    name: 'Diego Rojas',
+    name: 'Diego Vargas',
     title: 'Fundador & Asesor Principal',
-    bio: 'Más de 10 años especializados en propiedades de lujo en el Corredor Oeste. Experto en relocalización de familias internacionales y estructuración de inversiones inmobiliarias.',
+    bio: 'Más de 15 años especializados en propiedades de lujo en el Corredor Oeste. Experto en relocalización de familias internacionales y estructuración de inversiones inmobiliarias en Costa Rica.',
     phone: '+506 8654 0888',
     email: 'diego@drhousing.net',
-    specialties: ['Escazú', 'Santa Ana', 'Inversión', 'Relocalización'],
+    specialties: ['Escazú', 'Santa Ana', 'Inversión', 'Relocalización', 'Family Affairs'],
+    photo: '/dr-portrait.png',
   },
 ]
 
@@ -55,10 +57,20 @@ export default async function AgentesPage() {
             {agents.map((agent: any) => (
               <div key={agent.id} className="card-elevated p-8">
                 <div className="flex items-start gap-5 mb-6">
-                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <span className="font-serif text-2xl text-primary font-semibold">
-                      {(agent.name ?? agent.full_name ?? 'A')[0]}
-                    </span>
+                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    {(agent.photo ?? agent.photo_url) ? (
+                      <Image
+                        src={agent.photo ?? agent.photo_url}
+                        alt={agent.name ?? agent.full_name ?? ''}
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-serif text-2xl text-primary font-semibold">
+                        {(agent.name ?? agent.full_name ?? 'A')[0]}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <h2 className="font-serif text-xl font-semibold text-foreground">

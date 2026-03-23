@@ -8,10 +8,11 @@ const quickLinks = [
   { name: 'Propiedades', href: '/property' },
   { name: 'Agentes', href: '/agentes' },
   { name: 'Servicios', href: '/servicios' },
+  { name: 'Blog & Market Insights', href: '/blog' },
+  { name: 'Desarrollos & Preventa', href: '/desarrollos' },
   { name: 'Herramientas e Insights', href: '/herramientas' },
   { name: 'West GAM Luxury Guide', href: '/guia-west-gam' },
   { name: 'Contacto', href: '/contacto' },
-  { name: 'Dashboard', href: '/admin' },
 ]
 
 const services = [
