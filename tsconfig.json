@@ -35,10 +35,12 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
+    "vitest.config.ts",
     "node_modules",
-    "vite.config.ts",
+    "src",
     "vite.config.js",
-    "supabase",
-    "src"
+    "vitest.config.js",
+    "vite.config.ts",
+    "supabase"
   ]
 }
