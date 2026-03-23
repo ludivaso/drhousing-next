@@ -1,151 +1,281 @@
 'use client'
 
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
-import { Menu, X, Phone, Mail } from 'lucide-react'
+import {
+  Menu,
+  X,
+  Phone,
+  Mail,
+  ChevronDown,
+  BookOpen,
+  Calculator,
+  MapPin,
+} from 'lucide-react'
 
-const NAV_LINKS = [
-  { href: '/property',    label: 'Propiedades' },
-  { href: '/desarrollos', label: 'Desarrollos' },
-  { href: '/servicios',   label: 'Servicios' },
-  { href: '/contacto',    label: 'Contacto' },
+const navigation = [
+  { name: 'Inicio', href: '/' },
+  { name: 'Propiedades', href: '/property' },
+  { name: 'Agentes', href: '/agentes' },
+  { name: 'Servicios', href: '/servicios' },
+  { name: 'Contacto', href: '/contacto' },
+]
+
+const resourcesItems = [
+  {
+    name: 'Guía West GAM',
+    href: '/guia-west-gam',
+    description: 'Guía completa de vida de lujo',
+    icon: MapPin,
+  },
+  {
+    name: 'Herramientas y Calculadoras',
+    href: '/herramientas',
+    description: 'Calculadora de hipotecas y más',
+    icon: Calculator,
+  },
 ]
 
 export default function Navbar() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [resourcesOpen, setResourcesOpen] = useState(false)
   const pathname = usePathname()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/'
+    return pathname.startsWith(href)
+  }
+
+  const isResourcesActive = resourcesItems.some((item) =>
+    pathname.startsWith(item.href)
+  )
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setResourcesOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-
-      {/* ── Top bar (contact strip) — hidden on mobile ── */}
+    <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
+      {/* Top bar */}
       <div className="hidden md:block bg-primary text-primary-foreground">
-        <div className="container-wide py-2 flex items-center justify-between">
-          <p className="text-xs text-primary-foreground/70 tracking-wide">
+        <div className="container-wide py-2 flex items-center justify-between text-sm">
+          <span className="font-medium">
             Bienes Raíces de Lujo · Escazú · Santa Ana · Costa Rica
-          </p>
+          </span>
           <div className="flex items-center gap-6">
             <a
               href="tel:+50686540888"
-              className="flex items-center gap-1.5 text-xs text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+              className="flex items-center gap-2 hover:text-gold transition-colors"
             >
-              <Phone className="w-3 h-3" />
-              +506 8654-0888
+              <Phone className="w-4 h-4" />
+              +506 8654 0888
             </a>
             <a
-              href="mailto:diego@drhousing.net"
-              className="flex items-center gap-1.5 text-xs text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+              href="mailto:info@drhousing.net"
+              className="flex items-center gap-2 hover:text-gold transition-colors"
             >
-              <Mail className="w-3 h-3" />
-              diego@drhousing.net
+              <Mail className="w-4 h-4" />
+              info@drhousing.net
             </a>
           </div>
         </div>
       </div>
 
-      {/* ── Main navbar ── */}
-      <div className="bg-card/95 backdrop-blur-md border-b border-border">
-        <div className="container-wide py-4 flex items-center justify-between">
-
+      {/* Main nav */}
+      <nav className="container-wide py-4">
+        <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex flex-col shrink-0"
-            onClick={() => setMobileOpen(false)}
-          >
-            <span className="font-serif text-xl font-semibold text-foreground tracking-tight leading-none">
-              DR <span className="text-[#C9A96E]">Housing</span>
-            </span>
-            <span className="hidden sm:block text-[10px] font-sans text-muted-foreground tracking-widest uppercase mt-0.5">
-              Luxury Real Estate
-            </span>
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/logo.png"
+              alt="DR Housing"
+              width={56}
+              height={56}
+              className="h-14 w-auto"
+            />
+            <div>
+              <span className="font-serif text-xl font-semibold text-foreground tracking-tight">
+                DR Housing
+              </span>
+              <span className="hidden sm:block text-xs text-muted-foreground tracking-wide">
+                Costa Rica Real Estate
+              </span>
+            </div>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link) => {
-              const active = pathname === link.href || pathname.startsWith(link.href + '/')
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`link-underline font-sans text-sm font-medium transition-colors ${
-                    active ? 'text-[#C9A96E]' : 'text-foreground/80 hover:text-foreground'
+          {/* Desktop navigation */}
+          <div className="hidden lg:flex items-center gap-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`text-sm font-medium transition-colors link-underline ${
+                  isActive(item.href)
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+
+            {/* Resources Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setResourcesOpen((v) => !v)}
+                className={`text-sm font-medium transition-colors link-underline flex items-center gap-1 ${
+                  isResourcesActive
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <BookOpen className="w-4 h-4" />
+                Recursos
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform ${
+                    resourcesOpen ? 'rotate-180' : ''
                   }`}
-                >
-                  {link.label}
-                </Link>
-              )
-            })}
-          </nav>
+                />
+              </button>
+
+              {resourcesOpen && (
+                <div className="absolute top-full left-0 mt-2 w-64 bg-popover border border-border shadow-lg rounded z-50">
+                  {resourcesItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setResourcesOpen(false)}
+                      className={`flex items-start gap-3 p-3 hover:bg-secondary transition-colors ${
+                        isActive(item.href) ? 'bg-secondary' : ''
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-medium text-foreground text-sm">
+                          {item.name}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {item.description}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-4">
+            <Link
+              href="/family-affairs"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Family Affairs
+            </Link>
             <Link
               href="/contacto"
-              className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              Consulta Privada
+              Háblenos
             </Link>
-            <a
-              href="https://wa.me/50686540888?text=Hola,%20me%20gustaría%20agendar%20una%20consulta%20estratégica."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-sans text-sm font-medium bg-primary text-primary-foreground px-5 py-2.5 rounded hover:bg-primary/90 transition-colors"
-            >
-              Agendar Consulta
-            </a>
           </div>
 
           {/* Mobile hamburger */}
           <button
-            className="lg:hidden text-foreground p-2 -mr-2"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label={mobileOpen ? 'Cerrar menú' : 'Abrir menú'}
+            type="button"
+            className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
 
-        {/* Mobile drawer */}
-        {mobileOpen && (
-          <div className="lg:hidden border-t border-border bg-card px-6 py-4 flex flex-col gap-1 animate-fade-in">
-            {NAV_LINKS.map((link) => {
-              const active = pathname === link.href || pathname.startsWith(link.href + '/')
-              return (
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden mt-4 pb-4 border-t border-border pt-4 animate-fade-in">
+            <div className="flex flex-col gap-4">
+              {navigation.map((item) => (
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`font-sans text-base py-3 border-b border-border/50 transition-colors ${
-                    active ? 'text-[#C9A96E]' : 'text-foreground/80 hover:text-foreground'
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-base font-medium py-2 ${
+                    isActive(item.href)
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
-                  onClick={() => setMobileOpen(false)}
                 >
-                  {link.label}
+                  {item.name}
                 </Link>
-              )
-            })}
+              ))}
 
-            {/* Mobile contact strip */}
-            <div className="flex items-center gap-4 py-3 border-b border-border/50">
-              <a href="tel:+50686540888" className="flex items-center gap-1.5 font-sans text-sm text-muted-foreground">
-                <Phone className="w-4 h-4" /> +506 8654-0888
-              </a>
+              {/* Mobile Resources */}
+              <div className="py-2">
+                <div className="flex items-center gap-2 text-base font-medium text-foreground mb-2">
+                  <BookOpen className="w-4 h-4" />
+                  Recursos
+                </div>
+                <div className="pl-6 flex flex-col gap-2">
+                  {resourcesItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`text-sm py-1.5 flex items-center gap-2 ${
+                        isActive(item.href)
+                          ? 'text-primary'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4" />
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <Link
+                href="/family-affairs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-base font-medium py-2 text-muted-foreground hover:text-foreground"
+              >
+                Family Affairs
+              </Link>
+
+              <div className="pt-4 border-t border-border flex flex-col gap-3">
+                <a
+                  href="tel:+50686540888"
+                  className="flex items-center gap-2 text-muted-foreground text-sm"
+                >
+                  <Phone className="w-4 h-4" />
+                  +506 8654 0888
+                </a>
+                <Link
+                  href="/contacto"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center px-4 py-3 rounded bg-primary text-primary-foreground text-sm font-medium"
+                >
+                  Háblenos
+                </Link>
+              </div>
             </div>
-
-            <a
-              href="https://wa.me/50686540888?text=Hola,%20me%20gustaría%20agendar%20una%20consulta%20estratégica."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-sans text-sm font-medium bg-primary text-primary-foreground px-4 py-3 rounded text-center mt-3"
-              onClick={() => setMobileOpen(false)}
-            >
-              Agendar Consulta Estratégica
-            </a>
           </div>
         )}
-      </div>
+      </nav>
     </header>
   )
 }

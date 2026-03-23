@@ -1,142 +1,152 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Phone, Mail, MapPin } from 'lucide-react'
 
-export default function Footer() {
-  return (
-    // bg-forest-dark text-primary-foreground = #2C2C2C with off-white text
-    <footer style={{ backgroundColor: '#2C2C2C', color: 'hsl(30 18% 90%)' }}>
+const quickLinks = [
+  { name: 'Propiedades', href: '/property' },
+  { name: 'Agentes', href: '/agentes' },
+  { name: 'Servicios', href: '/servicios' },
+  { name: 'Herramientas e Insights', href: '/herramientas' },
+  { name: 'West GAM Luxury Guide', href: '/guia-west-gam' },
+  { name: 'Contacto', href: '/contacto' },
+  { name: 'Dashboard', href: '/admin' },
+]
 
-      {/* Main footer grid — py-12 md:py-16, 4-column */}
+const services = [
+  { name: 'Compra y Venta', href: '/servicios#brokerage' },
+  { name: 'Administración de Propiedades', href: '/servicios#management' },
+  { name: 'Legal e Inmigración', href: '/servicios#legal' },
+  { name: 'Desarrollos', href: '/servicios#development' },
+  { name: 'Family Affairs', href: '/family-affairs' },
+]
+
+export default function Footer() {
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Newsletter subscription handler
+  }
+
+  return (
+    <footer className="bg-forest-dark text-primary-foreground">
+      {/* Main footer */}
       <div className="container-wide py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-
-          {/* Column 1 — Brand */}
+          {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="mb-4">
-              <span className="font-serif text-xl font-semibold tracking-tight">
-                DR <span style={{ color: '#C9A96E' }}>Housing</span>
-              </span>
-              <p className="text-xs font-sans tracking-widest uppercase mt-0.5" style={{ color: 'rgba(245,242,238,0.5)' }}>
-                Luxury Real Estate
-              </p>
+            <div className="flex items-center gap-3 mb-5">
+              <Image
+                src="/logo.png"
+                alt="DR Housing"
+                width={48}
+                height={48}
+                className="h-12 w-auto brightness-0 invert"
+              />
+              <span className="font-serif text-xl font-semibold">DR Housing</span>
             </div>
-            <p className="text-sm leading-relaxed font-sans mb-6" style={{ color: 'rgba(245,242,238,0.6)' }}>
-              Asesoría inmobiliaria de lujo en Escazú, Santa Ana y el corredor Ruta 27 de Costa Rica.
+            <p className="text-primary-foreground/70 text-sm leading-relaxed mb-6">
+              Asesoría experta en bienes raíces de lujo en Escazú, Santa Ana y el Corredor Ruta 27. Su socio de confianza en Costa Rica.
             </p>
-            <div className="space-y-2">
-              <a href="tel:+50686540888" className="flex items-center gap-2 text-sm font-sans transition-colors hover:opacity-100" style={{ color: 'rgba(245,242,238,0.7)' }}>
-                <Phone className="w-3.5 h-3.5 shrink-0" />
-                +506 8654-0888
+            <div className="flex flex-col gap-3 text-sm">
+              <a
+                href="tel:+50686540888"
+                className="flex items-center gap-3 text-primary-foreground/80 hover:text-gold transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                +506 8654 0888
               </a>
-              <a href="mailto:diego@drhousing.net" className="flex items-center gap-2 text-sm font-sans transition-colors hover:opacity-100" style={{ color: 'rgba(245,242,238,0.7)' }}>
-                <Mail className="w-3.5 h-3.5 shrink-0" />
-                diego@drhousing.net
+              <a
+                href="mailto:info@drhousing.net"
+                className="flex items-center gap-3 text-primary-foreground/80 hover:text-gold transition-colors"
+              >
+                <Mail className="w-4 h-4" />
+                info@drhousing.net
               </a>
-              <div className="flex items-start gap-2 text-sm font-sans" style={{ color: 'rgba(245,242,238,0.7)' }}>
-                <MapPin className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                <span>Escazú · Santa Ana · Costa Rica</span>
+              <div className="flex items-start gap-3 text-primary-foreground/80">
+                <MapPin className="w-4 h-4 mt-0.5" />
+                <span>Escazú, San José, Costa Rica</span>
               </div>
             </div>
           </div>
 
-          {/* Column 2 — Quick Links */}
+          {/* Quick Links */}
           <div>
-            <h4 className="font-serif text-lg mb-4" style={{ color: 'hsl(30 18% 90%)' }}>
-              Propiedades
+            <h4 className="font-serif text-lg font-medium mb-4">
+              Enlaces Rápidos
             </h4>
-            <ul className="space-y-2.5">
-              {[
-                { href: '/property', label: 'Todas las propiedades' },
-                { href: '/property?status=for_sale', label: 'En venta' },
-                { href: '/property?status=for_rent', label: 'En alquiler' },
-                { href: '/desarrollos', label: 'Desarrollos & Preventa' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm font-sans transition-colors hover:opacity-100" style={{ color: 'rgba(245,242,238,0.7)' }}>
-                    {link.label}
+            <ul className="space-y-3">
+              {quickLinks.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-primary-foreground/70 hover:text-gold transition-colors"
+                  >
+                    {link.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 3 — Services */}
+          {/* Services */}
           <div>
-            <h4 className="font-serif text-lg mb-4" style={{ color: 'hsl(30 18% 90%)' }}>
-              Servicios
+            <h4 className="font-serif text-lg font-medium mb-4">
+              Nuestros Servicios
             </h4>
-            <ul className="space-y-2.5">
-              {[
-                { href: '/servicios', label: 'Bienes Raíces' },
-                { href: '/servicios', label: 'Legal & Migración' },
-                { href: '/servicios', label: 'Diseño de Interiores' },
-                { href: '/servicios', label: 'Administración' },
-                { href: '/servicios', label: 'Family Affairs' },
-              ].map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="text-sm font-sans transition-colors hover:opacity-100" style={{ color: 'rgba(245,242,238,0.7)' }}>
-                    {link.label}
+            <ul className="space-y-3">
+              {services.map((service) => (
+                <li key={service.name}>
+                  <Link
+                    href={service.href}
+                    className="text-sm text-primary-foreground/70 hover:text-gold transition-colors"
+                  >
+                    {service.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 4 — Newsletter / CTA */}
+          {/* Newsletter */}
           <div>
-            <h4 className="font-serif text-lg mb-4" style={{ color: 'hsl(30 18% 90%)' }}>
+            <h4 className="font-serif text-lg font-medium mb-4">
               Manténgase Informado
             </h4>
-            <p className="text-sm font-sans mb-4" style={{ color: 'rgba(245,242,238,0.6)' }}>
-              Reciba alertas de nuevas propiedades y análisis del mercado.
+            <p className="text-sm text-primary-foreground/70 mb-4">
+              Reciba actualizaciones de mercado y nuevas propiedades exclusivas.
             </p>
-            {/* Newsletter form — exact classes from audit */}
-            <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubscribe} className="flex flex-col gap-4">
               <input
                 type="email"
                 placeholder="su@email.com"
-                className="flex-1 px-4 py-3 rounded text-sm font-sans focus:outline-none"
-                style={{
-                  background: 'rgba(245,242,238,0.1)',
-                  border: '1px solid rgba(245,242,238,0.2)',
-                  color: 'hsl(30 18% 90%)',
-                }}
+                className="px-4 py-3 rounded bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-gold text-sm"
               />
               <button
                 type="submit"
-                className="px-4 py-3 rounded font-sans font-medium text-sm tracking-wide transition-colors hover:opacity-90"
-                style={{ background: '#C9A96E', color: '#2C2C2C' }}
+                className="px-4 py-3 rounded bg-gold text-forest-dark font-medium text-sm tracking-wide hover:bg-gold/90 transition-colors"
               >
-                →
+                Suscribirse
               </button>
             </form>
           </div>
         </div>
       </div>
 
-      {/* Bottom bar — border-t, flex justify-between */}
-      <div style={{ borderTop: '1px solid rgba(245,242,238,0.1)' }}>
-        <div className="container-wide py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm font-sans" style={{ color: 'rgba(245,242,238,0.6)' }}>
-            © {new Date().getFullYear()} DR Housing. Todos los derechos reservados.
-          </p>
+      {/* Bottom bar */}
+      <div className="border-t border-primary-foreground/10">
+        <div className="container-wide py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/60">
+          <p>© {new Date().getFullYear()} DR Housing. Todos los derechos reservados.</p>
           <div className="flex items-center gap-6">
-            {[
-              { href: '#', label: 'Privacidad' },
-              { href: '#', label: 'Términos' },
-              { href: '/admin', label: 'Admin' },
-            ].map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-sm font-sans transition-colors hover:opacity-100"
-                style={{ color: 'rgba(245,242,238,0.7)' }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            <Link href="/privacidad" className="hover:text-gold transition-colors">
+              Política de Privacidad
+            </Link>
+            <Link href="/terminos" className="hover:text-gold transition-colors">
+              Términos de Servicio
+            </Link>
+            <Link href="/admin/login" className="hover:text-gold transition-colors">
+              Admin
+            </Link>
           </div>
         </div>
       </div>

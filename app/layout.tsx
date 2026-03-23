@@ -1,22 +1,8 @@
 import type { Metadata } from 'next'
-import { Lora, Poppins } from 'next/font/google'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import ChatBot from '@/components/ChatBot'
 import './globals.css'
-
-const lora = Lora({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-lora',
-  display: 'swap',
-})
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-poppins',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   title: {
@@ -50,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es" className={`${lora.variable} ${poppins.variable}`}>
+    <html lang="es">
       <body className="min-h-screen bg-background text-foreground antialiased">
         <Navbar />
         {/* pt-24 = top bar (32px) + main nav (64px) on desktop; pt-16 on mobile (no top bar) */}
@@ -58,6 +44,7 @@ export default function RootLayout({
           <div className="flex-1">{children}</div>
           <Footer />
         </div>
+        <ChatBot />
       </body>
     </html>
   )
