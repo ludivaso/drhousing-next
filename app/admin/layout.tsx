@@ -60,7 +60,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     )
   }
 
-  if (!user) return null
+  // Login page renders without the admin shell
+  if (!user) return <>{children}</>
+
 
   return (
     <div className="min-h-screen bg-background flex">
