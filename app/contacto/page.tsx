@@ -40,16 +40,16 @@ const contactFormSchema = z.object({
   fullName: z.string().trim().min(1, 'El nombre es requerido').max(100),
   email: z.string().trim().email('Ingrese un correo válido').max(255),
   phone: z.string().trim().min(1, 'El teléfono es requerido').max(30),
-  preferredContactMethod: z.enum(['email', 'phone', 'whatsapp'], {
+  preferredContactMethod: z.enum(['email', 'phone', 'whatsapp'] as const, {
     required_error: 'Seleccione un método de contacto',
   }),
-  leadType: z.enum(['general', 'buying', 'selling', 'relocation', 'legal_immigration', 'property_management'], {
+  leadType: z.enum(['general', 'buying', 'selling', 'relocation', 'legal_immigration', 'property_management'] as const, {
     required_error: 'Seleccione su interés',
   }),
   countryOfOrigin: z.string().trim().max(100).optional().or(z.literal('')),
   timeline: z.enum(['exploring', 'within_3_months', 'within_6_months', 'within_year', 'over_year']).optional(),
-  budgetMin: z.string().optional().transform((v) => (v ? parseInt(v, 10) : undefined)),
-  budgetMax: z.string().optional().transform((v) => (v ? parseInt(v, 10) : undefined)),
+  budgetMin: z.string().optional(),
+  budgetMax: z.string().optional(),
   interestedAreas: z.array(z.string()).default([]),
   message: z.string().trim().max(2000).optional().or(z.literal('')),
 })
@@ -85,7 +85,8 @@ export default function ContactoPage() {
   const onSubmit = async (data: ContactFormData) => {
     setSubmitError(null)
     try {
-      const { error } = await supabase.from('leads').insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any).from('leads').insert({
         full_name: data.fullName,
         email: data.email,
         phone: data.phone,
@@ -93,8 +94,8 @@ export default function ContactoPage() {
         lead_type: data.leadType,
         country_of_origin: data.countryOfOrigin || null,
         timeline: data.timeline ?? 'exploring',
-        budget_min: data.budgetMin ?? null,
-        budget_max: data.budgetMax ?? null,
+        budget_min: data.budgetMin ? parseInt(data.budgetMin, 10) : null,
+        budget_max: data.budgetMax ? parseInt(data.budgetMax, 10) : null,
         interested_areas: data.interestedAreas,
         message: data.message || null,
         source: 'website_contact',

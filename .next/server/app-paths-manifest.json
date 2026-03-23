@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/chat/route": "app/api/chat/route.js",
+  "/contacto/page": "app/contacto/page.js",
+  "/property/page": "app/property/page.js",
+  "/herramientas/page": "app/herramientas/page.js",
+  "/desarrollos/page": "app/desarrollos/page.js",
+  "/agentes/page": "app/agentes/page.js",
+  "/family-affairs/page": "app/family-affairs/page.js",
+  "/page": "app/page.js",
+  "/guia-west-gam/page": "app/guia-west-gam/page.js",
+  "/privacidad/page": "app/privacidad/page.js",
+  "/servicios/page": "app/servicios/page.js",
+  "/property/[slug]/page": "app/property/[slug]/page.js",
+  "/terminos/page": "app/terminos/page.js"
+}

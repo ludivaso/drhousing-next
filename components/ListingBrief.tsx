@@ -9,14 +9,14 @@ interface ListingBriefProps {
 }
 
 function getStatusLabel(p: PropertyRow): string {
-  if (p.listing_type === 'rent') return 'Alquiler'
-  if (p.listing_type === 'both') return 'Venta / Alquiler'
+  if (p.price_sale && p.price_rent_monthly) return 'Venta / Alquiler'
+  if (p.price_rent_monthly && !p.price_sale) return 'Alquiler'
   return 'En Venta'
 }
 
 function getStatusClass(p: PropertyRow): string {
-  if (p.listing_type === 'rent') return 'badge-rent'
-  if (p.listing_type === 'both') return 'badge-both'
+  if (p.price_sale && p.price_rent_monthly) return 'badge-both'
+  if (p.price_rent_monthly && !p.price_sale) return 'badge-rent'
   return 'badge-sale'
 }
 
