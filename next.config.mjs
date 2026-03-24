@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Packages that use Node.js-only APIs — must not be bundled by webpack
+  experimental: {
+    serverComponentsExternalPackages: [
+      '@react-pdf/renderer',
+      '@anthropic-ai/sdk',
+    ],
+  },
   // Exclude Vite SPA source from Next.js compilation
   webpack: (config) => {
     config.module.rules.push({

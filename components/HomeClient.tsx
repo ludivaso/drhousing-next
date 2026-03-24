@@ -14,12 +14,12 @@ import {
   Sparkles,
   Palette,
 } from 'lucide-react'
-import ListingBrief from '@/components/ListingBrief'
+import PropertyCard from '@/components/PropertyCard'
 import { useI18n } from '@/lib/i18n/context'
 import type { PropertyRow } from '@/lib/supabase/queries'
 
 export default function HomeClient({ featuredProperties }: { featuredProperties: PropertyRow[] }) {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
 
   const howWeHelp = [
     { icon: HomeIcon, titleKey: 'home.howWeHelp.realEstate',          descKey: 'home.howWeHelp.realEstateDesc',          href: '/servicios' },
@@ -132,16 +132,17 @@ export default function HomeClient({ featuredProperties }: { featuredProperties:
             </Link>
           </div>
 
-          <div className="divide-y-0">
-            {featuredProperties.slice(0, 3).map((property) => (
-              <ListingBrief key={property.id} property={property} />
-            ))}
-            {featuredProperties.length === 0 && (
-              <p className="text-muted-foreground text-sm py-8">
-                {t('home.featured.noProperties')}
-              </p>
-            )}
-          </div>
+          {featuredProperties.length === 0 ? (
+            <p className="text-muted-foreground text-sm py-8">
+              {t('home.featured.noProperties')}
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredProperties.slice(0, 6).map((property) => (
+                <PropertyCard key={property.id} property={property} lang={lang} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

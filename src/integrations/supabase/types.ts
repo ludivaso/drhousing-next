@@ -547,6 +547,51 @@ export type Database = {
         }
         Relationships: []
       }
+      support_tickets: {
+        Row: {
+          id: string
+          title: string
+          type: 'bug' | 'feature' | 'task' | 'other'
+          description: string | null
+          status: 'open' | 'in_progress' | 'done' | 'closed'
+          priority: 'low' | 'medium' | 'high' | 'urgent'
+          screenshot_url: string | null
+          created_by: string | null
+          assigned_to: string | null
+          comments: Json[] | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          type?: 'bug' | 'feature' | 'task' | 'other'
+          description?: string | null
+          status?: 'open' | 'in_progress' | 'done' | 'closed'
+          priority?: 'low' | 'medium' | 'high' | 'urgent'
+          screenshot_url?: string | null
+          created_by?: string | null
+          assigned_to?: string | null
+          comments?: Json[] | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          type?: 'bug' | 'feature' | 'task' | 'other'
+          description?: string | null
+          status?: 'open' | 'in_progress' | 'done' | 'closed'
+          priority?: 'low' | 'medium' | 'high' | 'urgent'
+          screenshot_url?: string | null
+          created_by?: string | null
+          assigned_to?: string | null
+          comments?: Json[] | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       curated_lists: {
         Row: {
           id: string
@@ -558,6 +603,9 @@ export type Database = {
           contact_email: string | null
           contact_phone: string | null
           contact_name: string | null
+          message: string | null
+          language: string
+          is_private: boolean
           visibility: string
           password_hash: string | null
           accent_color: string
@@ -576,6 +624,9 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           contact_name?: string | null
+          message?: string | null
+          language?: string
+          is_private?: boolean
           visibility?: string
           password_hash?: string | null
           accent_color?: string
@@ -594,6 +645,9 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           contact_name?: string | null
+          message?: string | null
+          language?: string
+          is_private?: boolean
           visibility?: string
           password_hash?: string | null
           accent_color?: string
@@ -652,3 +706,4 @@ export type LeadRow = Tables<'leads'>
 export type ProfileRow = Tables<'profiles'>
 export type AmenityRow = Tables<'amenities_master'>
 export type CuratedListRow = Tables<'curated_lists'>
+export type TicketRow = Tables<'support_tickets'>

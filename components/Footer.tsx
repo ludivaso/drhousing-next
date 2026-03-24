@@ -152,7 +152,10 @@ export default function Footer() {
             <Link href="/terminos" className="hover:text-gold transition-colors">
               {t('footer.termsOfService')}
             </Link>
-            <Link href="/admin/login" className="hover:text-gold transition-colors">
+            <Link
+              href="/admin/login"
+              className="px-3 py-1 rounded border border-primary-foreground/20 text-primary-foreground/70 hover:border-gold hover:text-gold transition-colors text-xs tracking-wide uppercase"
+            >
               Admin
             </Link>
           </div>

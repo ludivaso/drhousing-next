@@ -12,15 +12,21 @@ import {
   Menu,
   X,
   Loader2,
+  KanbanSquare,
+  Bookmark,
+  Ticket,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
 const adminNav = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Propiedades', href: '/admin/listings', icon: Home },
-  { name: 'Leads', href: '/admin/leads', icon: Users },
-  { name: 'Agentes', href: '/admin/agents', icon: UserCircle },
+  { name: 'Dashboard',    href: '/admin',                icon: LayoutDashboard },
+  { name: 'Propiedades',  href: '/admin/listings',       icon: Home },
+  { name: 'Leads',        href: '/admin/leads',          icon: Users },
+  { name: 'Pipeline CRM', href: '/admin/leads/pipeline', icon: KanbanSquare },
+  { name: 'Curated',      href: '/admin/curated',        icon: Bookmark },
+  { name: 'Tickets',      href: '/admin/tickets',        icon: Ticket },
+  { name: 'Agentes',      href: '/admin/agents',         icon: UserCircle },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

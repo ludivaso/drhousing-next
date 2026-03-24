@@ -34,14 +34,13 @@ export async function getPublicProperties(): Promise<PropertyRow[]> {
   return data ?? []
 }
 
-/** Featured properties for homepage — hidden=false, visibility=public, featured=true, ordered by featured_order */
+/** Featured properties for homepage — up to 6 public properties ordered by featured_order */
 export async function getFeaturedProperties(): Promise<PropertyRow[]> {
   const { data, error } = await supabase
     .from('properties')
     .select('*')
     .eq('hidden', false)
     .eq('visibility', 'public')
-    .eq('featured', true)
     .order('featured_order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
     .limit(6)
