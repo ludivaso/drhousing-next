@@ -558,6 +558,9 @@ export type Database = {
           contact_email: string | null
           contact_phone: string | null
           contact_name: string | null
+          message: string | null
+          language: string
+          is_private: boolean
           visibility: string
           password_hash: string | null
           accent_color: string
@@ -576,6 +579,9 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           contact_name?: string | null
+          message?: string | null
+          language?: string
+          is_private?: boolean
           visibility?: string
           password_hash?: string | null
           accent_color?: string
@@ -594,6 +600,9 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           contact_name?: string | null
+          message?: string | null
+          language?: string
+          is_private?: boolean
           visibility?: string
           password_hash?: string | null
           accent_color?: string
