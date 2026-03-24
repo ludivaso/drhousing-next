@@ -212,7 +212,7 @@ interface DetailPanelProps {
 }
 
 function DetailPanel({ ticket, onClose, onUpdate, onDelete, onEdit, currentUserEmail }: DetailPanelProps) {
-  const [comments,    setComments]    = useState<Comment[]>((ticket.comments as Comment[]) ?? [])
+  const [comments,    setComments]    = useState<Comment[]>((ticket.comments as unknown as Comment[]) ?? [])
   const [commentBody, setCommentBody] = useState('')
   const [savingComment, setSavingComment] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -407,7 +407,7 @@ function TicketCard({ ticket, onClick }: { ticket: TicketRow; onClick: () => voi
   const TypeIcon = TYPE_CONFIG[ticket.type].Icon
   const status   = STATUS_CONFIG[ticket.status]
   const priority = PRIORITY_CONFIG[ticket.priority]
-  const commentCount = ((ticket.comments as Comment[]) ?? []).length
+  const commentCount = ((ticket.comments as unknown as Comment[]) ?? []).length
 
   return (
     <div
@@ -495,13 +495,19 @@ export default function TicketsPage() {
   // ── CRUD ──
 
   const handleCreate = async (data: Partial<TicketRow>) => {
+    const { title, type, priority, description, screenshot_url } = data
+    if (!title) throw new Error('Title is required')
     const { data: created, error: err } = await supabase
       .from('support_tickets')
       .insert({
-        ...data,
-        status:     'open',
-        created_by: currentEmail,
-        comments:   [],
+        title,
+        type:           type ?? 'task',
+        priority:       priority ?? 'medium',
+        description:    description ?? null,
+        screenshot_url: screenshot_url ?? null,
+        status:         'open',
+        created_by:     currentEmail,
+        comments:       [],
       })
       .select()
       .single()

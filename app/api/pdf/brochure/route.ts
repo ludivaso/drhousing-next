@@ -8,7 +8,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { renderToBuffer } from '@react-pdf/renderer'
-import React from 'react'
+import React, { type ReactElement } from 'react'
+import type { DocumentProps } from '@react-pdf/renderer'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { PropertyBrochure } from '@/lib/pdf/PropertyBrochure'
@@ -57,9 +58,8 @@ export async function GET(request: NextRequest) {
 
   // ── Render PDF ──
   try {
-    const buffer = await renderToBuffer(
-      React.createElement(PropertyBrochure, { property: property as PropertyRow, lang })
-    )
+    const element = React.createElement(PropertyBrochure, { property: property as PropertyRow, lang }) as unknown as ReactElement<DocumentProps>
+    const buffer = await renderToBuffer(element)
 
     const filename = `drhousing-${(property as PropertyRow).slug ?? id}-${lang}.pdf`
 

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { MapPin, CheckCircle, ArrowLeft, MessageCircle, TrendingUp } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
-import type { Development } from './page'
+import type { Development } from '../data'
 
 const NEIGHBORHOOD_COORDS: Record<string, [number, number]> = {
   'Escazú':             [9.9188, -84.1386],
