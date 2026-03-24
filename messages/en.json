@@ -1,0 +1,1272 @@
+{
+  "common": {
+    "learnMore": "Learn More",
+    "contactUs": "Contact Us",
+    "talkToUs": "Request Consultation",
+    "viewAll": "View All",
+    "callNow": "Schedule a Call",
+    "scheduleConsultation": "Request Private Consultation",
+    "browseProperties": "View Portfolio",
+    "subscribe": "Join",
+    "yourEmail": "Your email address",
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "saving": "Saving...",
+    "viewDetails": "View Details"
+  },
+  "header": {
+    "tagline": "Private Real Estate Advisory — Costa Rica",
+    "home": "Home",
+    "properties": "Portfolio",
+    "agents": "Advisors",
+    "toolsInsights": "Resources",
+    "services": "Solutions",
+    "contact": "Contact",
+    "familyAffairs": "Private Advisory"
+  },
+  "footer": {
+    "brand": "DR Housing",
+    "description": "Private real estate advisory for families and investors establishing their presence in Costa Rica.",
+    "quickLinks": "Navigation",
+    "ourServices": "Solutions",
+    "stayInformed": "Market Intelligence",
+    "newsletterText": "Receive curated market insights and exclusive listings.",
+    "copyright": "© {{year}} DR Housing. All rights reserved.",
+    "privacyPolicy": "Privacy",
+    "termsOfService": "Terms",
+    "buySell": "Acquisitions & Sales",
+    "propertyManagement": "Property Oversight",
+    "legalImmigration": "Legal & Immigration",
+    "development": "Development",
+    "location": "Escazú, San José, Costa Rica"
+  },
+  "home": {
+    "hero": {
+      "badge": "Costa Rica Real Estate Advisory",
+      "title": "Your Family's Next Chapter",
+      "titleHighlight": "Begins Here",
+      "description": "We guide discerning families through every aspect of relocation—from identifying the ideal residence to navigating legal requirements. Experience the Pura Vida lifestyle with trusted advisory.",
+      "relocationGuidance": "Relocation Advisory",
+      "investorServices": "Investment Solutions",
+      "calculatorsTools": "Planning Resources",
+      "advisoryCta": "Request a Private Consultation"
+    },
+    "featured": {
+      "title": "Selected Properties",
+      "subtitle": "Curated residences and investment opportunities",
+      "noProperties": "No featured properties at the moment."
+    },
+    "howWeHelp": {
+      "title": "Our Solutions",
+      "description": "Whether relocating your family, acquiring investment property, or planning for future generations, we provide comprehensive advisory at every stage.",
+      "realEstate": "Property Acquisition",
+      "realEstateDesc": "Buy, sell, or lease residential and commercial properties throughout Costa Rica.",
+      "legalImmigration": "Legal & Residency",
+      "legalImmigrationDesc": "Navigate residency, visas, and legal requirements with experienced guidance.",
+      "development": "Development",
+      "developmentDesc": "Custom construction, renovations, and project oversight for your vision.",
+      "interiorDesign": "Interior Design",
+      "interiorDesignDesc": "Luxury staging, custom cabinetry, kitchens, and premium appliance consulting.",
+      "propertyManagement": "Property Oversight",
+      "propertyManagementDesc": "Comprehensive management for international owners with transparent reporting.",
+      "familyAffairs": "Private Advisory",
+      "familyAffairsDesc": "Discreet advisory for wealth structuring and long-term asset planning."
+    },
+    "trust": {
+      "title": "Trusted Experience",
+      "description": "We have guided hundreds of families in making Costa Rica their home. Our approach combines deep local expertise with international service standards, ensuring your transition is seamless, transparent, and successful.",
+      "experience": "15+ Years",
+      "experienceDesc": "Established expertise and trusted relationships throughout Costa Rica.",
+      "families": "Family-Centered",
+      "familiesDesc": "We specialize in helping families relocate with confidence and clarity.",
+      "local": "Local Presence",
+      "localDesc": "On-the-ground team with intimate knowledge of every region.",
+      "meetTeam": "Meet Our Advisors"
+    },
+    "cta": {
+      "title": "Ready to Begin?",
+      "description": "We welcome the opportunity to understand your goals and explore the path forward.",
+      "noCommitment": "Let's talk. No commitments, no pressure."
+    }
+  },
+  "agents": {
+    "title": "Our Advisors",
+    "description": "Meet the dedicated professionals who make your Costa Rica real estate experience seamless and successful.",
+    "joinTeam": "Join Our Team",
+    "joinTeamDesc": "We are always seeking talented professionals who share our commitment to excellence."
+  },
+  "services": {
+    "title": "Solutions",
+    "description": "Integrated advisory and execution for families and investors establishing presence in Costa Rica.",
+    "inquire": "Inquire Privately",
+    "privateAdvisory": "Private Advisory Services",
+    "privateAdvisoryDesc": "Explore our Family Affairs offering for wealth structuring and long-term planning.",
+    "readyStart": "Begin a Conversation",
+    "readyStartDesc": "We welcome the opportunity to understand your goals and create a tailored approach.",
+    "brokerage": {
+      "title": "Real Estate Brokerage",
+      "subtitle": "Buy, Sell & Rent",
+      "description": "Whether you're buying your dream home, selling your property, or looking for rental opportunities, our experienced team guides you through every step.",
+      "feature1": "Comprehensive property search tailored to your criteria",
+      "feature2": "Professional property valuations and market analysis",
+      "feature3": "Negotiation expertise and transaction management",
+      "feature4": "Due diligence and legal coordination",
+      "feature5": "Post-purchase support and orientation"
+    },
+    "legal": {
+      "title": "Legal & Immigration",
+      "subtitle": "Residency & Legal Guidance",
+      "description": "Navigating Costa Rica's legal and immigration landscape can be complex. We connect you with trusted legal professionals.",
+      "feature1": "Residency visa options (Pensionado, Rentista, Investor)",
+      "feature2": "Property ownership structuring",
+      "feature3": "Contract review and legal due diligence",
+      "feature4": "Tax planning considerations",
+      "feature5": "Corporate formation for property holdings"
+    },
+    "development": {
+      "title": "Development & Remodeling",
+      "subtitle": "Build Your Vision",
+      "description": "From custom home construction to renovation projects, we manage the entire process.",
+      "feature1": "Custom home design and construction",
+      "feature2": "Renovation and remodeling projects",
+      "feature3": "Project management and oversight",
+      "feature4": "Permit acquisition and compliance",
+      "feature5": "Budget management and quality control"
+    },
+    "interiorDesign": {
+      "title": "Interior Design",
+      "subtitle": "Luxury Interiors & Staging",
+      "description": "Transform your space with our high-end interior design services. From complete renovations to house staging for sale.",
+      "feature1": "Complete interior renovations and redesigns",
+      "feature2": "Professional home staging for faster sales",
+      "feature3": "Custom cabinetry and millwork design",
+      "feature4": "Designer kitchen planning and installation",
+      "feature5": "Premium furniture curation and sourcing",
+      "feature6": "High-end appliance consulting (Sub-Zero, Wolf, Miele)"
+    },
+    "management": {
+      "title": "Property Management",
+      "subtitle": "Hassle-Free Ownership",
+      "description": "Own property in Costa Rica but live elsewhere? Our property management services keep your investment in top condition.",
+      "feature1": "Regular property inspections and maintenance",
+      "feature2": "Bill payment and administrative handling",
+      "feature3": "Vacation rental management (optional)",
+      "feature4": "Emergency response and coordination",
+      "feature5": "Monthly reporting and photo updates"
+    }
+  },
+  "tools": {
+    "title": "Planning Resources",
+    "description": "Use our calculators to plan your Costa Rica investment. All estimates are approximations—consult with our advisory team for precise figures.",
+    "needGuidance": "Need Personalized Guidance?",
+    "needGuidanceDesc": "These calculators provide estimates. For accurate figures tailored to your specific situation, request a private consultation.",
+    "mortgage": {
+      "title": "Mortgage Estimator",
+      "description": "Estimate your monthly mortgage payment",
+      "price": "Purchase Price (USD)",
+      "downPayment": "Down Payment (%)",
+      "interestRate": "Interest Rate (%)",
+      "term": "Term (years)",
+      "years": "years",
+      "monthlyPayment": "Estimated Monthly Payment",
+      "loanAmount": "Loan Amount",
+      "disclaimer": "This is an estimate only. Actual terms depend on lender and your financial situation."
+    },
+    "closing": {
+      "title": "Closing Cost Estimator",
+      "description": "Estimate typical closing costs in Costa Rica",
+      "transferTax": "Transfer Tax (1.5%)",
+      "registrationFee": "Registration Fee (~0.5%)",
+      "legalFees": "Legal Fees (1-1.5%)",
+      "notaryFees": "Notary Fees (~1%)",
+      "stampDuties": "Stamp Duties (~0.3%)",
+      "totalRange": "Estimated Total Range",
+      "ofPurchase": "of purchase price",
+      "disclaimer": "Estimates only. Actual costs vary based on property and transaction specifics. Consult with us for accurate figures."
+    },
+    "remodeling": {
+      "title": "Remodeling Cost Estimator",
+      "description": "Estimate renovation costs per square meter",
+      "qualityTier": "Quality Tier",
+      "areaToRemodel": "Area to Remodel (m²)",
+      "costRange": "Estimated Cost Range",
+      "midRange": "Mid-Range ($400-600/m²)",
+      "highEnd": "High-End ($700-1000/m²)",
+      "ultraLuxury": "Ultra Luxury ($1200-2000/m²)",
+      "disclaimer": "Estimates vary by scope, materials, and location. Contact us for a detailed quote."
+    },
+    "construction": {
+      "title": "New Construction Estimator",
+      "description": "Estimate new construction costs per square meter",
+      "constructionSize": "Construction Size (m²)",
+      "midRange": "Mid-Range ($800-1200/m²)",
+      "highEnd": "High-End ($1400-2000/m²)",
+      "ultraLuxury": "Ultra Luxury ($2500-4000/m²)",
+      "disclaimer": "Land, permits, and design fees are additional. Estimates vary by location and specifications."
+    }
+  },
+  "familyAffairs": {
+    "badge": "Private Advisory",
+    "title": "Family Affairs",
+    "subtitle": "Discreet, personalized services for families and individuals seeking comprehensive support for their Costa Rica interests.",
+    "intro": "Family Affairs is our private advisory practice, designed for clients who value discretion, long-term relationships, and comprehensive support. Whether managing significant real estate holdings, planning for the next generation, or exploring sophisticated structuring options, we provide the expertise and local presence required.",
+    "offerings": {
+      "familyOffice": {
+        "title": "Family Office Advisory",
+        "description": "Coordinated oversight of your Costa Rica interests, from real estate holdings to local administration. We serve as your trusted local partner, ensuring your assets and affairs are managed with discretion and care."
+      },
+      "financing": {
+        "title": "Private Capital Solutions",
+        "description": "Access to financing solutions and capital structuring tailored for international investors. We facilitate connections with established institutions and alternative capital sources."
+      },
+      "assetStrategy": {
+        "title": "Asset Strategy",
+        "description": "Strategic guidance for building and protecting wealth across generations. We help you think through succession, diversification, and long-term positioning of your Costa Rica portfolio."
+      },
+      "tokenization": {
+        "title": "Real Asset Structuring",
+        "description": "For clients interested in innovative ownership structures, we offer guidance on tokenization of real estate assets. This is approached conservatively and is suitable for sophisticated investors seeking fractional ownership or enhanced liquidity options."
+      }
+    },
+    "approach": {
+      "title": "Our Approach",
+      "description": "We build lasting relationships founded on trust, transparency, and aligned interests.",
+      "understand": "Understand",
+      "understandDesc": "We begin with deep listening to understand your goals, timeline, and priorities.",
+      "advise": "Advise",
+      "adviseDesc": "We provide clear, unbiased guidance tailored to your specific situation.",
+      "execute": "Execute",
+      "executeDesc": "We coordinate all aspects of implementation with trusted partners."
+    },
+    "cta": {
+      "title": "Request a Private Conversation",
+      "description": "We welcome the opportunity to learn about your interests and explore how we might be of service. All conversations are confidential.",
+      "requestMeeting": "Request Private Meeting"
+    }
+  },
+  "contactPage": {
+    "title": "Begin a Conversation",
+    "description": "Share your goals and a member of our advisory team will respond personally.",
+    "getInTouch": "Reach Us Directly",
+    "phone": "Phone",
+    "phoneHours": "Mon–Fri, 8am–6pm CST",
+    "email": "Email",
+    "emailResponse": "Response within 24 hours",
+    "whatsapp": "WhatsApp",
+    "whatsappResponse": "Prompt responses during business hours",
+    "office": "Office",
+    "sendMessage": "Submit an Inquiry",
+    "sendMessageDesc": "Share your interests and we will respond with personalized guidance.",
+    "fullName": "Full Name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "preferredContact": "Preferred Contact Method",
+    "interestedIn": "I'm Interested In",
+    "countryOfOrigin": "Country of Origin",
+    "timeline": "Timeline",
+    "minBudget": "Min Budget (USD)",
+    "maxBudget": "Max Budget (USD)",
+    "areasOfInterest": "Areas of Interest",
+    "message": "Message",
+    "messagePlaceholder": "Share your goals, timeline, or any questions you may have...",
+    "sending": "Submitting...",
+    "sendBtn": "Submit Inquiry",
+    "successTitle": "Inquiry Received",
+    "successDesc": "A member of our team will be in touch within 24 hours.",
+    "select": "Select..."
+  },
+  "propertyDetail": {
+    "backToProperties": "Back to Properties",
+    "notFound": "Property Not Found",
+    "notFoundDesc": "The property you're looking for doesn't exist.",
+    "browseAll": "View Portfolio",
+    "viewAllPhotos": "View Gallery",
+    "beds": "Bedrooms",
+    "baths": "Bathrooms",
+    "garage": "Garage",
+    "sqmBuilt": "m² Built",
+    "sqmLand": "m² Land",
+    "overview": "Overview",
+    "features": "Features",
+    "amenities": "Amenities",
+    "location": "Location",
+    "perMonth": "/month",
+    "scheduleViewing": "Request Private Viewing",
+    "listingAgent": "Your Advisor",
+    "listed": "Listed",
+    "similarProperties": "Related Properties",
+    "askAboutProperty": "Ask about this property",
+    "interested": "Interested in this property?",
+    "contactForVisit": "Contact us for more information or to schedule a viewing.",
+    "mainFeatures": "Key Features",
+    "description": "Description",
+    "investmentPerspective": "Investment Perspective",
+    "neighborhoodMap": "Neighborhood Map",
+    "advisor": "DR Housing · +506 6077-5000",
+    "construction": "Built",
+    "land": "Land",
+    "bedroom": "Bedroom",
+    "bathroom": "Bathroom"
+  },
+  "contact": {
+    "title": "Begin a Conversation",
+    "description": "Share your interests and a member of our advisory team will respond personally.",
+    "name": "Full Name",
+    "namePlaceholder": "John Doe",
+    "email": "Email",
+    "emailPlaceholder": "john@example.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+1 (555) 123-4567",
+    "preferredContact": "Preferred Contact Method",
+    "methodEmail": "Email",
+    "methodPhone": "Phone",
+    "methodWhatsApp": "WhatsApp",
+    "message": "Message",
+    "messagePlaceholder": "I'm interested in learning more about...",
+    "send": "Submit Inquiry",
+    "sending": "Submitting...",
+    "successTitle": "Inquiry Received",
+    "successMessage": "A member of our team will be in touch shortly.",
+    "errorTitle": "Error",
+    "errorMessage": "Failed to submit. Please try again.",
+    "thankYou": "Thank You",
+    "willRespond": "We will respond to your inquiry promptly.",
+    "sendAnother": "Submit Another Inquiry"
+  },
+  "properties": {
+    "title": "Property Portfolio",
+    "description": "Explore our curated selection of Costa Rica residences and investments.",
+    "searchPlaceholder": "Search by location, title...",
+    "loading": "Loading properties…",
+    "loadError": "Could not load properties. Please refresh.",
+    "filters": {
+      "status": "Status",
+      "allStatus": "All Status",
+      "type": "Type",
+      "allTypes": "All Types",
+      "tier": "Tier",
+      "allTiers": "All Tiers",
+      "clear": "Clear",
+      "any": "Any",
+      "minBedrooms": "Min Bedrooms",
+      "minBathrooms": "Min Bathrooms",
+      "minPrice": "Min Price",
+      "minPricePlaceholder": "$0",
+      "maxPrice": "Max Price",
+      "maxPricePlaceholder": "No max"
+    },
+    "viewModes": {
+      "grid": "Grid View",
+      "split": "Split View",
+      "map": "Map View"
+    },
+    "split": {
+      "listTitle": "Properties",
+      "resultsCount": "{{count}} result",
+      "resultsCount_other": "{{count}} results"
+    },
+    "map": {
+      "title": "Properties Map",
+      "count": "{{shown}} of {{total}} properties shown"
+    }
+  },
+  "property": {
+    "featured": "Featured",
+    "perMonth": "/mo",
+    "bedrooms": "Beds",
+    "bathrooms": "Baths",
+    "status": {
+      "for_sale": "For Sale",
+      "for_rent": "For Rent",
+      "both": "Sale & Rent",
+      "under_contract": "Under Contract",
+      "sold": "Sold",
+      "rented": "Rented"
+    },
+    "type": {
+      "house": "House",
+      "condo": "Condo",
+      "land": "Land",
+      "commercial": "Commercial",
+      "other": "Other"
+    },
+    "tier": {
+      "mid": "Mid-Range",
+      "high_end": "High-End",
+      "ultra_luxury": "Luxury"
+    }
+  },
+  "propertyGrid": {
+    "featuredTitle": "Featured Properties",
+    "featuredShort": "Featured",
+    "allTitle": "All Properties",
+    "allListingsTitle": "All Listings",
+    "noneTitle": "No Properties Found",
+    "noMatches": "No properties match your criteria.",
+    "clearFilters": "Clear Filters",
+    "count": "{{count}} property",
+    "count_other": "{{count}} properties"
+  },
+  "agentCard": {
+    "scheduleCall": "Schedule a Call",
+    "email": "Email",
+    "viewProfile": "View Profile"
+  },
+  "chat": {
+    "title": "Property Assistant",
+    "subtitle": "Ask me anything about Costa Rica",
+    "placeholder": "Type your message...",
+    "open": "Open chat",
+    "close": "Close chat"
+  },
+  "amenities": {
+    "pool": "Pool",
+    "garden": "Garden",
+    "security_system": "Security System",
+    "central_ac": "Central A/C",
+    "smart_home": "Smart Home",
+    "gym": "Gym",
+    "sauna": "Sauna",
+    "home_theater": "Home Theater",
+    "wine_cellar": "Wine Cellar",
+    "staff_quarters": "Staff Quarters",
+    "solar_panels": "Solar Panels",
+    "backup_generator": "Backup Generator",
+    "gated_entry": "Gated Entry",
+    "concierge": "Concierge",
+    "rooftop_terrace": "Rooftop Terrace",
+    "outdoor_kitchen": "Outdoor Kitchen",
+    "fire_pit": "Fire Pit",
+    "private_beach_access": "Private Beach Access",
+    "boat_dock": "Boat Dock",
+    "helipad": "Helipad",
+    "infinity_pool": "Infinity Pool",
+    "spa": "Spa",
+    "private_terrace": "Private Terrace",
+    "business_center": "Business Center",
+    "restaurant": "Restaurant",
+    "yoga_pavilion": "Yoga Pavilion",
+    "surf_equipment": "Surf Equipment",
+    "microwave": "Microwave",
+    "dishwasher": "Dishwasher",
+    "washer_dryer": "Washer/Dryer",
+    "air_conditioning": "Air Conditioning",
+    "heating": "Heating",
+    "elevator": "Elevator",
+    "parking": "Parking"
+  },
+  "features": {
+    "ocean_views": "Ocean Views",
+    "mountain_views": "Mountain Views",
+    "city_views": "City Views",
+    "park_views": "Park Views",
+    "jungle_setting": "Jungle Setting",
+    "gated_community": "Gated Community",
+    "near_international_schools": "Near International Schools",
+    "walking_distance_shops": "Walking Distance to Shops",
+    "pet_friendly": "Pet Friendly",
+    "furnished": "Furnished",
+    "high_ceilings": "High Ceilings",
+    "open_floor_plan": "Open Floor Plan",
+    "chefs_kitchen": "Chef's Kitchen",
+    "premium_finishes": "Premium Finishes",
+    "eco_certified": "Eco-Certified",
+    "recently_renovated": "Recently Renovated",
+    "direct_ocean_views": "Direct Ocean Views",
+    "tropical_gardens": "Tropical Gardens",
+    "road_access": "Road Access",
+    "utilities_available": "Utilities Available",
+    "beachfront": "Beachfront",
+    "established_business": "Established Business",
+    "staff_housing": "Staff Housing"
+  },
+  "admin": {
+    "language": "Language",
+    "english": "English",
+    "spanish": "Spanish",
+    "backToSite": "Back to Site",
+    "signOut": "Sign Out",
+    "nav": {
+      "dashboard": "Dashboard",
+      "listings": "Listings",
+      "agents": "Agents",
+      "users": "Users",
+      "leads": "Leads",
+      "activity": "Activity Log",
+      "hero": "Hero Controls"
+    },
+    "auditLogs": {
+      "title": "Activity Log",
+      "description": "Track all administrative actions and changes.",
+      "noLogs": "No activity recorded yet.",
+      "admin": "Admin",
+      "action": "Action",
+      "target": "Target",
+      "details": "Details",
+      "time": "Time"
+    },
+    "users": {
+      "title": "User Management",
+      "description": "Manage user accounts, roles, and permissions.",
+      "searchPlaceholder": "Search users...",
+      "user": "User",
+      "email": "Email",
+      "roles": "Roles",
+      "language": "Language",
+      "joined": "Joined",
+      "actions": "Actions",
+      "noName": "No name",
+      "noRoles": "No roles",
+      "noUsers": "No users found.",
+      "makeAdmin": "Make Admin",
+      "removeAdmin": "Remove Admin",
+      "edit": "Edit",
+      "roleAdded": "Role added",
+      "roleAddedDesc": "{{role}} role added to {{user}}.",
+      "roleRemoved": "Role removed",
+      "roleRemovedDesc": "{{role}} role removed from {{user}}.",
+      "confirmAddRole": "Add Admin Role?",
+      "confirmAddRoleDesc": "This will give {{user}} full administrative access to the dashboard.",
+      "confirmRemoveRole": "Remove Admin Role?",
+      "confirmRemoveRoleDesc": "This will revoke administrative access from {{user}}.",
+      "error": "Error",
+      "editUser": "Edit User",
+      "editUserDesc": "Update user account details.",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter full name",
+      "emailAddress": "Email Address",
+      "emailPlaceholder": "Enter email address",
+      "password": "Password",
+      "sendPasswordReset": "Send Password Reset Email",
+      "sendPasswordResetDesc": "Send a password reset link to the user's email.",
+      "saveChanges": "Save Changes",
+      "updateSuccess": "User updated",
+      "updateSuccessDesc": "User details have been updated successfully.",
+      "passwordResetSent": "Password reset sent",
+      "passwordResetSentDesc": "A password reset link has been sent to {{email}}.",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "confirmDelete": "Delete User Account?",
+      "confirmDeleteDesc": "Are you sure you want to permanently delete {{user}}'s account? This action cannot be undone and will remove all associated data.",
+      "deleteSuccess": "User deleted",
+      "deleteSuccessDesc": "{{user}}'s account has been permanently deleted.",
+      "addUser": "Add User",
+      "createUser": "Create New User",
+      "createUserDesc": "Create a new user account with email and password.",
+      "createUserBtn": "Create User",
+      "creating": "Creating...",
+      "passwordPlaceholder": "Enter password",
+      "passwordHint": "Create a strong password",
+      "pwStrength": "Password Strength",
+      "pwStrengthWeak": "Weak",
+      "pwStrengthFair": "Fair",
+      "pwStrengthGood": "Good",
+      "pwStrengthStrong": "Strong",
+      "pwStrengthExcellent": "Excellent",
+      "pwReqMinLength": "At least 8 characters",
+      "pwReqUppercase": "One uppercase letter",
+      "pwReqLowercase": "One lowercase letter",
+      "pwReqNumber": "One number",
+      "pwReqSpecial": "One special character (!@#$%...)",
+      "assignRole": "Assign Role",
+      "roleUser": "User",
+      "roleAdmin": "Admin",
+      "roleHint": "Admins have full access to the management dashboard.",
+      "createSuccess": "User created",
+      "createSuccessDesc": "Account created for {{email}}."
+    },
+    "imageUpload": {
+      "dragDrop": "Drag and drop images here or browse your device",
+      "dropHere": "Drop images here!",
+      "supportedFormats": "JPG, PNG, WebP • Max 10MB per image",
+      "cropEnabled": "Images will be cropped before upload • Max 10MB",
+      "browseFiles": "Browse Device",
+      "pasteUrl": "Paste URL",
+      "urlPlaceholder": "Paste image URL here...",
+      "add": "Add",
+      "uploading": "Uploading...",
+      "invalidType": "Invalid file type",
+      "notImage": "is not an image file.",
+      "tooLarge": "File too large",
+      "exceedsLimit": "exceeds 10MB limit.",
+      "uploadFailed": "Upload failed",
+      "failedToUpload": "Failed to upload",
+      "uploadSuccess": "Images uploaded",
+      "imagesUploaded": "image(s) uploaded successfully.",
+      "errorOccurred": "An error occurred while uploading images.",
+      "propertyImage": "Property image",
+      "cover": "Cover",
+      "hint": "Upload images from your device or paste URLs. First image will be the cover.",
+      "reorderHint": "Drag images to reorder. First image becomes the cover.",
+      "reorderSuccess": "Images reordered",
+      "setCover": "New cover image set.",
+      "imagesMoved": "Image order updated.",
+      "setAsCover": "Set Cover"
+    },
+    "imageCropper": {
+      "title": "Crop Image",
+      "apply": "Apply Crop",
+      "processing": "Processing...",
+      "imageCropped": "Image cropped and uploaded."
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "totalListings": "Total Listings",
+      "agents": "Agents",
+      "activeLeads": "Active Leads",
+      "welcome": "Welcome to the DR Housing admin panel. Use the sidebar to manage listings and leads.",
+      "diagnostic": "Run Site Diagnostic"
+    },
+    "listings": {
+      "title": "Listings",
+      "searchPlaceholder": "Search listings...",
+      "noProperties": "No properties found",
+      "addFirstProperty": "Add Your First Property",
+      "addListing": "Add Listing",
+      "exportAll": "Export All",
+      "export": "Export",
+      "migrateImages": "Migrate Images",
+      "migrating": "Migrating...",
+      "importCsv": "Import CSV",
+      "importing": "Importing...",
+      "importUrl": "Import URL",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "deleteProperty": "Delete Property",
+      "deletePropertyDesc": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
+      "bulkDeleteTitle": "Delete {{count}} Properties",
+      "bulkDeleteDesc": "Are you sure you want to delete {{count}} selected properties? This action cannot be undone.",
+      "deleteCount": "Delete {{count}} Properties",
+      "importTitle": "Import Properties from CSV",
+      "importDesc": "Would you like to clear all existing properties before importing, or add the new ones alongside existing listings?",
+      "addToExisting": "Add to Existing",
+      "clearAndImport": "Clear & Import Fresh",
+      "exportComplete": "Export complete",
+      "exportCompleteDesc": "Exported {{count}} listings to CSV.",
+      "migrationComplete": "Image Migration Complete",
+      "migrationFailed": "Migration Failed",
+      "importComplete": "Import Complete",
+      "importFailed": "Import Failed",
+      "propertyDeleted": "Property deleted",
+      "propertyDeletedDesc": "\"{{title}}\" has been removed.",
+      "propertiesDeleted": "Properties deleted",
+      "propertiesDeletedDesc": "{{count}} properties have been removed.",
+      "propertiesUpdated": "Properties updated",
+      "error": "Error",
+      "backToListings": "Back to Listings",
+      "addNewProperty": "Add New Property",
+      "addNewPropertyDesc": "Fill in the details below to create a new property listing.",
+      "editProperty": "Edit Property",
+      "editPropertyDesc": "Update the property details below.",
+      "propertyNotFound": "Property not found"
+    },
+    "table": {
+      "photo": "Photo",
+      "property": "Property",
+      "type": "Type",
+      "status": "Status",
+      "salePrice": "Sale Price",
+      "rentPrice": "Rent Price",
+      "date": "Date",
+      "actions": "Actions",
+      "photos": "photos"
+    },
+    "filters": {
+      "label": "Filters:",
+      "allStatuses": "All Statuses",
+      "allTypes": "All Types",
+      "allTiers": "All Tiers",
+      "dateAdded": "Date added",
+      "clear": "Clear"
+    },
+    "featured": {
+      "title": "Featured Properties Order",
+      "description": "Drag to reorder. Top 4 appear on the homepage.",
+      "loading": "Loading featured properties...",
+      "empty": "No featured properties. Mark properties as featured from the listings table.",
+      "cancel": "Cancel",
+      "saveOrder": "Save Order",
+      "homepage": "Homepage",
+      "orderSaved": "Order saved",
+      "orderSavedDesc": "Featured property order updated."
+    },
+    "bulk": {
+      "title": "Bulk Actions",
+      "markFeatured": "Mark as Featured",
+      "removeFeatured": "Remove Featured",
+      "hideListings": "Hide Listings",
+      "showListings": "Show Listings",
+      "changeStatus": "Change Status",
+      "changeTier": "Change Tier",
+      "setSource": "Set Source"
+    },
+    "leads": {
+      "title": "Leads",
+      "count": "{{filtered}} of {{total}} leads",
+      "exportCsv": "Export CSV",
+      "searchPlaceholder": "Search by name, email, or phone...",
+      "activeLeads": "Active Leads",
+      "allIncArchived": "All (incl. Archived)",
+      "archivedOnly": "Archived Only",
+      "allTypes": "All Types",
+      "allAgents": "All Agents",
+      "unassigned": "Unassigned",
+      "noLeadsYet": "No leads yet. Leads will appear here when visitors submit the contact form.",
+      "noLeadsMatch": "No leads match your filters.",
+      "view": "View",
+      "errorLoading": "Error loading leads. Please try again.",
+      "newLead": "New Lead",
+      "createLead": "Create New Lead",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "preferredContact": "Preferred Contact",
+      "leadType": "Lead Type",
+      "timeline": "Timeline",
+      "countryOfOrigin": "Country of Origin",
+      "propertyTypeInterest": "Property Type Interest",
+      "minBudget": "Min Budget ($)",
+      "maxBudget": "Max Budget ($)",
+      "assignToAgent": "Assign to Agent",
+      "notesMessage": "Notes / Message",
+      "createBtn": "Create Lead"
+    },
+    "leadDetail": {
+      "call": "Call",
+      "whatsApp": "WhatsApp",
+      "sms": "SMS",
+      "email": "Email",
+      "contactInfo": "Contact Information",
+      "prefers": "Prefers: {{method}}",
+      "leadDetails": "Lead Details",
+      "type": "Type",
+      "timeline": "Timeline",
+      "budget": "Budget",
+      "submitted": "Submitted",
+      "propertyType": "Property Type",
+      "interestedAreas": "Interested Areas",
+      "sourceProperty": "Source Property",
+      "clickToView": "Click to view listing",
+      "message": "Message",
+      "crmManagement": "CRM Management",
+      "status": "Status",
+      "assignedAgent": "Assigned Agent",
+      "notes": "Notes",
+      "notesPlaceholder": "Add notes about this lead...",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "lastContacted": "Last contacted: {{date}}",
+      "notSpecified": "Not specified",
+      "budgetFrom": "From ${{amount}}",
+      "budgetUpTo": "Up to ${{amount}}"
+    },
+    "agentsPage": {
+      "title": "Agents",
+      "addAgent": "Add Agent",
+      "searchPlaceholder": "Search agents...",
+      "noAgents": "No agents found",
+      "addFirstAgent": "Add Your First Agent",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteAgent": "Delete Agent",
+      "deleteAgentDesc": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+      "deleting": "Deleting...",
+      "backToAgents": "Back to Agents",
+      "addNewAgent": "Add New Agent",
+      "addNewAgentDesc": "Fill in the details below to add a new team member.",
+      "editAgent": "Edit Agent",
+      "editAgentDesc": "Update the agent details below.",
+      "agentNotFound": "Agent not found"
+    },
+    "pagination": {
+      "showing": "Showing {{start}}-{{end}} of {{total}} listings",
+      "perPage": "per page"
+    },
+    "roles": {
+      "manageRoles": "Manage Roles",
+      "active": "Active",
+      "listingEditor": "Listing Editor",
+      "agent": "Agent",
+      "admin": "Admin",
+      "user": "User",
+      "propertyAdvisor": "Property Advisor",
+      "clientAdvisor": "Client Advisor",
+      "administrator": "Administrator",
+      "fullAccess": "Full access to all features",
+      "canManageListings": "Can manage property listings",
+      "canViewListingsLeads": "Can view listings and manage leads"
+    },
+    "leadStatus": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "negotiating": "Negotiating",
+      "closed_won": "Closed Won",
+      "closed_lost": "Closed Lost",
+      "archived": "Archived"
+    },
+    "leadType": {
+      "relocation": "Family Relocation",
+      "investor": "Investment Advisory",
+      "property_management": "Property Oversight",
+      "development": "Development & Remodeling",
+      "legal_immigration": "Legal & Residency",
+      "family_affairs": "Private Advisory",
+      "general": "General Inquiry"
+    },
+    "timelineLabel": {
+      "asap": "As soon as possible",
+      "1_3_months": "1-3 months",
+      "3_6_months": "3-6 months",
+      "6_12_months": "6-12 months",
+      "exploring": "Just exploring"
+    },
+    "contactMethod": {
+      "email": "Email",
+      "phone": "Phone Call",
+      "whatsapp": "WhatsApp"
+    },
+    "login": {
+      "title": "Admin Login",
+      "description": "Sign in to access the admin dashboard",
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "orContinueWith": "Or continue with",
+      "loginFailed": "Login Failed",
+      "welcomeBack": "Welcome back!",
+      "redirecting": "Redirecting to dashboard...",
+      "googleFailed": "Google Sign-In Failed",
+      "appleFailed": "Apple Sign-In Failed",
+      "backToWebsite": "← Back to website"
+    },
+    "hero": {
+      "title": "Hero Controls",
+      "globalSettings": "Global Settings",
+      "perPageMedia": "Per-Page Media",
+      "height": "Height",
+      "unit": "Unit",
+      "value": "Value",
+      "viewportHeight": "Viewport Height (vh)",
+      "pixels": "Pixels (px)",
+      "overlay": "Overlay",
+      "type": "Type",
+      "solid": "Solid",
+      "gradient": "Gradient",
+      "opacity": "Opacity",
+      "direction": "Direction",
+      "topToBottom": "Top → Bottom",
+      "bottomToTop": "Bottom → Top",
+      "leftToRight": "Left → Right",
+      "rightToLeft": "Right → Left",
+      "startColor": "Start Color",
+      "endColor": "End Color",
+      "startStop": "Start Stop",
+      "endStop": "End Stop",
+      "livePreview": "Live Preview",
+      "heroPreview": "Hero Preview",
+      "saveGlobalSettings": "Save Global Settings",
+      "settingsSaved": "Global hero settings saved",
+      "settingsFailed": "Failed to save settings",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "save": "Save",
+      "mediaType": "Media Type",
+      "video": "Video",
+      "image": "Image",
+      "videoSource": "Video Source",
+      "currentDefault": "Current Default",
+      "upload": "Upload",
+      "externalUrl": "External URL",
+      "uploadVideo": "Upload Video (MP4/WebM, max 20MB, 720p–1080p recommended, 6–12s loop, no audio)",
+      "videoUrl": "Video URL",
+      "uploadImage": "Upload Image (max 10MB)",
+      "posterImage": "Poster / Fallback Image",
+      "altText": "Alt Text",
+      "headline": "Headline (optional)",
+      "subheadline": "Subheadline (optional)",
+      "ctaLabel": "CTA Label (optional)",
+      "ctaUrl": "CTA URL (optional)",
+      "previewWithOverlay": "Preview (with global overlay)",
+      "videoTooLarge": "Video must be under 20MB",
+      "imageTooLarge": "Image must be under 10MB",
+      "uploadFailed": "Upload failed",
+      "fileUploaded": "File uploaded",
+      "heroSaved": "Hero for \"{{slug}}\" saved",
+      "heroSaveFailed": "Failed to save",
+      "pageHome": "Home",
+      "pageServices": "Services",
+      "pageWestGam": "West GAM Guide"
+    }
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "description": "Manage your account settings and preferences.",
+    "photo": "Profile Photo",
+    "photoDesc": "This will be displayed across the platform.",
+    "basicInfo": "Basic Information",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Enter your full name",
+    "email": "Email Address",
+    "emailHint": "Email cannot be changed. Contact support if needed.",
+    "language": "Language Preference",
+    "languageDesc": "Choose your preferred language for the interface.",
+    "roles": "Your Roles",
+    "rolesDesc": "Roles are assigned by administrators.",
+    "noRoles": "No roles assigned",
+    "saveChanges": "Save Changes",
+    "saveSuccess": "Profile updated",
+    "saveSuccessDesc": "Your profile has been saved successfully.",
+    "saveError": "Update failed"
+  },
+  "westGamGuide": {
+    "badge": "Definitive Market Intelligence",
+    "title": "West GAM Luxury Living & Lifestyle Guide: Sabana to La Guácima",
+    "heroDescription": "The comprehensive authority on Costa Rica's premier residential investment corridor—covering real estate markets, lifestyle infrastructure, and strategic insights for high-net-worth investors, relocating executives, and international families.",
+    "explorePortfolio": "Explore Available Portfolio",
+    "requestBriefing": "Request Private Market Briefing",
+    "nav": {
+      "navigate": "Navigate:",
+      "whyWestGam": "Why West GAM",
+      "residentialAreas": "Residential Areas",
+      "lifestyleCommerce": "Lifestyle & Commerce",
+      "investmentInsight": "Investment Insight",
+      "whyWorkWithUs": "Why Work With Us"
+    },
+    "whyWestGam": {
+      "title": "Why West GAM Is Costa Rica's Prime Luxury Corridor",
+      "intro1": "The western Greater Metropolitan Area—spanning from La Sabana through La Guácima—constitutes the most concentrated wealth corridor in Central America. This is not coincidence; it is the result of decades of deliberate infrastructure investment, international school establishment, healthcare system development, and organic community formation by Costa Rica's most successful families and the international executives they attract.",
+      "intro2": "For investors and families evaluating Costa Rica luxury real estate, the West GAM corridor offers critical advantages that no other Central American market—and few global emerging markets—can match. Understanding these fundamentals is essential for making sound investment and relocation decisions.",
+      "legalCertainty": {
+        "title": "Legal Certainty",
+        "description": "Costa Rica's property rights framework provides clear title registration, constitutional protections for foreign ownership, and a legal system aligned with international standards—critical for high-value transactions."
+      },
+      "securityInfrastructure": {
+        "title": "Security Infrastructure",
+        "description": "Established gated communities, 24/7 professional security, and Costa Rica's lowest crime indices create an environment where families and assets are protected."
+      },
+      "multinationalPresence": {
+        "title": "Multinational Presence",
+        "description": "Amazon, Intel, Microsoft, Boston Scientific, and dozens of Fortune 500 companies maintain regional operations in West GAM, anchoring consistent executive housing demand."
+      },
+      "marketLiquidity": {
+        "title": "Market Liquidity",
+        "description": "Consistent international demand ensures properties can be sold within reasonable timeframes at fair valuations—a critical consideration for investment planning."
+      },
+      "investmentLogic": {
+        "title": "Investment Logic & Relocation Rationale",
+        "description": "The concentration of infrastructure, services, and institutional-quality residential development in West GAM creates a self-reinforcing ecosystem. High-net-worth residents attract premium services; premium services attract additional high-net-worth residents. This dynamic, combined with limited developable land and strict zoning, supports sustained property value appreciation while providing the daily conveniences that make international relocation successful rather than merely survivable."
+      }
+    },
+    "residentialAreas": {
+      "title": "Residential Real Estate by Area",
+      "subtitle": "Comprehensive analysis of each West GAM neighborhood—market dynamics, property types, lifestyle characteristics, and optimal buyer profiles for informed decision-making.",
+      "areaGuide": "Area Guide",
+      "personalizedGuidance": "Need personalized guidance?",
+      "speakSpecialist": "Speak with a Specialist",
+      "marketProfile": "Market Profile & Buyer Demand",
+      "propertyTypes": "Luxury Property Types Available",
+      "condominiums": "High-End Condominiums",
+      "townhouses": "Townhouses & Gated Communities",
+      "singleFamily": "Single-Family Luxury Homes",
+      "developments": "Landmark Developments",
+      "lifestyle": "Lifestyle & Daily Convenience",
+      "pricePosition": "Relative Price Positioning",
+      "rentalAppeal": "Rental & Resale Attractiveness",
+      "idealBuyer": "Ideal Buyer Profile",
+      "viewProperties": "View {{area}} Properties",
+      "requestBriefing": "Request Area-Specific Briefing"
+    },
+    "areas": {
+      "sabanaRohrmoser": {
+        "title": "La Sabana & Rohrmoser",
+        "subtitle": "Urban Sophistication Meets Metropolitan Convenience"
+      },
+      "nunciatura": {
+        "title": "Nunciatura",
+        "subtitle": "Diplomatic Prestige and Quiet Exclusivity"
+      },
+      "escazu": {
+        "title": "Escazú",
+        "subtitle": "Costa Rica's Benchmark for Luxury Living"
+      },
+      "santaAna": {
+        "title": "Santa Ana",
+        "subtitle": "Modern Lifestyle Communities with Investment Upside"
+      },
+      "belen": {
+        "title": "Belén & La Ribera",
+        "subtitle": "Strategic Position with Airport Proximity"
+      },
+      "laGuacima": {
+        "title": "La Guácima",
+        "subtitle": "Estate Living and Equestrian Heritage"
+      }
+    },
+    "lifestyleEcosystem": {
+      "title": "Lifestyle & Commerce Ecosystem",
+      "subtitle": "Beyond property specifications, successful investment and relocation depend on surrounding infrastructure. West GAM's concentration of quality services creates measurable advantages for property owners and residents.",
+      "hospitality": {
+        "title": "Hospitality & Hotels",
+        "escazu": {
+          "title": "Escazú & Santa Ana",
+          "description": "The Marriott Costa Rica and Real InterContinental anchor the premium hospitality segment, offering full-service business facilities and executive meeting rooms. Boutique properties like Hotel & Spa Nau provide intimate alternatives for extended stays.",
+          "features": "Executive accommodations • Business facilities • Medical tourism support"
+        },
+        "sabana": {
+          "title": "Sabana & Rohrmoser",
+          "description": "The Crowne Plaza Corobicí and DoubleTree by Hilton Cariari host business travelers requiring proximity to San José's commercial district while avoiding downtown congestion.",
+          "features": "Conference facilities • Diplomatic events • Central access"
+        },
+        "belen": {
+          "title": "Belén & Airport Corridor",
+          "description": "The Costa Rica Marriott Hacienda Belén and Wyndham San José position travelers and businesses dependent on international connectivity.",
+          "features": "Airport proximity • Transit accommodations • Corporate housing support"
+        },
+        "investorRelevance": "Major hotel brands invest only in markets demonstrating long-term viability. Their presence signals mature infrastructure, supports short-term rental markets, and enables prospective buyers to experience neighborhoods before committing."
+      },
+      "dining": {
+        "title": "Restaurants & Dining",
+        "escazu": {
+          "title": "Escazú Dining District",
+          "description": "Avenida Escazú and surrounding streets host Costa Rica's densest concentration of fine dining—contemporary Latin cuisine, pan-Asian excellence, Italian trattorias, and executive steakhouses catering to business entertainment.",
+          "features": "Executive lunch culture • Wine programs • Private dining"
+        },
+        "santaAna": {
+          "title": "Santa Ana & Forum",
+          "description": "The Forum complex and City Place developments have cultivated a business dining ecosystem serving the multinational workforce—professional service, predictable timing, and discreet settings for commercial conversations.",
+          "features": "Business entertainment • International variety • Corporate accounts"
+        },
+        "sabana": {
+          "title": "Sabana & Rohrmoser",
+          "description": "Park Café ranks among Central America's finest restaurants, while the broader area offers Lebanese, Peruvian, Japanese, and contemporary options within walking distance of residential towers.",
+          "features": "Fine dining landmarks • Diverse cuisines • Walkable from towers"
+        }
+      },
+      "shopping": {
+        "title": "Shopping, Healthcare & Professional Services",
+        "premiumRetail": "Premium Retail",
+        "multiplaza": {
+          "title": "Multiplaza Escazú",
+          "description": "Costa Rica's premier shopping destination—international luxury brands, premium department stores, and sophisticated dining."
+        },
+        "avenida": {
+          "title": "Avenida Escazú",
+          "description": "Lifestyle center combining retail, dining, entertainment, and residential towers in a European-style pedestrian environment."
+        },
+        "cityPlace": {
+          "title": "City Place Santa Ana",
+          "description": "Mixed-use development serving the corporate population with retail, restaurants, cinema, and entertainment."
+        },
+        "healthcare": "Healthcare",
+        "cima": {
+          "title": "Hospital CIMA",
+          "description": "JCI-accredited facility representing Central America's healthcare benchmark. US-trained physicians, advanced imaging, comprehensive specialty services."
+        },
+        "clinicaBiblica": {
+          "title": "Clínica Bíblica Escazú",
+          "description": "Extension of Costa Rica's prestigious Clínica Bíblica with emergency services, diagnostics, and outpatient care."
+        },
+        "medicalTourism": {
+          "title": "Medical Tourism Impact",
+          "description": "Healthcare excellence drives significant rental demand from medical tourists—a consistent revenue source for nearby property investors."
+        },
+        "professionalServices": "Professional Services",
+        "privateBanking": {
+          "title": "Private Banking",
+          "description": "BAC Credomatic, Scotiabank, and Banco Nacional maintain premium branches with English-speaking staff and wealth management."
+        },
+        "legal": {
+          "title": "Legal & Notarial",
+          "description": "Concentration of international-focused law firms specializing in real estate, corporate structuring, and immigration."
+        },
+        "consulates": {
+          "title": "Consulates & Embassies",
+          "description": "US Embassy proximity and multiple consulates facilitate visa processing and document authentication."
+        }
+      },
+      "education": {
+        "title": "Education & Business Infrastructure",
+        "internationalSchools": "International Schools",
+        "schoolsDescription": "West GAM's concentration of accredited international schools represents the single most important infrastructure element for relocating families—and the strongest stabilizer of residential property values.",
+        "countryDay": {
+          "title": "Country Day School",
+          "description": "Costa Rica's premier American-curriculum institution, IB-certified, K-12. Escazú location anchors surrounding residential demand."
+        },
+        "blueValley": {
+          "title": "Blue Valley School",
+          "description": "Bilingual institution with strong US university placement. Generates consistent family housing demand in Escazú."
+        },
+        "lincoln": {
+          "title": "Lincoln School",
+          "description": "American-accredited with strong STEM focus. Accessible to Belén, Santa Ana, and eastern Escazú."
+        },
+        "european": {
+          "title": "European School",
+          "description": "German and European curriculum for families requiring continental educational continuity."
+        },
+        "investmentImplication": "Properties within international school zones command 15-25% rental premiums and experience significantly lower vacancy rates.",
+        "corporateZones": "Corporate & Business Zones",
+        "corporateDescription": "Costa Rica has emerged as Central America's preferred headquarters location for multinational operations, and West GAM concentrates this corporate presence.",
+        "forum": {
+          "title": "Forum Business Park",
+          "description": "Santa Ana corporate landmark hosting Amazon, Intel, Microsoft—generates significant executive housing demand in Lindora and Pozos."
+        },
+        "coyol": {
+          "title": "COYOL Free Trade Zone",
+          "description": "Medical device hub (Boston Scientific, Abbott) creating specialized demand for housing in Belén and La Guácima."
+        },
+        "ultrapark": {
+          "title": "Ultrapark & La Sabana",
+          "description": "Technology and shared services centers driving demand for urban apartment living in Sabana and Rohrmoser."
+        },
+        "zonaFranca": {
+          "title": "Zona Franca America",
+          "description": "Heredia technology corridor accessible to northern West GAM, hosting major tech operations."
+        },
+        "demandStability": "Corporate relocations typically involve 2-3 year assignments with housing allowances, creating predictable, high-quality tenant pools."
+      },
+      "connectivity": {
+        "title": "Connectivity & Mobility",
+        "description": "Transportation infrastructure determines daily quality of life and property values. West GAM's positioning provides access advantages no other Costa Rica luxury corridor can match.",
+        "route27": {
+          "title": "Route 27 Corridor",
+          "description": "Modern highway connects West GAM to Pacific beaches in under an hour, enabling weekend coastal lifestyles impossible from other metropolitan areas."
+        },
+        "airport": {
+          "title": "Airport Proximity",
+          "description": "Juan Santamaría International Airport accessible in 15-35 minutes. Belén: 10 minutes. Escazú/Santa Ana: 20-25 minutes via Route 27."
+        },
+        "intraCorridor": {
+          "title": "Intra-Corridor Connectivity",
+          "description": "Residents access hospitals, schools, shopping, and business districts without leaving the western zone—significant time-quality advantage."
+        },
+        "comparison": {
+          "title": "Why West GAM Outperforms Beach Zones",
+          "westGam": "West GAM",
+          "westGamFeatures": ["20-35 min to international airport", "5-15 min to world-class hospitals", "Same-day international flights", "Complete year-round services", "Multinational employment anchors"],
+          "beachCorridors": "Beach Corridors",
+          "beachFeatures": ["3-5 hours to main airport", "Limited medical facilities", "Domestic flight required", "Seasonal service availability", "Tourism-dependent economy"]
+        }
+      }
+    },
+    "investmentInsight": {
+      "title": "Investment & Relocation Insight",
+      "subtitle": "The concentration of lifestyle infrastructure, security, and economic anchors in West GAM translates directly to measurable investment advantages and successful relocation outcomes.",
+      "capitalPreservation": {
+        "title": "Capital Preservation",
+        "description": "Established infrastructure protects against boom-bust cycles. West GAM properties maintain value during broader market corrections, supported by consistent international demand and limited developable land."
+      },
+      "rentalDemand": {
+        "title": "Rental Demand Stability",
+        "description": "Corporate relocations, medical tourism, and international school families create consistent, high-quality tenant pools. Premium rates with low vacancy compared to seasonal beach markets."
+      },
+      "appreciation": {
+        "title": "Long-Term Appreciation",
+        "description": "Continued infrastructure investment and growing international recognition position West GAM for sustained appreciation as Costa Rica's premier residential corridor."
+      },
+      "connectingLifestyle": {
+        "title": "Connecting Lifestyle to Financial Outcomes",
+        "forInvestors": "For Investors",
+        "investorPoints": [
+          "Properties surrounded by quality services command premium rental rates",
+          "School proximity reduces vacancy and attracts multi-year tenancies",
+          "Corporate employment anchors ensure consistent demand regardless of tourism cycles"
+        ],
+        "forFamilies": "For Relocating Families",
+        "familyPoints": [
+          "Access to international-standard healthcare provides peace of mind",
+          "Educational continuity through accredited international schools",
+          "Professional services ecosystem supports business and personal needs"
+        ]
+      }
+    },
+    "whySpecialist": {
+      "title": "Why Work With a West GAM Specialist",
+      "subtitle": "Navigating Costa Rica's luxury real estate market requires more than property access—it demands legal expertise, local relationships, and the ability to identify opportunities that never reach public listings.",
+      "legalIntegration": {
+        "title": "Legal & Real Estate Integration",
+        "description": "Combined expertise ensures transactions are structured for security, tax efficiency, and clear title—critical for international buyers."
+      },
+      "localKnowledge": {
+        "title": "Deep Local Knowledge",
+        "description": "Street-level understanding of every neighborhood, development trajectory, and hidden value opportunity across the entire West GAM corridor."
+      },
+      "internationalExperience": {
+        "title": "International Experience",
+        "description": "Extensive track record with North American, European, and global clients navigating Costa Rica investment and relocation."
+      },
+      "profitFocused": {
+        "title": "Profit-Focused Decisions",
+        "description": "Every recommendation considers exit strategy, rental yield, appreciation potential, and risk mitigation—not just features."
+      },
+      "requestBriefing": "Request a Private Market Briefing",
+      "explorePortfolio": "Explore Available Portfolio"
+    },
+    "continueResearch": {
+      "title": "Continue Your Research",
+      "exploreProperties": {
+        "title": "Explore Luxury Properties",
+        "description": "Browse current listings across West GAM neighborhoods with detailed specifications and investment metrics.",
+        "cta": "View Portfolio"
+      },
+      "requestConsultation": {
+        "title": "Request Relocation Consultation",
+        "description": "Personalized guidance on neighborhoods, schools, and properties matching your specific requirements.",
+        "cta": "Start Conversation"
+      },
+      "investmentTools": {
+        "title": "Access Investment Tools",
+        "description": "Analyze rental yields, mortgage payments, and investment returns for Costa Rica properties.",
+        "cta": "View Calculators"
+      }
+    },
+    "finalCta": {
+      "title": "Ready to Explore West GAM Opportunities?",
+      "description": "Connect with our advisory team for personalized guidance on Costa Rica's premier luxury corridor.",
+      "button": "Speak with a West GAM Specialist"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Costa Rica Real Estate Advisory",
+      "description": "Private real estate advisory for families relocating to Costa Rica. Property acquisition, legal guidance, and investment solutions."
+    },
+    "properties": {
+      "title": "Property Portfolio",
+      "description": "Browse curated Costa Rica residences and investment properties. Luxury homes, condos, and land in Escazú, Santa Ana, Guanacaste and more."
+    },
+    "agents": {
+      "title": "Our Advisors",
+      "description": "Meet the experienced real estate professionals guiding families and investors through Costa Rica property transactions."
+    },
+    "services": {
+      "title": "Real Estate Solutions",
+      "description": "Comprehensive real estate services in Costa Rica: brokerage, legal & immigration, development, interior design, and property management."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "description": "Get in touch with DR Housing for personalized Costa Rica real estate guidance. Schedule a private consultation today."
+    },
+    "tools": {
+      "title": "Planning Resources & Calculators",
+      "description": "Estimate mortgage payments, closing costs, remodeling and construction budgets for Costa Rica real estate investments."
+    },
+    "familyAffairs": {
+      "title": "Private Advisory — Family Affairs",
+      "description": "Discreet advisory for wealth structuring, asset strategy, and long-term planning for families with interests in Costa Rica."
+    },
+    "westGamGuide": {
+      "title": "West GAM Luxury Living Guide",
+      "description": "The definitive guide to Costa Rica's premier luxury corridor: Escazú, Santa Ana, Sabana, Rohrmoser, Belén and La Guácima."
+    },
+    "profile": {
+      "title": "Profile Settings",
+      "description": "Manage your DR Housing account preferences and profile information."
+    }
+  }
+}
