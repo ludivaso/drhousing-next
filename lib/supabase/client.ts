@@ -1,11 +1,9 @@
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 import type { Database } from '@/src/integrations/supabase/types'
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
-const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
-
-// Server-side client for SSG/SSR — uses anon key (RLS enforces access)
-export const supabase = createClient<Database>(
-  url || 'https://placeholder.supabase.co',
-  key || 'placeholder'
+// Browser client using @supabase/ssr so cookies are set correctly
+// This ensures the middleware (which reads cookies) can see the session
+export const supabase = createBrowserClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
