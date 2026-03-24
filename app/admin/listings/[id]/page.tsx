@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Loader2, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Loader2, ExternalLink, FileDown } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 
 export default function EditListingPage() {
@@ -14,6 +14,8 @@ export default function EditListingPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [slug, setSlug] = useState('')
+  const [pdfLang, setPdfLang] = useState<'es' | 'en'>('es')
+  const [exportingPdf, setExportingPdf] = useState(false)
   const [form, setForm] = useState({
     title: '',
     location_name: '',
@@ -55,6 +57,25 @@ export default function EditListingPage() {
   const set = (field: string, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [field]: value }))
 
+  const handleExportPdf = async () => {
+    setExportingPdf(true)
+    try {
+      const res = await fetch(`/api/pdf/brochure?id=${id}&lang=${pdfLang}`)
+      if (!res.ok) { const j = await res.json(); throw new Error(j.error ?? 'Error') }
+      const blob = await res.blob()
+      const url  = URL.createObjectURL(blob)
+      const a    = document.createElement('a')
+      a.href     = url
+      a.download = `drhousing-${slug || id}-${pdfLang}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al generar PDF')
+    } finally {
+      setExportingPdf(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -89,20 +110,41 @@ export default function EditListingPage() {
 
   return (
     <div className="max-w-2xl">
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-6 flex-wrap">
         <Link href="/admin/listings" className="text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <h1 className="font-serif text-2xl font-semibold">Editar Propiedad</h1>
-        {slug && (
-          <Link
-            href={`/property/${slug}`}
-            target="_blank"
-            className="ml-auto text-sm text-primary flex items-center gap-1 hover:underline"
-          >
-            <ExternalLink className="w-4 h-4" /> Ver en sitio
-          </Link>
-        )}
+        <div className="ml-auto flex items-center gap-2">
+          {/* PDF export */}
+          <div className="flex items-center border border-border rounded-lg overflow-hidden">
+            <select
+              value={pdfLang}
+              onChange={e => setPdfLang(e.target.value as 'es' | 'en')}
+              className="px-2 py-1.5 text-xs bg-background border-r border-border focus:outline-none"
+            >
+              <option value="es">ES</option>
+              <option value="en">EN</option>
+            </select>
+            <button
+              onClick={handleExportPdf}
+              disabled={exportingPdf}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-background hover:bg-secondary transition-colors disabled:opacity-60"
+            >
+              {exportingPdf ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileDown className="w-3.5 h-3.5" />}
+              PDF
+            </button>
+          </div>
+          {slug && (
+            <Link
+              href={`/property/${slug}`}
+              target="_blank"
+              className="text-sm text-primary flex items-center gap-1 hover:underline"
+            >
+              <ExternalLink className="w-4 h-4" /> Ver en sitio
+            </Link>
+          )}
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="card-elevated p-6 space-y-5">
