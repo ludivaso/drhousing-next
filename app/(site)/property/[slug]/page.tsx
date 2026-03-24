@@ -10,6 +10,7 @@ import PropertyDetailClient from '@/components/PropertyDetailClient'
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://drhousing.net'
 
 export const revalidate = 1800
+export const dynamicParams = true
 
 export async function generateStaticParams() {
   const slugs = await getPublicSlugs()
