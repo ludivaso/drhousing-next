@@ -30,7 +30,7 @@ export default function ListingBrief({ property: p }: ListingBriefProps) {
   const { lang, t } = useI18n()
   const heroImage = getHeroImage(p)
   const price = getDisplayPrice(p, lang)
-  const title = (lang === 'en' && (p as any).title_en) ? (p as any).title_en : p.title
+  const title = lang === "en" && p.title_en ? p.title_en : p.title
 
   const statusLabel = (() => {
     if (p.price_sale && p.price_rent_monthly) return t('property.status.both')

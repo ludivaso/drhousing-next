@@ -25,7 +25,7 @@ interface PropertyCardProps {
 export default function PropertyCard({ property, lang = 'es' }: PropertyCardProps) {
   const heroImage = getHeroImage(property)
   const title = (lang === 'en' ? property.title_en : null) ?? property.title
-  const subtitle = lang === 'en' ? property.subtitle_en : property.subtitle_es
+  const subtitle = lang === 'en' ? property.subtitle_en : property.subtitle
   const { label: statusLabel, className: statusClass } = getStatusBadge(property.status)
 
   return (

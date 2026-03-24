@@ -44,7 +44,7 @@ export default function PropertyDetailClient({ property }: Props) {
   const whatsappMessage = `${lang === 'en' ? 'Hello, I\'m interested in' : 'Hola, me interesa la propiedad'}: ${p.title} — ${SITE_URL}/property/${p.slug}`
 
   const title       = (lang === 'en' && (p as any).title_en)       ? (p as any).title_en       : p.title
-  const description = (lang === 'en' && (p as any).description_en) ? (p as any).description_en : p.description
+  const description = lang === "en" && p.description_en ? p.description_en : p.description
   const allImages   = p.images ?? []
   const askLabel    = t('propertyDetail.askAboutProperty')
 
@@ -82,9 +82,9 @@ export default function PropertyDetailClient({ property }: Props) {
               {title}
             </h1>
 
-            {p.subtitle_es && (
+            {p.subtitle && (
               <p className="mt-1 mb-3 font-light italic text-[15px] font-sans" style={{ color: '#6B6B6B' }}>
-                {p.subtitle_es}
+                {p.subtitle}
               </p>
             )}
 

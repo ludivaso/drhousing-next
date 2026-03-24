@@ -16,7 +16,7 @@ type Property = {
   featured: boolean
   hidden: boolean
   created_at: string
-  slug: string
+  slug: string | null
 }
 
 export default function AdminListings() {
