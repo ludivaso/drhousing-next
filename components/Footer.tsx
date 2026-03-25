@@ -108,7 +108,7 @@ export default function Footer() {
       <div className="border-t border-primary-foreground/10">
         <div className="container-wide py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/60">
           <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 mr-20">
             <Link href="/privacidad" className="hover:text-gold transition-colors">
               {t('footer.privacyPolicy')}
             </Link>
