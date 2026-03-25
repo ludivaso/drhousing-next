@@ -11,7 +11,7 @@ export default function Footer() {
   const [email, setEmail] = useState('')
 
   const quickLinks = [
-    { nameKey: 'header.properties', href: '/propiedades' }
+    { nameKey: 'header.properties', href: '/propiedades' },
     { nameKey: 'header.agents',     href: '/agentes' },
     { nameKey: 'header.services',   href: '/servicios' },
     { name: 'Blog & Market Insights', href: '/blog' },
