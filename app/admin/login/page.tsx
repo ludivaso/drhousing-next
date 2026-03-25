@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Lock, Mail, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
@@ -12,21 +12,38 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [checking, setChecking] = useState(true)
+
+  // If already logged in, go straight to dashboard
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        router.replace('/admin')
+      } else {
+        setChecking(false)
+      }
+    })
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setError(null)
-
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
-
     if (authError) {
       setError(authError.message)
       setIsSubmitting(false)
     } else {
-      router.push('/admin')
-      router.refresh()
+      router.replace('/admin')
     }
+  }
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (
@@ -39,7 +56,6 @@ export default function AdminLoginPage() {
           <h1 className="font-serif text-2xl font-semibold text-foreground">Admin — DR Housing</h1>
           <p className="text-muted-foreground mt-2">Acceso restringido a personal autorizado</p>
         </div>
-
         <div className="card-elevated p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
@@ -47,7 +63,6 @@ export default function AdminLoginPage() {
                 {error}
               </div>
             )}
-
             <div>
               <label className="text-sm font-medium mb-1 block">Correo electrónico</label>
               <div className="relative">
@@ -62,7 +77,6 @@ export default function AdminLoginPage() {
                 />
               </div>
             </div>
-
             <div>
               <label className="text-sm font-medium mb-1 block">Contraseña</label>
               <div className="relative">
@@ -84,7 +98,6 @@ export default function AdminLoginPage() {
                 </button>
               </div>
             </div>
-
             <button
               type="submit"
               disabled={isSubmitting}
@@ -98,7 +111,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
         </div>
-
         <p className="text-center text-sm text-muted-foreground mt-6">
           <a href="/" className="hover:text-foreground transition-colors">← Volver al sitio</a>
         </p>
