@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Bed, Bath, Maximize } from 'lucide-react'
 import { type PropertyRow, getHeroImage, formatPrice } from '@/lib/supabase/queries'
+import FavoriteButton from '@/components/FavoriteButton'
 
 // Status label + badge class — exact from Lovable source
 function getStatusBadge(status: string): { label: string; className: string } {
@@ -55,6 +56,12 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
         <span className={`absolute top-3 left-3 uppercase tracking-wide ${statusClass}`}>
           {statusLabel}
         </span>
+
+        {/* Favorite button: top-2 right-2 */}
+        <FavoriteButton
+          propertyId={property.id}
+          className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow-sm"
+        />
       </div>
 
       {/* Content — p-5 space-y-3 exact from audit */}

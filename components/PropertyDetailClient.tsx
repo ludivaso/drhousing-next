@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { formatPrice, type PropertyRow } from '@/lib/supabase/queries'
 import PropertyCard from '@/components/PropertyCard'
+import FavoriteButton from '@/components/FavoriteButton'
 import { useI18n } from '@/lib/i18n/context'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -218,9 +219,15 @@ export default function PropertyDetailClient({ property, relatedProperties = [] 
             </div>
 
             {/* Title */}
-            <h1 className="font-serif text-3xl font-semibold text-foreground mb-1">
-              {title}
-            </h1>
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="font-serif text-3xl font-semibold text-foreground mb-1">
+                {title}
+              </h1>
+              <FavoriteButton
+                propertyId={p.id}
+                className="mt-1 w-9 h-9 rounded-full border border-border bg-background hover:bg-muted shadow-sm flex-shrink-0"
+              />
+            </div>
 
             {/* Subtitle */}
             {p.subtitle && (
