@@ -10,10 +10,17 @@ export async function GET(request: NextRequest) {
   const price = searchParams.get('price') ?? ''
   const subtitle = searchParams.get('subtitle') ?? ''
   const status = searchParams.get('status') ?? 'for_sale'
-  const image = searchParams.get('image') ?? ''
+  const rawImage = searchParams.get('image') ?? ''
   const beds = searchParams.get('beds') ?? ''
   const baths = searchParams.get('baths') ?? ''
   const sqm = searchParams.get('sqm') ?? ''
+
+  // Proxy through Next.js image optimizer to compress before embedding.
+  // q=50 keeps visual quality high for real estate photos while staying
+  // well under WhatsApp's 600KB OG image limit.
+  const image = rawImage
+    ? `https://drhousing-next.vercel.app/_next/image?url=${encodeURIComponent(rawImage)}&w=1200&q=50`
+    : ''
 
   const statusLabel =
     status === 'for_rent' ? 'EN ALQUILER' :
@@ -31,7 +38,7 @@ export async function GET(request: NextRequest) {
     sqm   ? `${sqm} m²`     : null,
   ].filter(Boolean).join('  ·  ')
 
-  return new ImageResponse(
+  const imageResponse = new ImageResponse(
     (
       <div
         style={{
@@ -224,4 +231,7 @@ export async function GET(request: NextRequest) {
       height: 630,
     }
   )
+
+  imageResponse.headers.set('Cache-Control', 'public, max-age=86400, immutable')
+  return imageResponse
 }
