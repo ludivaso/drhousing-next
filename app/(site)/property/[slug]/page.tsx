@@ -20,20 +20,37 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const property = await getPropertyBySlug(params.slug)
   if (!property) return {}
 
+  const ogImageUrl = new URL('/api/og/property', 'https://drhousing-next.vercel.app')
+  ogImageUrl.searchParams.set('title', property.title ?? '')
+  ogImageUrl.searchParams.set(
+    'price',
+    property.price_sale
+      ? `$${property.price_sale.toLocaleString()}`
+      : property.price_rent_monthly
+      ? `$${property.price_rent_monthly.toLocaleString()}/mes`
+      : ''
+  )
+  ogImageUrl.searchParams.set('subtitle', property.subtitle ?? '')
+  ogImageUrl.searchParams.set('status', property.status ?? 'for_sale')
+  ogImageUrl.searchParams.set('image', property.images?.[0] ?? '')
+  ogImageUrl.searchParams.set('beds', String(property.bedrooms ?? ''))
+  ogImageUrl.searchParams.set('baths', String(property.bathrooms ?? ''))
+  ogImageUrl.searchParams.set('sqm', String(property.construction_size_sqm ?? ''))
+
   return {
     title: `${property.title_en || property.title} | DR Housing`,
     description: (property.description_en || property.description)?.slice(0, 160),
     openGraph: {
       title: property.title_en || property.title,
       description: (property.description_en || property.description)?.slice(0, 160) ?? '',
-      images: [{ url: property.images?.[0] ?? '', width: 1200, height: 630 }],
+      images: [{ url: ogImageUrl.toString(), width: 1200, height: 630, alt: property.title ?? '' }],
       type: 'website',
       locale: 'es_CR',
     },
     twitter: {
       card: 'summary_large_image',
       title: property.title_en || property.title,
-      images: [property.images?.[0] ?? ''],
+      images: [ogImageUrl.toString()],
     },
     alternates: {
       canonical: `https://drhousing.net/property/${property.slug}`,
