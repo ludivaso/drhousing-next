@@ -15,11 +15,12 @@ export async function GET(request: NextRequest) {
   const baths = searchParams.get('baths') ?? ''
   const sqm = searchParams.get('sqm') ?? ''
 
-  // Proxy through Next.js image optimizer to compress before embedding.
-  // q=50 keeps visual quality high for real estate photos while staying
-  // well under WhatsApp's 600KB OG image limit.
+  // Proxy through Next.js image optimizer at reduced quality + width.
+  // ImageResponse outputs PNG — pixel count drives file size more than
+  // source quality. Canvas is 900×472 (same 1.9:1 ratio as 1200×630,
+  // 44% fewer pixels) which brings the PNG well under WhatsApp's 600KB cap.
   const image = rawImage
-    ? `https://drhousing-next.vercel.app/_next/image?url=${encodeURIComponent(rawImage)}&w=1200&q=50`
+    ? `https://drhousing-next.vercel.app/_next/image?url=${encodeURIComponent(rawImage)}&w=900&q=30`
     : ''
 
   const statusLabel =
@@ -42,8 +43,8 @@ export async function GET(request: NextRequest) {
     (
       <div
         style={{
-          width: '1200px',
-          height: '630px',
+          width: '900px',
+          height: '472px',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
@@ -227,8 +228,8 @@ export async function GET(request: NextRequest) {
       </div>
     ),
     {
-      width: 1200,
-      height: 630,
+      width: 900,
+      height: 472,
     }
   )
 
