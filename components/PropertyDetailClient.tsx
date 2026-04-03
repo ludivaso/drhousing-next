@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import PropertyInquiryModal from '@/components/PropertyInquiryModal'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -135,6 +136,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [] 
 
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [inquiryOpen, setInquiryOpen] = useState(false)
   const [descExpanded, setDescExpanded] = useState(false)
 
   // Deduplicated image list: featured first, then fill with images
@@ -496,13 +498,13 @@ export default function PropertyDetailClient({ property, relatedProperties = [] 
                 </a>
 
                 {/* Email inquiry */}
-                <a
-                  href={`mailto:info@drhousing.net?subject=${encodeURIComponent(`Información: ${p.title}`)}`}
+                <button
+                  onClick={() => setInquiryOpen(true)}
                   className="flex items-center gap-3 w-full py-3 px-4 rounded-lg border border-border font-sans text-sm font-medium text-foreground hover:bg-muted transition-colors"
                 >
                   <Mail className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
                   Solicitar información
-                </a>
+                </button>
 
                 {/* Agent card */}
                 <div className="border-t border-border pt-4">
@@ -569,6 +571,12 @@ export default function PropertyDetailClient({ property, relatedProperties = [] 
       >
         <WhatsAppIcon size={28} />
       </Link>
+
+      <PropertyInquiryModal
+        property={p}
+        open={inquiryOpen}
+        onClose={() => setInquiryOpen(false)}
+      />
     </>
   )
 }

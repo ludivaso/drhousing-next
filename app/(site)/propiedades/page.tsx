@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/src/integrations/supabase/types'
 import PropertyCard from '@/components/PropertyCard'
@@ -20,18 +21,22 @@ const LOCATIONS = [
   'Alajuela', 'Heredia', 'Guanacaste',
 ]
 
-export default function PropiedadesPage() {
+function PropiedadesPageInner() {
   const { t, lang } = useI18n()
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [properties, setProperties] = useState<PropertyRow[]>([])
   const [loading, setLoading] = useState(true)
 
-  const [search, setSearch] = useState('')
-  const [location, setLocation] = useState('')
-  const [type, setType] = useState('')
-  const [listingType, setListingType] = useState<'all' | 'sale' | 'rent'>('all')
-  const [minBeds, setMinBeds] = useState(0)
-  const [minPrice, setMinPrice] = useState('')
-  const [maxPrice, setMaxPrice] = useState('')
+  const [search, setSearch] = useState(searchParams.get('q') ?? '')
+  const [location, setLocation] = useState(searchParams.get('location') ?? '')
+  const [type, setType] = useState(searchParams.get('type') ?? '')
+  const [listingType, setListingType] = useState<'all' | 'sale' | 'rent'>(
+    (searchParams.get('listing') as 'all' | 'sale' | 'rent') ?? 'all'
+  )
+  const [minBeds, setMinBeds] = useState(Number(searchParams.get('beds') ?? 0))
+  const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') ?? '')
+  const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') ?? '')
   const [showFilters, setShowFilters] = useState(false)
 
   useEffect(() => {
@@ -45,6 +50,19 @@ export default function PropiedadesPage() {
         setLoading(false)
       })
   }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (search) params.set('q', search)
+    if (location) params.set('location', location)
+    if (type) params.set('type', type)
+    if (listingType !== 'all') params.set('listing', listingType)
+    if (minBeds > 0) params.set('beds', String(minBeds))
+    if (minPrice) params.set('minPrice', minPrice)
+    if (maxPrice) params.set('maxPrice', maxPrice)
+    const qs = params.toString()
+    router.replace(qs ? `/propiedades?${qs}` : '/propiedades', { scroll: false })
+  }, [search, location, type, listingType, minBeds, minPrice, maxPrice, router])
 
   const PROPERTY_TYPES = useMemo(() => ({
     house:      lang === 'en' ? 'House'            : 'Casa',
@@ -270,5 +288,13 @@ export default function PropiedadesPage() {
         )}
       </div>
     </main>
+  )
+}
+
+export default function PropiedadesPage() {
+  return (
+    <Suspense fallback={<div className="section-padding container-wide text-muted-foreground">Cargando...</div>}>
+      <PropiedadesPageInner />
+    </Suspense>
   )
 }

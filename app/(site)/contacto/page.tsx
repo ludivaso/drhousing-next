@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Phone, Mail, MapPin, MessageSquare, Send, Loader2 } from 'lucide-react'
-import { supabase } from '@/lib/supabase/client'
 import { useI18n } from '@/lib/i18n/context'
 
 const COSTA_RICA_AREAS = [
@@ -60,22 +59,31 @@ export default function ContactoPage() {
   const onSubmit = async (data: ContactFormData) => {
     setSubmitError(null)
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase as any).from('leads').insert({
-        full_name: data.fullName,
-        email: data.email,
-        phone: data.phone,
-        preferred_contact_method: data.preferredContactMethod,
-        lead_type: data.leadType,
-        country_of_origin: data.countryOfOrigin || null,
-        timeline: data.timeline ?? 'exploring',
-        budget_min: data.budgetMin ? parseInt(data.budgetMin, 10) : null,
-        budget_max: data.budgetMax ? parseInt(data.budgetMax, 10) : null,
-        interested_areas: data.interestedAreas,
-        message: data.message || null,
-        source: 'website_contact',
-      })
-      if (error) throw error
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/submit-lead`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: data.fullName,
+            email: data.email,
+            phone: data.phone,
+            message: data.message || '',
+            lead_type: data.leadType,
+            preferred_contact_method: data.preferredContactMethod,
+            source_campaign: 'contact-page',
+            country_of_origin: data.countryOfOrigin || null,
+            timeline: data.timeline ?? 'exploring',
+            budget_min: data.budgetMin ? parseInt(data.budgetMin, 10) : null,
+            budget_max: data.budgetMax ? parseInt(data.budgetMax, 10) : null,
+            interested_areas: data.interestedAreas,
+          }),
+        }
+      )
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        throw new Error((json as { error?: string }).error ?? 'Error al enviar')
+      }
       setSubmitted(true)
       reset()
     } catch (err: unknown) {
@@ -131,13 +139,13 @@ export default function ContactoPage() {
               </h2>
 
               <div className="space-y-8 mb-10">
-                <a href="tel:+50660775000" className="flex items-start gap-4 group">
+                <a href="tel:+50686540888" className="flex items-start gap-4 group">
                   <div className="w-14 h-14 rounded bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
                     <Phone className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground">{t('contactPage.phone')}</h4>
-                    <p className="text-muted-foreground">+506 6077-5000</p>
+                    <p className="text-muted-foreground">+506 8654-0888</p>
                     <p className="text-sm text-muted-foreground/70">{t('contactPage.phoneHours')}</p>
                   </div>
                 </a>
@@ -154,7 +162,7 @@ export default function ContactoPage() {
                 </a>
 
                 <a
-                  href="https://wa.me/50660775000"
+                  href="https://wa.me/50686540888"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-4 group"
@@ -164,7 +172,7 @@ export default function ContactoPage() {
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground">{t('contactPage.whatsapp')}</h4>
-                    <p className="text-muted-foreground">+506 6077-5000</p>
+                    <p className="text-muted-foreground">+506 8654-0888</p>
                     <p className="text-sm text-muted-foreground/70">{t('contactPage.whatsappResponse')}</p>
                   </div>
                 </a>
@@ -197,14 +205,14 @@ export default function ContactoPage() {
 
               <div className="space-y-3">
                 <a
-                  href="tel:+50660775000"
+                  href="tel:+50686540888"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                   {t('common.callNow')}
                 </a>
                 <a
-                  href="https://wa.me/50660775000"
+                  href="https://wa.me/50686540888"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded border border-border text-foreground text-sm font-medium hover:bg-secondary transition-colors"
