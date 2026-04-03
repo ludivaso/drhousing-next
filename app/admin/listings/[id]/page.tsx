@@ -19,6 +19,7 @@ export default function EditListingPage() {
   const [form, setForm] = useState({
     title: '',
     location_name: '',
+    zone: '',
     property_type: 'house',
     status: 'active',
     price_sale: '',
@@ -38,6 +39,7 @@ export default function EditListingPage() {
         setForm({
           title: data.title ?? '',
           location_name: data.location_name ?? '',
+          zone: (data as any).zone ?? '',
           property_type: data.property_type ?? 'house',
           status: data.status ?? 'active',
           price_sale: data.price_sale?.toString() ?? '',
@@ -84,6 +86,7 @@ export default function EditListingPage() {
     const { error: err } = await supabase.from('properties').update({
       title: form.title,
       location_name: form.location_name,
+      zone: form.zone || null,
       property_type: form.property_type,
       status: form.status,
       price_sale: form.price_sale ? parseInt(form.price_sale) : null,
@@ -195,6 +198,20 @@ export default function EditListingPage() {
           >
             {['active', 'pending', 'sold', 'rented'].map((s) => (
               <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-1 block">Zona</label>
+          <select
+            value={form.zone}
+            onChange={(e) => set('zone', e.target.value)}
+            className="w-full px-3 py-2.5 border border-input rounded bg-background text-sm focus:outline-none"
+          >
+            <option value="">— Sin asignar —</option>
+            {['Escazú','Santa Ana','La Guácima','Ciudad Colón','Rohrmoser','La Sabana','Pavas','San Rafael de Alajuela','Guanacaste','Pacífico Sur','Otras zonas'].map(z => (
+              <option key={z} value={z}>{z}</option>
             ))}
           </select>
         </div>

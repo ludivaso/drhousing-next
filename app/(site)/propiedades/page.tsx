@@ -13,16 +13,19 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
-// Map friendly zona query strings to display names (matches FilterBar ZONES)
+// Zone values match the `zone` TEXT column in Supabase (populated by migration SQL)
 const ZONA_LABELS: Record<string, string> = {
-  'Escaz':     'Escazú',
-  'Santa Ana': 'Santa Ana',
-  'Guácima':   'La Guácima',
-  'Alajuela':  'Alajuela',
-  'Lindora':   'Lindora / Pozos',
-  'San Rafael':'San Rafael',
-  'Guanacaste':'Guanacaste',
-  'Rohrmoser': 'Rohrmoser',
+  'Escazú':                 'Escazú',
+  'Santa Ana':              'Santa Ana',
+  'La Guácima':             'La Guácima',
+  'Ciudad Colón':           'Ciudad Colón',
+  'Rohrmoser':              'Rohrmoser',
+  'La Sabana':              'La Sabana',
+  'Pavas':                  'Pavas',
+  'San Rafael de Alajuela': 'San Rafael',
+  'Guanacaste':             'Guanacaste',
+  'Pacífico Sur':           'Pacífico Sur',
+  'Otras zonas':            'Otras zonas',
 }
 
 interface PageProps {
@@ -58,7 +61,7 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
   if (searchParams.min)      query = query.gte('price_sale', Number(searchParams.min))
   if (searchParams.max)      query = query.lte('price_sale', Number(searchParams.max))
   if (searchParams.camas)    query = query.gte('bedrooms', Number(searchParams.camas))
-  if (searchParams.zona)     query = query.ilike('location_name', `%${searchParams.zona}%`)
+  if (searchParams.zona)     query = query.eq('zone', searchParams.zona)
 
   // gated_community is stored in the features[] array (confirmed: 8 properties)
   if (searchParams.comunidad === 'gated') {

@@ -2,17 +2,19 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 
-// Hardcoded zones derived from actual DB location_name values.
-// Each zone.query is used as the ilike pattern: ilike('%${query}%')
+// Zone values must exactly match the `zone` TEXT column in Supabase
 const ZONES = [
-  { name: 'Escazú',          query: 'Escaz' },
-  { name: 'Santa Ana',       query: 'Santa Ana' },
-  { name: 'La Guácima',      query: 'Guácima' },
-  { name: 'Alajuela',        query: 'Alajuela' },
-  { name: 'Lindora / Pozos', query: 'Lindora' },
-  { name: 'San Rafael',      query: 'San Rafael' },
-  { name: 'Guanacaste',      query: 'Guanacaste' },
-  { name: 'Rohrmoser',       query: 'Rohrmoser' },
+  { value: 'Escazú',                 label: 'Escazú' },
+  { value: 'Santa Ana',              label: 'Santa Ana' },
+  { value: 'La Guácima',             label: 'La Guácima' },
+  { value: 'Ciudad Colón',           label: 'Ciudad Colón' },
+  { value: 'Rohrmoser',              label: 'Rohrmoser' },
+  { value: 'La Sabana',              label: 'La Sabana' },
+  { value: 'Pavas',                  label: 'Pavas' },
+  { value: 'San Rafael de Alajuela', label: 'San Rafael' },
+  { value: 'Guanacaste',             label: 'Guanacaste' },
+  { value: 'Pacífico Sur',           label: 'Pacífico Sur' },
+  { value: 'Otras zonas',            label: 'Otras zonas' },
 ]
 
 const STATUS_OPTIONS = [
@@ -139,9 +141,9 @@ export default function FilterBar() {
               Todas
             </button>
             {ZONES.map(z => (
-              <button key={z.query} onClick={() => setParam('zona', z.query)}
-                className={pill(zona === z.query)}>
-                {z.name}
+              <button key={z.value} onClick={() => setParam('zona', z.value)}
+                className={pill(zona === z.value)}>
+                {z.label}
               </button>
             ))}
           </div>

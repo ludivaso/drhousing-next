@@ -67,9 +67,9 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
       {/* Content — p-5 space-y-3 exact from audit */}
       <div className="p-5 space-y-3">
 
-        {/* Location — exact: text-xs uppercase tracking-widest text-muted-foreground */}
+        {/* Location — show normalized zone when available, fall back to raw location_name */}
         <p className="text-xs uppercase tracking-widest text-muted-foreground font-sans truncate">
-          {property.location_name}
+          {(property as any).zone || property.location_name}
         </p>
 
         {/* Title — exact: font-serif text-lg font-medium text-foreground leading-snug line-clamp-2 group-hover:text-primary */}
