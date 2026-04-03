@@ -1,55 +1,183 @@
 'use client'
 
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Bed, Bath, Maximize, LandPlot, MapPin } from 'lucide-react'
-import ReactMarkdown from 'react-markdown'
+import {
+  ArrowLeft,
+  BedDouble,
+  Bath,
+  Building2,
+  TreePine,
+  Layers,
+  MapPin,
+  CheckCircle2,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Phone,
+  Mail,
+} from 'lucide-react'
 import { formatPrice, type PropertyRow } from '@/lib/supabase/queries'
-import WhatsAppCTA, { WhatsAppFAB } from '@/components/WhatsAppCTA'
+import PropertyCard from '@/components/PropertyCard'
 import { useI18n } from '@/lib/i18n/context'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://drhousing.net'
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-// Neighbourhood centre-points for the map fallback
-const NEIGHBORHOOD_COORDS: Record<string, [number, number]> = {
-  'Escazú':             [9.9188, -84.1386],
-  'Santa Ana':          [9.9281, -84.1836],
-  'La Guácima':         [9.9667, -84.2167],
-  'Lindora':            [9.9500, -84.1500],
-  'Ciudad Colón':       [9.9033, -84.2600],
-  'Pozos':              [9.9350, -84.1800],
-  'Hacienda Los Reyes': [9.9550, -84.1300],
-  'Rohrmoser':          [9.9400, -84.0950],
-  'Sabana':             [9.9370, -84.1020],
-  'Alajuela':           [10.0162, -84.2141],
-  'Heredia':            [9.9983, -84.1170],
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('es-CR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 }
 
-function getMapCoords(locationName: string | null): [number, number] {
-  if (!locationName) return [9.9188, -84.1386]
-  for (const [key, coords] of Object.entries(NEIGHBORHOOD_COORDS)) {
-    if (locationName.toLowerCase().includes(key.toLowerCase())) return coords
+function getPropertyTypeLabel(type: string): string {
+  const map: Record<string, string> = {
+    house:       'Casa',
+    apartment:   'Apartamento',
+    condo:       'Condominio',
+    land:        'Lote',
+    commercial:  'Comercial',
+    townhouse:   'Townhouse',
   }
-  return [9.9188, -84.1386]
+  return map[type] ?? type
 }
+
+// ── Lightbox ─────────────────────────────────────────────────────────────────
+
+function Lightbox({
+  images,
+  startIndex,
+  onClose,
+}: {
+  images: string[]
+  startIndex: number
+  onClose: () => void
+}) {
+  const [current, setCurrent] = useState(startIndex)
+
+  const prev = useCallback(() => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1)), [images.length])
+  const next = useCallback(() => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1)), [images.length])
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft') prev()
+      else if (e.key === 'ArrowRight') next()
+      else if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [prev, next, onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+      onClick={onClose}
+    >
+      {/* Close */}
+      <button
+        className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
+        onClick={onClose}
+        aria-label="Cerrar"
+      >
+        <X className="w-6 h-6" />
+      </button>
+
+      {/* Prev */}
+      <button
+        className="absolute left-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
+        onClick={(e) => { e.stopPropagation(); prev() }}
+        aria-label="Anterior"
+      >
+        <ChevronLeft className="w-6 h-6" />
+      </button>
+
+      {/* Image */}
+      <div
+        className="relative w-full max-w-4xl mx-16 aspect-[4/3]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Image
+          src={images[current]}
+          alt={`Photo ${current + 1}`}
+          fill
+          className="object-contain"
+          sizes="100vw"
+        />
+        <p className="absolute bottom-2 right-2 text-white/70 text-sm font-sans bg-black/40 px-2 py-1 rounded">
+          {current + 1} / {images.length}
+        </p>
+      </div>
+
+      {/* Next */}
+      <button
+        className="absolute right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
+        onClick={(e) => { e.stopPropagation(); next() }}
+        aria-label="Siguiente"
+      >
+        <ChevronRight className="w-6 h-6" />
+      </button>
+    </div>
+  )
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
 
 interface Props {
   property: PropertyRow
+  relatedProperties?: PropertyRow[]
 }
 
-export default function PropertyDetailClient({ property }: Props) {
-  const { t, lang } = useI18n()
+export default function PropertyDetailClient({ property, relatedProperties = [] }: Props) {
+  const { lang } = useI18n()
   const p = property
 
-  const whatsappMessage = `${lang === 'en' ? 'Hello, I\'m interested in' : 'Hola, me interesa la propiedad'}: ${p.title} — ${SITE_URL}/property/${p.slug}`
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [descExpanded, setDescExpanded] = useState(false)
 
-  const title       = (lang === 'en' && (p as any).title_en)       ? (p as any).title_en       : p.title
-  const description = lang === "en" && p.description_en ? p.description_en : p.description
-  const allImages   = p.images ?? []
-  const askLabel    = t('propertyDetail.askAboutProperty')
+  // Deduplicated image list: featured first, then fill with images
+  const allImages: string[] = []
+  const seen = new Set<string>()
+  for (const img of (p.featured_images ?? [])) {
+    if (img && !seen.has(img)) { allImages.push(img); seen.add(img) }
+  }
+  for (const img of (p.images ?? [])) {
+    if (img && !seen.has(img)) { allImages.push(img); seen.add(img) }
+  }
 
-  const [lat, lng] = getMapCoords(p.location_name)
-  const mapSrc = `https://maps.google.com/maps?q=${lat},${lng}&t=m&z=14&output=embed&hl=${lang}`
+  const title       = (lang === 'en' && p.title_en) ? p.title_en : p.title
+  const description = (lang === 'en' && p.description_en) ? p.description_en : (p.description ?? '')
+
+  const whatsappText  = encodeURIComponent(`Hola, me interesa la propiedad ${p.reference_id ?? p.title}`)
+  const whatsappHref  = `https://wa.me/50686540888?text=${whatsappText}`
+
+  // Status badge logic
+  function getStatusBadge() {
+    if (p.price_sale && p.price_rent_monthly) {
+      return { label: 'Venta y Alquiler', className: 'bg-amber-500 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+    }
+    if (p.price_sale) {
+      return { label: 'En Venta', className: 'bg-green-600 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+    }
+    if (p.price_rent_monthly) {
+      return { label: 'En Alquiler', className: 'bg-blue-600 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+    }
+    return null
+  }
+
+  const statusBadge = getStatusBadge()
+
+  function openLightbox(index: number) {
+    setLightboxIndex(index)
+    setLightboxOpen(true)
+  }
+
+  // Description truncation
+  const DESC_LIMIT = 300
+  const isLong = description.length > DESC_LIMIT
+  const displayedDesc = isLong && !descExpanded ? description.slice(0, DESC_LIMIT) + '…' : description
 
   return (
     <>
@@ -63,122 +191,210 @@ export default function PropertyDetailClient({ property }: Props) {
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-sans"
             >
               <ArrowLeft className="w-4 h-4" />
-              {t('propertyDetail.backToProperties')}
+              Volver a propiedades
             </Link>
           </div>
         </div>
 
-        {/* Header */}
+        {/* ── HEADER ───────────────────────────────────────────────────── */}
         <section className="bg-background">
-          <div className="container-wide pt-4 pb-5">
-            <div className="flex flex-wrap items-start gap-3 mb-3">
-              <StatusBadge status={p.status} lang={lang} />
-              <span className="text-xs font-medium px-2 py-0.5 rounded bg-muted text-muted-foreground font-sans capitalize">
-                {p.property_type}
+          <div className="container-wide pt-6 pb-5">
+
+            {/* Badge row */}
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              {statusBadge && (
+                <span className={statusBadge.className}>{statusBadge.label}</span>
+              )}
+              {p.tier && (
+                <span className="text-xs font-medium px-2.5 py-1 rounded bg-muted text-muted-foreground font-sans capitalize">
+                  {p.tier}
+                </span>
+              )}
+              <span className="text-xs font-medium px-2.5 py-1 rounded border border-border text-muted-foreground font-sans">
+                {getPropertyTypeLabel(p.property_type)}
               </span>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl font-semibold text-foreground mb-1">
+            {/* Title */}
+            <h1 className="font-serif text-3xl font-semibold text-foreground mb-1">
               {title}
             </h1>
 
+            {/* Subtitle */}
             {p.subtitle && (
               <p className="mt-1 mb-3 font-light italic text-[15px] font-sans" style={{ color: '#6B6B6B' }}>
                 {p.subtitle}
               </p>
             )}
 
-            <div className="mb-1">
+            {/* Price */}
+            <div className="mb-1 space-y-1">
+              {p.original_price && p.price_sale && p.original_price > p.price_sale && (
+                <p className="font-sans text-muted-foreground text-base line-through">
+                  {formatPrice(p.original_price, p.currency)}
+                </p>
+              )}
               {p.price_sale && (
-                <span className="font-serif text-xl sm:text-2xl font-bold" style={{ color: '#C9A96E' }}>
+                <p className="font-serif text-2xl font-bold" style={{ color: '#C9A96E' }}>
                   {formatPrice(p.price_sale, p.currency)}
-                </span>
+                </p>
               )}
               {p.price_rent_monthly && (
-                <div className="mt-1">
-                  <span className="font-serif text-xl sm:text-2xl font-bold" style={{ color: '#C9A96E' }}>
-                    {formatPrice(p.price_rent_monthly, p.currency)}
-                  </span>
-                  <span className="text-sm text-muted-foreground font-sans">
-                    {t('propertyDetail.perMonth')}
-                  </span>
-                </div>
+                <p className="font-serif text-xl font-bold text-blue-600">
+                  {formatPrice(p.price_rent_monthly, p.currency)}
+                  <span className="text-sm font-sans text-muted-foreground font-normal ml-1">/mes</span>
+                </p>
+              )}
+              {p.price_note && (
+                <p className="font-sans text-sm text-muted-foreground">{p.price_note}</p>
               )}
             </div>
 
-            <h2 className="flex items-center gap-2 text-[14px] mt-2 font-sans font-normal" style={{ color: '#6B6B6B' }}>
-              <MapPin className="w-4 h-4" />
+            {/* Location */}
+            <div className="flex items-center gap-1.5 text-sm font-sans mt-2" style={{ color: '#6B6B6B' }}>
+              <MapPin className="w-4 h-4 flex-shrink-0" />
               <span>{p.location_name}</span>
-            </h2>
+            </div>
           </div>
         </section>
 
-        {/* Gallery */}
+        {/* ── PHOTO GALLERY ─────────────────────────────────────────────── */}
         <section className="bg-muted">
           <div className="container-wide py-6">
             {allImages.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
-                <div className="aspect-[4/3] rounded-xl overflow-hidden group">
-                  <Image
-                    src={allImages[0]}
-                    alt={title}
-                    width={800}
-                    height={600}
-                    priority
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  {allImages.slice(1, 5).map((img, i) => (
-                    <div key={i} className="aspect-[4/3] rounded-lg overflow-hidden group">
-                      <Image
-                        src={img}
-                        alt={`Photo ${i + 2}`}
-                        width={400}
-                        height={300}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  ))}
-                  {allImages.length < 5 &&
-                    Array.from({ length: 5 - Math.max(allImages.length, 1) }).map((_, i) => (
+              <div className="relative">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Large image left — spans 2 rows */}
+                  <div
+                    className="md:row-span-2 aspect-[4/3] md:aspect-auto relative rounded-xl overflow-hidden group cursor-pointer"
+                    style={{ minHeight: '300px' }}
+                    onClick={() => openLightbox(0)}
+                  >
+                    <Image
+                      src={allImages[0]}
+                      alt={title}
+                      fill
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+
+                  {/* 4 smaller images in 2x2 grid */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {allImages.slice(1, 5).map((img, i) => (
+                      <div
+                        key={i}
+                        className="aspect-[4/3] relative rounded-lg overflow-hidden group cursor-pointer"
+                        onClick={() => openLightbox(i + 1)}
+                      >
+                        <Image
+                          src={img}
+                          alt={`Foto ${i + 2}`}
+                          fill
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    ))}
+                    {/* Empty placeholders */}
+                    {Array.from({ length: Math.max(0, 4 - (allImages.length - 1)) }).map((_, i) => (
                       <div key={`empty-${i}`} className="aspect-[4/3] rounded-lg bg-border" />
                     ))}
+                  </div>
                 </div>
+
+                {/* "Ver todas las fotos" button */}
+                {allImages.length > 1 && (
+                  <button
+                    className="absolute bottom-4 right-4 bg-white/90 text-foreground text-sm font-sans font-medium px-4 py-2 rounded-lg shadow hover:bg-white transition-colors"
+                    onClick={() => openLightbox(0)}
+                  >
+                    Ver todas las fotos ({allImages.length})
+                  </button>
+                )}
               </div>
             ) : (
               <div className="aspect-[16/9] rounded-xl bg-border flex items-center justify-center text-muted-foreground font-sans text-sm">
-                {lang === 'en' ? 'No images' : 'Sin imágenes'}
+                Sin imágenes
+              </div>
+            )}
+
+            {/* YouTube embed */}
+            {p.youtube_enabled === true && p.youtube_url && (
+              <div className="mt-6 aspect-video rounded-xl overflow-hidden">
+                <iframe
+                  src={p.youtube_url.replace('watch?v=', 'embed/')}
+                  title="Video de la propiedad"
+                  width="100%"
+                  height="100%"
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
             )}
           </div>
         </section>
 
-        {/* Body */}
+        {/* ── BODY GRID ─────────────────────────────────────────────────── */}
         <div className="container-wide py-10 lg:py-14">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {/* Main column */}
+            {/* ── MAIN COLUMN ─────────────────────────────────────────── */}
             <div className="lg:col-span-2 space-y-10">
 
-              {/* Mobile WhatsApp CTA */}
-              <div className="md:hidden">
-                <WhatsAppCTA message={whatsappMessage} label={askLabel} variant="hero" />
-              </div>
-
               {/* Spec bar */}
-              <SpecBar property={p} t={t} lang={lang} />
+              <SpecBar property={p} />
 
-              {/* Amenities */}
+              {/* Description */}
+              {description && (
+                <section>
+                  <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
+                    Descripción
+                  </h2>
+                  <div className="font-sans text-sm text-foreground leading-relaxed">
+                    <p style={{ whiteSpace: 'pre-wrap' }}>{displayedDesc}</p>
+                    {isLong && (
+                      <button
+                        className="mt-2 text-sm font-medium font-sans hover:opacity-80 transition-opacity"
+                        style={{ color: '#C9A96E' }}
+                        onClick={() => setDescExpanded((v) => !v)}
+                      >
+                        {descExpanded ? 'Leer menos' : 'Leer más'}
+                      </button>
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {/* Features grid */}
+              {(p.features?.length ?? 0) > 0 && (
+                <section>
+                  <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
+                    Características
+                  </h2>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {(p.features ?? []).map((f) => (
+                      <li key={f} className="flex items-center gap-2 font-sans text-sm text-foreground">
+                        <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              {/* Amenities grid */}
               {(p.amenities?.length ?? 0) > 0 && (
                 <section>
                   <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                    {t('propertyDetail.mainFeatures')}
+                    Amenidades
                   </h2>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {p.amenities!.map((a) => (
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {(p.amenities ?? []).map((a) => (
                       <li key={a} className="flex items-center gap-2 font-sans text-sm text-foreground">
-                        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: '#C9A96E' }} />
+                        <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
                         {a}
                       </li>
                     ))}
@@ -186,157 +402,235 @@ export default function PropertyDetailClient({ property }: Props) {
                 </section>
               )}
 
-              {/* Description (locale-aware) */}
-              {description && (
-                <section>
-                  <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                    {t('propertyDetail.description')}
-                  </h2>
-                  <div className="prose prose-stone max-w-none font-sans text-foreground text-sm leading-relaxed">
-                    <ReactMarkdown>{description}</ReactMarkdown>
-                  </div>
-                </section>
-              )}
-
-              {/* Investment Perspective */}
+              {/* Plusvalía / Investment Perspective */}
               {p.plusvalia_notes && (
                 <section
                   className="pl-6 py-6 pr-6 rounded-r-lg"
-                  style={{ borderLeft: '4px solid #C9A96E', backgroundColor: '#F5F2EE' }}
+                  style={{ borderLeft: '3px solid #C9A96E', backgroundColor: '#F5F2EE' }}
                 >
                   <h2 className="font-serif text-xl font-semibold text-foreground mb-3">
-                    {t('propertyDetail.investmentPerspective')}
+                    Perspectiva de Inversión
                   </h2>
-                  <div className="prose prose-stone max-w-none font-sans text-foreground text-sm leading-relaxed">
-                    <ReactMarkdown>{p.plusvalia_notes}</ReactMarkdown>
-                  </div>
+                  <p className="font-sans text-sm text-foreground leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>
+                    {p.plusvalia_notes}
+                  </p>
                 </section>
               )}
 
-              {/* Map */}
+              {/* WhatsApp CTA hero */}
+              <section>
+                <Link
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-3 w-full py-4 rounded-xl font-sans font-semibold text-base text-white transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: '#25D366' }}
+                >
+                  <WhatsAppIcon />
+                  Consultar sobre esta propiedad
+                </Link>
+              </section>
+
+              {/* Google Maps */}
               <section>
                 <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                  {t('propertyDetail.neighborhoodMap')}
+                  Ubicación
                 </h2>
-                <div className="rounded-xl overflow-hidden border border-border" style={{ height: 320 }}>
+                {p.lat !== null && p.lng !== null ? (
                   <iframe
-                    src={mapSrc}
+                    src={`https://maps.google.com/maps?q=${p.lat},${p.lng}&z=15&output=embed`}
+                    title={`Mapa: ${p.location_name}`}
                     width="100%"
-                    height="100%"
+                    height="300"
+                    className="w-full rounded-lg border border-border"
                     style={{ border: 0 }}
-                    allowFullScreen
                     loading="lazy"
+                    allowFullScreen
                     referrerPolicy="no-referrer-when-downgrade"
-                    title={`${p.location_name} map`}
                   />
-                </div>
-                {p.location_name && (
-                  <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-                    <MapPin className="w-3 h-3" />
+                ) : (
+                  <div className="flex items-center gap-2 py-4 font-sans text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4 flex-shrink-0" />
                     {p.location_name}
-                  </p>
+                  </div>
                 )}
               </section>
 
-              {/* Desktop bottom CTA */}
-              <section className="border-t border-border pt-10 text-center hidden md:block">
-                <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">
-                  {t('propertyDetail.interested')}
-                </h2>
-                <p className="font-sans text-muted-foreground text-sm mb-6">
-                  {t('propertyDetail.contactForVisit')}
-                </p>
-                <WhatsAppCTA message={whatsappMessage} label={askLabel} variant="footer" />
-              </section>
+              {/* Related properties */}
+              {relatedProperties.length > 0 && (
+                <section>
+                  <h2 className="font-serif text-xl font-semibold text-foreground mb-6">
+                    Propiedades Similares
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {relatedProperties.map((rp) => (
+                      <PropertyCard key={rp.id} property={rp} lang={lang} />
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
 
-            {/* Sidebar */}
-            <aside className="hidden lg:block space-y-6">
-              <div className="card-elevated p-6 space-y-4 sticky top-28">
-                <div>
-                  {p.price_sale && (
-                    <p className="font-serif font-bold text-2xl" style={{ color: '#C9A96E' }}>
-                      {formatPrice(p.price_sale, p.currency)}
+            {/* ── SIDEBAR ──────────────────────────────────────────────── */}
+            <aside className="hidden lg:block">
+              <div
+                className="rounded-xl border border-border bg-card p-6 space-y-5 sticky top-28 shadow-sm"
+              >
+                {/* Reference ID */}
+                {p.reference_id && (
+                  <div>
+                    <p className="text-xs font-sans text-muted-foreground uppercase tracking-wide mb-1">
+                      Referencia
                     </p>
-                  )}
-                  {p.price_rent_monthly && (
-                    <p className="font-sans text-muted-foreground text-base">
-                      {formatPrice(p.price_rent_monthly, p.currency)}
-                      <span className="text-xs">{t('propertyDetail.perMonth')}</span>
-                    </p>
-                  )}
-                </div>
+                    <p className="font-mono text-sm text-foreground">{p.reference_id}</p>
+                  </div>
+                )}
 
-                <div className="border-t border-border pt-4 grid grid-cols-2 gap-3">
-                  <QuickSpec icon={<Bed className="w-4 h-4" />}      label={t('propertyDetail.beds')}     value={p.bedrooms} />
-                  <QuickSpec icon={<Bath className="w-4 h-4" />}     label={t('propertyDetail.baths')}    value={p.bathrooms} />
-                  {p.construction_size_sqm && (
-                    <QuickSpec icon={<Maximize className="w-4 h-4" />} label={t('propertyDetail.construction')} value={`${p.construction_size_sqm} m²`} />
-                  )}
-                  {p.land_size_sqm && (
-                    <QuickSpec icon={<LandPlot className="w-4 h-4" />} label={t('propertyDetail.land')} value={`${p.land_size_sqm} m²`} />
-                  )}
-                </div>
+                {/* Call */}
+                <a
+                  href="tel:+50686540888"
+                  className="flex items-center gap-3 w-full py-3 px-4 rounded-lg border border-border font-sans text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  <Phone className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
+                  Llamar ahora
+                </a>
 
+                {/* Email inquiry */}
+                <a
+                  href={`mailto:info@drhousing.net?subject=${encodeURIComponent(`Información: ${p.title}`)}`}
+                  className="flex items-center gap-3 w-full py-3 px-4 rounded-lg border border-border font-sans text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  <Mail className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
+                  Solicitar información
+                </a>
+
+                {/* Agent card */}
                 <div className="border-t border-border pt-4">
-                  <WhatsAppCTA message={whatsappMessage} label={askLabel} variant="sidebar" />
+                  <p className="text-xs font-sans text-muted-foreground uppercase tracking-wide mb-2">
+                    Agente
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-serif font-semibold text-muted-foreground">
+                        {((p as PropertyRow & { listing_agent_name?: string }).listing_agent_name ?? 'A')[0].toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-sans text-sm font-medium text-foreground">
+                        {(p as PropertyRow & { listing_agent_name?: string }).listing_agent_name ?? 'Agente DR Housing'}
+                      </p>
+                      <p className="font-sans text-xs text-muted-foreground">DR Housing</p>
+                    </div>
+                  </div>
                 </div>
 
-                <p className="font-sans text-muted-foreground text-xs text-center">
-                  {t('propertyDetail.advisor')}
-                </p>
+                {/* Listed date */}
+                <div className="border-t border-border pt-4">
+                  <p className="text-xs font-sans text-muted-foreground uppercase tracking-wide mb-1">
+                    Publicado
+                  </p>
+                  <p className="font-sans text-sm text-foreground">{formatDate(p.created_at)}</p>
+                </div>
+
+                {/* WhatsApp in sidebar */}
+                <Link
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-lg font-sans text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: '#25D366' }}
+                >
+                  <WhatsAppIcon size={18} />
+                  Consultar por WhatsApp
+                </Link>
               </div>
             </aside>
           </div>
         </div>
       </main>
 
-      <WhatsAppFAB message={whatsappMessage} />
+      {/* Lightbox */}
+      {lightboxOpen && allImages.length > 0 && (
+        <Lightbox
+          images={allImages}
+          startIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+
+      {/* Mobile sticky WhatsApp FAB */}
+      <Link
+        href={whatsappHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contactar por WhatsApp"
+        className="fixed bottom-24 right-5 z-50 flex items-center justify-center rounded-full text-white shadow-lg hover:opacity-90 transition-opacity md:hidden"
+        style={{ width: 56, height: 56, backgroundColor: '#25D366' }}
+      >
+        <WhatsAppIcon size={28} />
+      </Link>
     </>
   )
 }
 
-// ── Sub-components ──────────────────────────────────────────────────────────
+// ── Sub-components ────────────────────────────────────────────────────────────
 
-function StatusBadge({ status, lang }: { status: string; lang: string }) {
-  const map: Record<string, string> = {
-    for_sale:       'badge-sale',
-    for_rent:       'badge-rent',
-    both:           'badge-both',
-    presale:        'badge-both',
-    under_contract: 'bg-amber-600 text-white text-xs font-medium tracking-wide px-2.5 py-1 rounded',
-    sold:           'bg-muted text-muted-foreground text-xs font-medium tracking-wide px-2.5 py-1 rounded',
-    rented:         'bg-muted text-muted-foreground text-xs font-medium tracking-wide px-2.5 py-1 rounded',
-  }
-  const labels: Record<string, { es: string; en: string }> = {
-    for_sale:       { es: 'En Venta',        en: 'For Sale' },
-    for_rent:       { es: 'En Alquiler',     en: 'For Rent' },
-    both:           { es: 'Venta & Alquiler',en: 'Sale & Rent' },
-    presale:        { es: 'Preventa',        en: 'Pre-Sale' },
-    under_contract: { es: 'Bajo Contrato',   en: 'Under Contract' },
-    sold:           { es: 'Vendido',         en: 'Sold' },
-    rented:         { es: 'Alquilado',       en: 'Rented' },
-  }
-  const label = labels[status]?.[lang as 'es' | 'en'] ?? status
-  return (
-    <span className={`uppercase tracking-wide font-sans ${map[status] ?? 'badge-sale'}`}>
-      {label}
-    </span>
-  )
-}
+function SpecBar({ property: p }: { property: PropertyRow }) {
+  type SpecItem = { icon: React.ReactNode; value: React.ReactNode; label: string }
 
-function SpecBar({ property: p, t, lang }: { property: PropertyRow; t: (k: string) => string; lang: string }) {
-  const specs = [
-    p.bedrooms > 0  && { icon: <Bed className="w-5 h-5" />,      value: p.bedrooms,                       label: p.bedrooms === 1 ? t('propertyDetail.bedroom') : t('propertyDetail.beds') },
-    p.bathrooms > 0 && { icon: <Bath className="w-5 h-5" />,     value: p.bathrooms,                      label: p.bathrooms === 1 ? t('propertyDetail.bathroom') : t('propertyDetail.baths') },
-    p.construction_size_sqm && { icon: <Maximize className="w-5 h-5" />, value: `${p.construction_size_sqm} m²`, label: t('propertyDetail.construction') },
-    p.land_size_sqm         && { icon: <LandPlot className="w-5 h-5" />, value: `${p.land_size_sqm} m²`,        label: t('propertyDetail.land') },
-  ].filter(Boolean) as { icon: React.ReactNode; value: string | number; label: string }[]
+  const specs: SpecItem[] = []
+
+  if (p.bedrooms > 0) {
+    specs.push({
+      icon: <BedDouble className="w-5 h-5" />,
+      value: p.bedrooms,
+      label: 'Habitaciones',
+    })
+  }
+  if (p.bathrooms > 0) {
+    specs.push({
+      icon: <Bath className="w-5 h-5" />,
+      value: p.bathrooms,
+      label: 'Baños',
+    })
+  }
+  if (p.construction_size_sqm) {
+    const ft2 = Math.round(p.construction_size_sqm * 10.764)
+    specs.push({
+      icon: <Building2 className="w-5 h-5" />,
+      value: (
+        <span>
+          {p.construction_size_sqm} m²{' '}
+          <span className="text-xs text-muted-foreground font-normal">({ft2} ft²)</span>
+        </span>
+      ),
+      label: 'Construcción',
+    })
+  }
+  if (p.land_size_sqm && p.land_size_sqm > 0) {
+    specs.push({
+      icon: <TreePine className="w-5 h-5" />,
+      value: `${p.land_size_sqm} m²`,
+      label: 'Terreno',
+    })
+  }
+  if (p.levels && p.levels > 0) {
+    specs.push({
+      icon: <Layers className="w-5 h-5" />,
+      value: p.levels === 1 ? (
+        <span style={{ color: '#C9A96E' }}>Un Nivel</span>
+      ) : p.levels,
+      label: 'Niveles',
+    })
+  }
 
   if (specs.length === 0) return null
 
   return (
-    <div className="border-t border-b border-border py-5 flex flex-wrap gap-6">
+    <div
+      className="flex flex-wrap gap-6 py-5"
+      style={{ borderTop: '1px solid #E8E3DC', borderBottom: '1px solid #E8E3DC' }}
+    >
       {specs.map((s, i) => (
         <div key={i} className="flex items-center gap-2">
           <span style={{ color: '#C9A96E' }}>{s.icon}</span>
@@ -344,21 +638,25 @@ function SpecBar({ property: p, t, lang }: { property: PropertyRow; t: (k: strin
             <p className="font-sans font-semibold text-foreground text-base leading-none">{s.value}</p>
             <p className="font-sans text-muted-foreground text-xs mt-0.5">{s.label}</p>
           </div>
-          {i < specs.length - 1 && <span className="ml-4 h-8 w-px bg-border" />}
+          {i < specs.length - 1 && (
+            <span className="ml-4 h-8 w-px" style={{ backgroundColor: '#E8E3DC' }} />
+          )}
         </div>
       ))}
     </div>
   )
 }
 
-function QuickSpec({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) {
+function WhatsAppIcon({ size = 20 }: { size?: number }) {
   return (
-    <div className="flex items-center gap-2">
-      <span style={{ color: '#C9A96E' }}>{icon}</span>
-      <div>
-        <p className="font-sans text-muted-foreground text-xs">{label}</p>
-        <p className="font-sans font-medium text-foreground text-sm">{value}</p>
-      </div>
-    </div>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
   )
 }
