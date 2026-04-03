@@ -29,41 +29,30 @@ export async function GET(request: NextRequest) {
     sqm   ? `${sqm} m²`     : null,
   ].filter(Boolean).join('   ·   ')
 
-  // Fetch the property image and convert to base64.
-  // This is the ONLY way ImageResponse can use external images.
-  let imageBase64 = ''
+  // Fetch image → base64 data URI.
+  // Satori (ImageResponse) cannot load arbitrary external URLs — only
+  // data URIs work reliably. backgroundImage css does NOT work; use <img>.
+  let imageDataUri = ''
   if (imageUrl) {
     try {
       const res = await fetch(imageUrl, {
-        headers: { 'Accept': 'image/*' },
+        headers: { Accept: 'image/*' },
         signal: AbortSignal.timeout(4000),
       })
       if (res.ok) {
-        const contentType = res.headers.get('content-type') || 'image/jpeg'
-        const imageMime = contentType.split(';')[0]
-        const arrayBuffer = await res.arrayBuffer()
-        const bytes = new Uint8Array(arrayBuffer)
+        const mime = (res.headers.get('content-type') || 'image/jpeg').split(';')[0]
+        const buffer = await res.arrayBuffer()
+        const bytes = new Uint8Array(buffer)
         let binary = ''
         for (let i = 0; i < bytes.byteLength; i++) {
           binary += String.fromCharCode(bytes[i])
         }
-        imageBase64 = `data:${imageMime};base64,${btoa(binary)}`
+        imageDataUri = `data:${mime};base64,${btoa(binary)}`
       }
     } catch {
-      // Fallback to gradient if image fetch fails
-      imageBase64 = ''
+      imageDataUri = ''
     }
   }
-
-  const backgroundStyle = imageBase64
-    ? {
-        backgroundImage: `url(${imageBase64})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }
-    : {
-        background: 'linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 40%, #1a1a1a 100%)',
-      }
 
   const imageResponse = new ImageResponse(
     (
@@ -71,105 +60,121 @@ export async function GET(request: NextRequest) {
         style={{
           width: '1200px',
           height: '630px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '0',
           position: 'relative',
-          ...backgroundStyle,
+          display: 'flex',
+          fontFamily: 'sans-serif',
+          overflow: 'hidden',
+          background: 'linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 40%, #1a1a1a 100%)',
         }}
       >
-        {/* Dark gradient overlay — always on top of photo */}
+        {/* Property photo — rendered as <img> which satori supports */}
+        {imageDataUri ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imageDataUri}
+            alt=""
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        ) : null}
+
+        {/* Dark gradient overlay for text legibility */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: imageBase64
-              ? 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.75) 65%, rgba(0,0,0,0.92) 100%)'
-              : 'transparent',
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.40) 0%, rgba(0,0,0,0.10) 30%, rgba(0,0,0,0.72) 65%, rgba(0,0,0,0.92) 100%)',
             display: 'flex',
           }}
         />
 
-        {/* Content layer */}
+        {/* Top bar */}
         <div
           style={{
             position: 'absolute',
-            inset: 0,
+            top: '40px',
+            left: '52px',
+            right: '52px',
             display: 'flex',
-            flexDirection: 'column',
             justifyContent: 'space-between',
-            padding: '40px 52px',
+            alignItems: 'flex-start',
           }}
         >
-          {/* Top bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ color: '#ffffff', fontSize: '16px', fontWeight: 700, letterSpacing: '0.18em', fontFamily: 'sans-serif' }}>
-                DR HOUSING
-              </span>
-              <div style={{ width: '72px', height: '2px', background: '#C9A96E', display: 'flex' }} />
-            </div>
-            <div
-              style={{
-                background: statusColor,
-                color: '#ffffff',
-                fontSize: '12px',
-                fontWeight: 700,
-                padding: '5px 14px',
-                borderRadius: '20px',
-                letterSpacing: '0.08em',
-                fontFamily: 'sans-serif',
-              }}
-            >
-              {statusLabel}
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ color: '#ffffff', fontSize: '16px', fontWeight: 700, letterSpacing: '0.18em' }}>
+              DR HOUSING
+            </span>
+            <div style={{ width: '72px', height: '2px', background: '#C9A96E', display: 'flex' }} />
           </div>
 
-          {/* Bottom content */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {subtitle ? (
-              <span style={{ color: '#C9A96E', fontSize: '15px', fontStyle: 'italic', fontFamily: 'sans-serif' }}>
-                {subtitle.slice(0, 70)}
-              </span>
-            ) : null}
+          <div
+            style={{
+              background: statusColor,
+              color: '#ffffff',
+              fontSize: '12px',
+              fontWeight: 700,
+              padding: '5px 14px',
+              borderRadius: '20px',
+              letterSpacing: '0.08em',
+            }}
+          >
+            {statusLabel}
+          </div>
+        </div>
 
-            <span
-              style={{
-                color: '#ffffff',
-                fontSize: title.length > 55 ? '30px' : '36px',
-                fontWeight: 700,
-                lineHeight: 1.2,
-                fontFamily: 'sans-serif',
-                textShadow: '0 2px 8px rgba(0,0,0,0.6)',
-              }}
-            >
-              {title.slice(0, 72)}{title.length > 72 ? '...' : ''}
+        {/* Bottom content */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '44px',
+            left: '52px',
+            right: '52px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
+          {subtitle ? (
+            <span style={{ color: '#C9A96E', fontSize: '15px', fontStyle: 'italic' }}>
+              {subtitle.slice(0, 70)}
             </span>
+          ) : null}
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-              <span style={{ color: '#C9A96E', fontSize: '13px', fontFamily: 'sans-serif' }}>📍</span>
-              <span style={{ color: '#ffffff', fontSize: '13px', opacity: 0.8, fontFamily: 'sans-serif' }}>
-                {location}
-              </span>
-            </div>
+          <span
+            style={{
+              color: '#ffffff',
+              fontSize: title.length > 55 ? '30px' : '36px',
+              fontWeight: 700,
+              lineHeight: 1.2,
+            }}
+          >
+            {title.slice(0, 72)}{title.length > 72 ? '...' : ''}
+          </span>
 
-            {price ? (
-              <span style={{ color: '#C9A96E', fontSize: '28px', fontWeight: 700, fontFamily: 'sans-serif', marginTop: '4px' }}>
-                {price}
-              </span>
-            ) : null}
+          <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: '14px', marginTop: '2px' }}>
+            {location}
+          </span>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-              {specs ? (
-                <span style={{ color: '#ffffff', fontSize: '15px', opacity: 0.8, fontFamily: 'sans-serif' }}>
-                  {specs}
-                </span>
-              ) : <span />}
-              <span style={{ color: '#ffffff', fontSize: '12px', opacity: 0.45, fontFamily: 'sans-serif' }}>
-                drhousing.net
+          {price ? (
+            <span style={{ color: '#C9A96E', fontSize: '28px', fontWeight: 700, marginTop: '4px' }}>
+              {price}
+            </span>
+          ) : null}
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+            {specs ? (
+              <span style={{ color: 'rgba(255,255,255,0.80)', fontSize: '15px' }}>
+                {specs}
               </span>
-            </div>
+            ) : <span />}
+            <span style={{ color: 'rgba(255,255,255,0.40)', fontSize: '12px' }}>
+              drhousing.net
+            </span>
           </div>
         </div>
       </div>
