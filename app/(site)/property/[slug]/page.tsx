@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   )
   ogImageUrl.searchParams.set('subtitle', property.subtitle ?? '')
   ogImageUrl.searchParams.set('status', property.status ?? 'for_sale')
-  ogImageUrl.searchParams.set('image', property.images?.[0] ?? '')
+  ogImageUrl.searchParams.set('location', property.location_name ?? '')
   ogImageUrl.searchParams.set('beds', String(property.bedrooms ?? ''))
   ogImageUrl.searchParams.set('baths', String(property.bathrooms ?? ''))
   ogImageUrl.searchParams.set('sqm', String(property.construction_size_sqm ?? ''))
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     openGraph: {
       title: property.title_en || property.title,
       description: (property.description_en || property.description)?.slice(0, 160) ?? '',
-      images: [{ url: ogImageUrl.toString(), width: 900, height: 472, alt: property.title ?? '' }],
+      images: [{ url: ogImageUrl.toString(), width: 1200, height: 630, alt: property.title ?? '' }],
       type: 'website',
       locale: 'es_CR',
     },

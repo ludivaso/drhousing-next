@@ -6,230 +6,130 @@ export const runtime = 'edge'
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl
 
-  const title = searchParams.get('title') ?? ''
-  const price = searchParams.get('price') ?? ''
-  const subtitle = searchParams.get('subtitle') ?? ''
-  const status = searchParams.get('status') ?? 'for_sale'
-  const rawImage = searchParams.get('image') ?? ''
-  const beds = searchParams.get('beds') ?? ''
-  const baths = searchParams.get('baths') ?? ''
-  const sqm = searchParams.get('sqm') ?? ''
-
-  // Proxy through Next.js image optimizer at reduced quality + width.
-  // ImageResponse outputs PNG — pixel count drives file size more than
-  // source quality. Canvas is 900×472 (same 1.9:1 ratio as 1200×630,
-  // 44% fewer pixels) which brings the PNG well under WhatsApp's 600KB cap.
-  const image = rawImage
-    ? `https://drhousing-next.vercel.app/_next/image?url=${encodeURIComponent(rawImage)}&w=900&q=30`
-    : ''
+  const title    = searchParams.get('title')    || 'Propiedad en Costa Rica'
+  const price    = searchParams.get('price')    || ''
+  const subtitle = searchParams.get('subtitle') || ''
+  const status   = searchParams.get('status')   || 'for_sale'
+  const beds     = searchParams.get('beds')     || ''
+  const baths    = searchParams.get('baths')    || ''
+  const sqm      = searchParams.get('sqm')      || ''
+  const location = searchParams.get('location') || 'Costa Rica'
 
   const statusLabel =
+    status === 'for_sale' ? 'EN VENTA' :
     status === 'for_rent' ? 'EN ALQUILER' :
-    status === 'both'     ? 'VENTA & ALQUILER' :
-                            'EN VENTA'
+                            'VENTA & ALQUILER'
 
-  const statusBg =
-    status === 'for_rent' ? '#2563EB' :
-    status === 'both'     ? '#C9A96E' :
-                            '#16A34A'
+  const statusColor =
+    status === 'for_sale' ? '#2e7d32' :
+    status === 'for_rent' ? '#1565c0' :
+                            '#C9A96E'
 
   const specs = [
-    beds  ? `${beds} hab`   : null,
+    beds  ? `${beds} hab`    : null,
     baths ? `${baths} baños` : null,
     sqm   ? `${sqm} m²`     : null,
-  ].filter(Boolean).join('  ·  ')
+  ].filter(Boolean).join('   ·   ')
 
   const imageResponse = new ImageResponse(
     (
       <div
         style={{
-          width: '900px',
-          height: '472px',
-          position: 'relative',
+          width: '1200px',
+          height: '630px',
+          background: 'linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 40%, #1a1a1a 100%)',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '48px 56px',
           fontFamily: 'sans-serif',
-          overflow: 'hidden',
-          backgroundColor: '#1A1A1A',
         }}
       >
-        {/* Background image */}
-        {image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={image}
-            alt=""
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          />
-        )}
-
-        {/* Dark gradient overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to bottom, transparent 10%, rgba(0,0,0,0.85) 100%)',
-          }}
-        />
-
-        {/* Top-left: DR HOUSING branding */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '28px',
-            left: '32px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '6px',
-          }}
-        >
-          <span
-            style={{
-              color: 'white',
-              fontSize: '14px',
-              fontWeight: 700,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-            }}
-          >
-            DR HOUSING
-          </span>
+        {/* Top bar */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ color: '#ffffff', fontSize: '18px', fontWeight: 700, letterSpacing: '0.15em' }}>
+              DR HOUSING
+            </span>
+            <div style={{ width: '80px', height: '2px', background: '#C9A96E' }} />
+          </div>
           <div
             style={{
-              width: '80px',
-              height: '2px',
-              backgroundColor: '#C9A96E',
+              background: statusColor,
+              color: '#ffffff',
+              fontSize: '13px',
+              fontWeight: 700,
+              padding: '6px 16px',
+              borderRadius: '20px',
+              letterSpacing: '0.08em',
             }}
-          />
+          >
+            {statusLabel}
+          </div>
         </div>
 
-        {/* Top-right: status badge */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '28px',
-            right: '32px',
-            backgroundColor: statusBg,
-            color: 'white',
-            fontSize: '12px',
-            fontWeight: 700,
-            padding: '4px 14px',
-            borderRadius: '999px',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {statusLabel}
-        </div>
+        {/* Main content */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center', padding: '32px 0' }}>
+          {/* Decorative gold line */}
+          <div style={{ width: '48px', height: '3px', background: '#C9A96E' }} />
 
-        {/* Bottom section */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '40px',
-            left: '32px',
-            right: '32px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '6px',
-          }}
-        >
           {/* Subtitle */}
-          {subtitle && (
-            <span
-              style={{
-                color: '#C9A96E',
-                fontSize: '16px',
-                fontStyle: 'italic',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                maxWidth: '800px',
-              }}
-            >
+          {subtitle ? (
+            <span style={{ color: '#C9A96E', fontSize: '18px', fontStyle: 'italic', opacity: 0.9 }}>
               {subtitle}
             </span>
-          )}
+          ) : null}
 
           {/* Title */}
           <span
             style={{
-              color: 'white',
-              fontSize: '32px',
+              color: '#ffffff',
+              fontSize: '42px',
               fontWeight: 700,
-              lineHeight: 1.2,
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
+              lineHeight: 1.15,
               maxWidth: '900px',
             }}
           >
-            {title}
+            {title.length > 60 ? title.slice(0, 57) + '...' : title}
           </span>
 
-          {/* Price */}
-          {price && (
-            <span
-              style={{
-                color: '#C9A96E',
-                fontSize: '28px',
-                fontWeight: 700,
-                marginTop: '8px',
-              }}
-            >
-              {price}
-            </span>
-          )}
-
-          {/* Spec row */}
-          {specs && (
-            <span
-              style={{
-                color: 'rgba(255,255,255,0.85)',
-                fontSize: '16px',
-                marginTop: '4px',
-              }}
-            >
-              {specs}
-            </span>
-          )}
+          {/* Location */}
+          <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: '18px', marginTop: '4px' }}>
+            📍 {location}
+          </span>
         </div>
 
-        {/* Bottom bar */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '0',
-            left: '0',
-            right: '0',
-            height: '28px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            borderTop: '2px solid #C9A96E',
-            paddingRight: '24px',
-          }}
-        >
-          <span
-            style={{
-              color: 'rgba(255,255,255,0.6)',
-              fontSize: '12px',
-            }}
-          >
-            drhousing.net
-          </span>
+        {/* Bottom section */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {/* Gold divider */}
+          <div style={{ width: '100%', height: '1px', background: 'rgba(201,169,110,0.3)' }} />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            {/* Price + specs */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {price ? (
+                <span style={{ color: '#C9A96E', fontSize: '36px', fontWeight: 700 }}>
+                  {price}
+                </span>
+              ) : null}
+              {specs ? (
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px' }}>
+                  {specs}
+                </span>
+              ) : null}
+            </div>
+
+            {/* Domain watermark */}
+            <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '14px', letterSpacing: '0.05em' }}>
+              drhousing.net
+            </span>
+          </div>
         </div>
       </div>
     ),
     {
-      width: 900,
-      height: 472,
+      width: 1200,
+      height: 630,
     }
   )
 
