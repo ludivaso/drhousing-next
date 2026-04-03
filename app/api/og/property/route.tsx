@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
   const baths    = searchParams.get('baths')    || ''
   const sqm      = searchParams.get('sqm')      || ''
   const location = searchParams.get('location') || 'Costa Rica'
+  const imageUrl = searchParams.get('image')    || ''
 
   const statusLabel =
     status === 'for_sale' ? 'EN VENTA' :
@@ -31,35 +32,99 @@ export async function GET(request: NextRequest) {
     sqm   ? `${sqm} m²`     : null,
   ].filter(Boolean).join('   ·   ')
 
+  // Fetch the property image and convert to base64.
+  // ImageResponse (satori) cannot load arbitrary external URLs — converting
+  // to a data URI is the only reliable way to embed an image.
+  let imageDataUri = ''
+  if (imageUrl) {
+    try {
+      const res = await fetch(imageUrl, {
+        headers: { Accept: 'image/*' },
+        signal: AbortSignal.timeout(4000),
+      })
+      if (res.ok) {
+        const mime = (res.headers.get('content-type') || 'image/jpeg').split(';')[0]
+        const buffer = await res.arrayBuffer()
+        const bytes = new Uint8Array(buffer)
+        let binary = ''
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i])
+        }
+        imageDataUri = `data:${mime};base64,${btoa(binary)}`
+      }
+    } catch {
+      // Fetch timed out or failed — fall back to gradient background
+      imageDataUri = ''
+    }
+  }
+
   const imageResponse = new ImageResponse(
     (
       <div
         style={{
           width: '1200px',
           height: '630px',
-          background: 'linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 40%, #1a1a1a 100%)',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '48px 56px',
           fontFamily: 'sans-serif',
+          overflow: 'hidden',
+          position: 'relative',
+          background: imageDataUri
+            ? 'transparent'
+            : 'linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 40%, #1a1a1a 100%)',
         }}
       >
+        {/* Background photo */}
+        {imageDataUri ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imageDataUri}
+            alt=""
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        ) : null}
+
+        {/* Dark gradient overlay — always present so text is legible */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.85) 100%)',
+          }}
+        />
+
         {/* Top bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '40px',
+            left: '56px',
+            right: '56px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <span style={{ color: '#ffffff', fontSize: '18px', fontWeight: 700, letterSpacing: '0.15em' }}>
               DR HOUSING
             </span>
             <div style={{ width: '80px', height: '2px', background: '#C9A96E' }} />
           </div>
+
           <div
             style={{
               background: statusColor,
               color: '#ffffff',
               fontSize: '13px',
               fontWeight: 700,
-              padding: '6px 16px',
+              padding: '6px 18px',
               borderRadius: '20px',
               letterSpacing: '0.08em',
             }}
@@ -68,15 +133,25 @@ export async function GET(request: NextRequest) {
           </div>
         </div>
 
-        {/* Main content */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center', padding: '32px 0' }}>
-          {/* Decorative gold line */}
+        {/* Bottom content */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '44px',
+            left: '56px',
+            right: '56px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+          }}
+        >
+          {/* Gold accent */}
           <div style={{ width: '48px', height: '3px', background: '#C9A96E' }} />
 
           {/* Subtitle */}
           {subtitle ? (
-            <span style={{ color: '#C9A96E', fontSize: '18px', fontStyle: 'italic', opacity: 0.9 }}>
-              {subtitle}
+            <span style={{ color: '#C9A96E', fontSize: '18px', fontStyle: 'italic' }}>
+              {subtitle.length > 60 ? subtitle.slice(0, 57) + '...' : subtitle}
             </span>
           ) : null}
 
@@ -84,42 +159,37 @@ export async function GET(request: NextRequest) {
           <span
             style={{
               color: '#ffffff',
-              fontSize: '42px',
+              fontSize: '40px',
               fontWeight: 700,
               lineHeight: 1.15,
-              maxWidth: '900px',
+              maxWidth: '950px',
             }}
           >
-            {title.length > 60 ? title.slice(0, 57) + '...' : title}
+            {title.length > 65 ? title.slice(0, 62) + '...' : title}
           </span>
 
           {/* Location */}
-          <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: '18px', marginTop: '4px' }}>
-            📍 {location}
+          <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: '17px' }}>
+            {location}
           </span>
-        </div>
 
-        {/* Bottom section */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {/* Gold divider */}
-          <div style={{ width: '100%', height: '1px', background: 'rgba(201,169,110,0.3)' }} />
+          {/* Divider */}
+          <div style={{ width: '100%', height: '1px', background: 'rgba(201,169,110,0.3)', marginTop: '4px' }} />
 
+          {/* Price + specs + domain */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            {/* Price + specs */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {price ? (
-                <span style={{ color: '#C9A96E', fontSize: '36px', fontWeight: 700 }}>
+                <span style={{ color: '#C9A96E', fontSize: '34px', fontWeight: 700 }}>
                   {price}
                 </span>
               ) : null}
               {specs ? (
-                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px' }}>
+                <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: '17px' }}>
                   {specs}
                 </span>
               ) : null}
             </div>
-
-            {/* Domain watermark */}
             <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '14px', letterSpacing: '0.05em' }}>
               drhousing.net
             </span>
