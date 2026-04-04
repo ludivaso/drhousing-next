@@ -20,7 +20,7 @@ import {
 import { supabase } from '@/lib/supabase/client'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
-type LeadStatus = 'new' | 'contacted' | 'viewing' | 'offer' | 'closed' | 'lost'
+type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'won' | 'lost'
 
 type Lead = {
   id: string
@@ -47,15 +47,16 @@ type Column = {
   label: string
   color: string
   bg: string
+  accent: string
 }
 
 const COLUMNS: Column[] = [
-  { id: 'new',       label: 'Nuevos',    color: 'text-blue-700',   bg: 'bg-blue-50 border-blue-200' },
-  { id: 'contacted', label: 'Contactados', color: 'text-yellow-700', bg: 'bg-yellow-50 border-yellow-200' },
-  { id: 'viewing',   label: 'Visita',    color: 'text-purple-700', bg: 'bg-purple-50 border-purple-200' },
-  { id: 'offer',     label: 'Oferta',    color: 'text-orange-700', bg: 'bg-orange-50 border-orange-200' },
-  { id: 'closed',    label: 'Cerrado ✓', color: 'text-green-700',  bg: 'bg-green-50 border-green-200' },
-  { id: 'lost',      label: 'Perdido',   color: 'text-gray-500',   bg: 'bg-gray-50 border-gray-200' },
+  { id: 'new',        label: 'Nuevos',       color: 'text-blue-700',   bg: 'bg-blue-50 border-blue-200',    accent: 'border-l-blue-400'   },
+  { id: 'contacted',  label: 'Contactados',  color: 'text-yellow-700', bg: 'bg-yellow-50 border-yellow-200', accent: 'border-l-yellow-400' },
+  { id: 'qualified',  label: 'Calificados',  color: 'text-purple-700', bg: 'bg-purple-50 border-purple-200', accent: 'border-l-purple-400' },
+  { id: 'proposal',   label: 'Propuesta',    color: 'text-orange-700', bg: 'bg-orange-50 border-orange-200', accent: 'border-l-orange-400' },
+  { id: 'won',        label: 'Ganado ✓',     color: 'text-green-700',  bg: 'bg-green-50 border-green-200',   accent: 'border-l-green-400'  },
+  { id: 'lost',       label: 'Perdido',      color: 'text-gray-500',   bg: 'bg-gray-50 border-gray-200',    accent: 'border-l-gray-300'   },
 ]
 
 const fmt = (n: number) =>
@@ -66,10 +67,12 @@ function LeadCard({
   lead,
   onClick,
   isDragging = false,
+  accent,
 }: {
   lead: Lead
   onClick: () => void
   isDragging?: boolean
+  accent?: string
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: lead.id })
   const style = {
@@ -84,7 +87,7 @@ function LeadCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
+      className={`bg-card border border-border border-l-4 ${accent ?? ''} rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer group`}
       onClick={onClick}
     >
       <div className="flex items-start justify-between gap-2">
@@ -425,6 +428,7 @@ export default function LeadsPipelinePage() {
                         lead={lead}
                         onClick={() => setSelectedLead(lead)}
                         isDragging={activeLead?.id === lead.id}
+                        accent={col.accent}
                       />
                     ))}
                     {colLeads.length === 0 && (

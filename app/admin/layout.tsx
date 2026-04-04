@@ -15,6 +15,7 @@ import {
   KanbanSquare,
   Bookmark,
   Ticket,
+  Palette,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -27,6 +28,7 @@ const adminNav = [
   { name: 'Curated',      href: '/admin/curated',        icon: Bookmark },
   { name: 'Tickets',      href: '/admin/tickets',        icon: Ticket },
   { name: 'Agentes',      href: '/admin/agents',         icon: UserCircle },
+  { name: 'Marca',        href: '/admin/settings/brand', icon: Palette },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

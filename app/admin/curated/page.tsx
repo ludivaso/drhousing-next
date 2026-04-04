@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import {
   Plus, Search, Copy, Check, ExternalLink, Trash2,
-  MessageCircle, Loader2, X, GripVertical, ChevronDown, ChevronUp
+  MessageCircle, Loader2, X, GripVertical, ChevronDown, ChevronUp, Lock
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 
@@ -17,6 +17,7 @@ type CuratedList = {
   message: string | null
   language: string
   is_active: boolean
+  is_private: boolean
   created_at: string
 }
 
@@ -128,6 +129,7 @@ function ListForm({
   const [slug, setSlug] = useState(initial?.slug ?? '')
   const [message, setMessage] = useState(initial?.message ?? '')
   const [language, setLanguage] = useState(initial?.language ?? 'es')
+  const [isPrivate, setIsPrivate] = useState(initial?.is_private ?? false)
   const [search, setSearch] = useState('')
   const [allProps, setAllProps] = useState<PropertySnippet[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>(initial?.property_ids ?? [])
@@ -174,6 +176,7 @@ function ListForm({
       language,
       property_ids: selectedIds,
       is_active: true,
+      is_private: isPrivate,
     }
 
     let data, error
@@ -221,7 +224,7 @@ function ListForm({
               </div>
               {slug && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  drhousing.net/for/<strong>{slug}</strong>
+                  drhousing.net/{isPrivate ? 'private' : 'for'}/<strong>{slug}</strong>
                 </p>
               )}
             </div>
@@ -248,6 +251,21 @@ function ListForm({
                 className="w-full px-3 py-2 rounded border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isPrivate}
+                onChange={(e) => setIsPrivate(e.target.checked)}
+                className="rounded"
+              />
+              <div>
+                <span className="font-medium">Lista Privada</span>
+                <p className="text-xs text-muted-foreground">Requiere PIN para acceder</p>
+              </div>
+            </label>
           </div>
 
           {/* Property selector */}
@@ -323,6 +341,7 @@ export default function CuratedAdminPage() {
   const [waModal, setWaModal] = useState<{ list: CuratedList; props: PropertySnippet[] } | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [listProps, setListProps] = useState<Record<string, PropertySnippet[]>>({})
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
   const fetchLists = useCallback(async () => {
     setLoading(true)
@@ -368,6 +387,13 @@ export default function CuratedAdminPage() {
     setWaModal({ list, props: listProps[list.id] ?? [] })
   }
 
+  const handleCopyLink = (list: CuratedList) => {
+    const path = list.is_private ? 'private' : 'for'
+    navigator.clipboard.writeText(`https://drhousing.net/${path}/${list.slug}`)
+    setCopiedId(list.id)
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
   const handleSave = (saved: CuratedList) => {
     setLists((prev) => {
       const exists = prev.find((l) => l.id === saved.id)
@@ -407,9 +433,14 @@ export default function CuratedAdminPage() {
                   <span className={`text-xs px-2 py-0.5 rounded-full ${list.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                     {list.is_active ? 'Activa' : 'Inactiva'}
                   </span>
+                  {list.is_private && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 flex items-center gap-1">
+                      <Lock className="w-3 h-3" /> PIN
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
-                  <span className="font-mono">/for/{list.slug}</span>
+                  <span className="font-mono">/{list.is_private ? 'private' : 'for'}/{list.slug}</span>
                   <span>·</span>
                   <span>{list.property_ids?.length ?? 0} propiedades</span>
                   <span>·</span>
@@ -425,8 +456,15 @@ export default function CuratedAdminPage() {
                 >
                   <MessageCircle className="w-4 h-4" />
                 </button>
+                <button
+                  onClick={() => handleCopyLink(list)}
+                  title="Copiar enlace"
+                  className="p-2 rounded hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {copiedId === list.id ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                </button>
                 <a
-                  href={`/for/${list.slug}`}
+                  href={`/${list.is_private ? 'private' : 'for'}/${list.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Ver lista pública"

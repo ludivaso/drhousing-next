@@ -1,14 +1,26 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import CuratedPortfolioClient from './CuratedPortfolioClient'
 
-// Always noindex — these are private client portfolios
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-}
+export const dynamic = 'force-dynamic'
 
-export const revalidate = 300 // 5 min cache
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Promise<Metadata> {
+  const { data } = await supabase
+    .from('curated_lists')
+    .select('title, client_name')
+    .eq('slug', params.slug)
+    .maybeSingle()
+  const name = data?.client_name ?? data?.title ?? 'Portafolio'
+  return {
+    title: `Portafolio · ${name}`,
+    robots: { index: false, follow: false },
+  }
+}
 
 async function getCuratedList(slug: string) {
   const { data, error } = await supabase
@@ -50,6 +62,9 @@ export default async function CuratedPortfolioPage({
 }) {
   const list = await getCuratedList(params.slug)
   if (!list) notFound()
+
+  // Redirect private lists to PIN gate
+  if ((list as any).is_private) redirect(`/private/${params.slug}`)
 
   const properties = await getPropertiesByIds(list.property_ids ?? [])
 

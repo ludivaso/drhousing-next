@@ -1,0 +1,21 @@
+{
+  "name": "DR Housing",
+  "short_name": "DR Housing",
+  "description": "Propiedades premium en Costa Rica — DR Housing",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F2EE",
+  "theme_color": "#C9A96E",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
