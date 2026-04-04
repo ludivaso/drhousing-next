@@ -132,7 +132,7 @@ export default function NewListingPage() {
             className="w-full px-3 py-2.5 border border-input rounded bg-background text-sm focus:outline-none"
           >
             <option value="">— Sin asignar —</option>
-            {['Escazú','Santa Ana','La Guácima','Ciudad Colón','Rohrmoser','La Sabana','Pavas','San Rafael de Alajuela','Guanacaste','Pacífico Sur','Otras zonas'].map(z => (
+            {['Escazú','Santa Ana','La Guácima','Ciudad Colón','Rohrmoser','La Sabana','Pavas','San Rafael de Alajuela','Guanacaste','Pacífico Sur','Sin zona'].map(z => (
               <option key={z} value={z}>{z}</option>
             ))}
           </select>

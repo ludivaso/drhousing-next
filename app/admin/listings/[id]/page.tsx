@@ -39,7 +39,7 @@ export default function EditListingPage() {
         setForm({
           title: data.title ?? '',
           location_name: data.location_name ?? '',
-          zone: (data as any).zone ?? '',
+          zone: data.zone ?? '',
           property_type: data.property_type ?? 'house',
           status: data.status ?? 'active',
           price_sale: data.price_sale?.toString() ?? '',
@@ -210,7 +210,7 @@ export default function EditListingPage() {
             className="w-full px-3 py-2.5 border border-input rounded bg-background text-sm focus:outline-none"
           >
             <option value="">— Sin asignar —</option>
-            {['Escazú','Santa Ana','La Guácima','Ciudad Colón','Rohrmoser','La Sabana','Pavas','San Rafael de Alajuela','Guanacaste','Pacífico Sur','Otras zonas'].map(z => (
+            {['Escazú','Santa Ana','La Guácima','Ciudad Colón','Rohrmoser','La Sabana','Pavas','San Rafael de Alajuela','Guanacaste','Pacífico Sur','Sin zona'].map(z => (
               <option key={z} value={z}>{z}</option>
             ))}
           </select>

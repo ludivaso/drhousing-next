@@ -69,7 +69,7 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
 
         {/* Location — show normalized zone when available, fall back to raw location_name */}
         <p className="text-xs uppercase tracking-widest text-muted-foreground font-sans truncate">
-          {(property as any).zone || property.location_name}
+          {property.zone || property.location_name}
         </p>
 
         {/* Title — exact: font-serif text-lg font-medium text-foreground leading-snug line-clamp-2 group-hover:text-primary */}

@@ -108,6 +108,7 @@ export type Database = {
           meta_title_en: string | null
           meta_description: string | null
           meta_description_en: string | null
+          zone: string | null
           created_at: string
           updated_at: string
         }
@@ -207,6 +208,7 @@ export type Database = {
           meta_title_en?: string | null
           meta_description?: string | null
           meta_description_en?: string | null
+          zone?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -306,6 +308,7 @@ export type Database = {
           meta_title_en?: string | null
           meta_description?: string | null
           meta_description_en?: string | null
+          zone?: string | null
           created_at?: string
           updated_at?: string
         }
