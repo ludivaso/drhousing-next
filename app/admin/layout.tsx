@@ -115,10 +115,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="p-4 border-t border-white/10 space-y-2">
             <div className="px-3 py-2 text-xs text-primary-foreground/50 truncate">{user.email}</div>
             <Link
-              href="/"
+              href="https://drhousing-next.vercel.app"
+              target="_blank"
               className="flex items-center gap-2 px-3 py-2 rounded text-sm text-primary-foreground/70 hover:text-white hover:bg-white/10 transition-colors"
             >
-              <Home className="w-4 h-4" /> Ver sitio
+              <Home className="w-4 h-4" /> Ver sitio ↗
             </Link>
             <button
               onClick={handleSignOut}

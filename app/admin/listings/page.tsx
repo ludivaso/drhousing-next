@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   Plus, Search, Loader2, Pencil, ExternalLink,
-  Link2, FileText, Star, GripVertical, Filter,
+  Link2, FileText, Star, GripVertical, Filter, Trash2,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import {
@@ -46,13 +46,17 @@ type Property = {
   created_at: string
   slug: string | null
   reference_id: string | null
+  zone: string | null
 }
 
 type Tab = 'featured' | 'public' | 'private' | 'meta' | 'e24'
 
+const PAGE_SIZE = 20
+
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  for_sale:       { label: 'Venta',       color: 'bg-emerald-100 text-emerald-800' },
-  for_rent:       { label: 'Alquiler',    color: 'bg-blue-100 text-blue-800' },
+  for_sale:       { label: 'En Venta',    color: 'bg-emerald-100 text-emerald-800' },
+  for_rent:       { label: 'En Alquiler', color: 'bg-blue-100 text-blue-800' },
+  both:           { label: 'Venta & Alq', color: 'bg-amber-100 text-amber-800' },
   presale:        { label: 'Preventa',    color: 'bg-purple-100 text-purple-800' },
   under_contract: { label: 'Contrato',    color: 'bg-yellow-100 text-yellow-800' },
   sold:           { label: 'Vendido',     color: 'bg-gray-100 text-gray-500' },
@@ -67,7 +71,15 @@ function formatPrice(n: number | null) {
   return n ? `$${n.toLocaleString()}` : '—'
 }
 
-function RowActions({ prop, onCopyLink }: { prop: Property; onCopyLink: (url: string) => void }) {
+function RowActions({
+  prop,
+  onCopyLink,
+  onDelete,
+}: {
+  prop: Property
+  onCopyLink: (url: string) => void
+  onDelete: (id: string) => void
+}) {
   const publicUrl = `https://drhousing.net/property/${prop.slug || prop.id}`
   return (
     <div className="flex items-center gap-1 justify-end">
@@ -87,11 +99,31 @@ function RowActions({ prop, onCopyLink }: { prop: Property; onCopyLink: (url: st
         className="p-1.5 rounded text-muted-foreground hover:text-primary hover:bg-secondary transition-colors" title="Edit">
         <Pencil className="w-3.5 h-3.5" />
       </Link>
+      <button
+        onClick={async () => {
+          if (window.confirm('¿Eliminar esta propiedad?')) {
+            await supabase.from('properties').delete().eq('id', prop.id)
+            onDelete(prop.id)
+          }
+        }}
+        className="p-1.5 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+        title="Eliminar"
+      >
+        <Trash2 className="w-3.5 h-3.5" />
+      </button>
     </div>
   )
 }
 
-function SortableRow({ prop, onCopyLink }: { prop: Property; onCopyLink: (url: string) => void }) {
+function SortableRow({
+  prop,
+  onCopyLink,
+  onDelete,
+}: {
+  prop: Property
+  onCopyLink: (url: string) => void
+  onDelete: (id: string) => void
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: prop.id })
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
@@ -112,10 +144,14 @@ function SortableRow({ prop, onCopyLink }: { prop: Property; onCopyLink: (url: s
           : <div className="w-10 h-10 rounded bg-secondary" />}
       </td>
       <td className="px-3 py-2">
-        <p className="font-medium text-sm line-clamp-1">{displayTitle}</p>
+        <p className="font-medium text-sm line-clamp-1">
+          {displayTitle}
+          {prop.featured && <Star className="w-3 h-3 text-amber-500 fill-amber-500 inline ml-1" />}
+        </p>
         <p className="text-xs text-muted-foreground">{prop.location_name}</p>
       </td>
       <td className="px-3 py-2 hidden md:table-cell text-sm text-muted-foreground capitalize">{prop.property_type}</td>
+      <td className="px-3 py-2 hidden md:table-cell text-xs text-muted-foreground">{prop.zone ?? '—'}</td>
       <td className="px-3 py-2 hidden sm:table-cell">
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_LABELS[prop.status]?.color ?? 'bg-gray-100 text-gray-600'}`}>
           {STATUS_LABELS[prop.status]?.label ?? prop.status}
@@ -128,12 +164,20 @@ function SortableRow({ prop, onCopyLink }: { prop: Property; onCopyLink: (url: s
       <td className="px-3 py-2 hidden xl:table-cell text-xs text-muted-foreground">
         {new Date(prop.created_at).toLocaleDateString('es-CR')}
       </td>
-      <td className="px-3 py-2"><RowActions prop={prop} onCopyLink={onCopyLink} /></td>
+      <td className="px-3 py-2"><RowActions prop={prop} onCopyLink={onCopyLink} onDelete={onDelete} /></td>
     </tr>
   )
 }
 
-function StandardRow({ prop, onCopyLink }: { prop: Property; onCopyLink: (url: string) => void }) {
+function StandardRow({
+  prop,
+  onCopyLink,
+  onDelete,
+}: {
+  prop: Property
+  onCopyLink: (url: string) => void
+  onDelete: (id: string) => void
+}) {
   const thumb = prop.images?.[0]
   const displayTitle = prop.title_es || prop.title
   const isMeta = prop.facebook_published === 'true'
@@ -150,10 +194,14 @@ function StandardRow({ prop, onCopyLink }: { prop: Property; onCopyLink: (url: s
           {isMeta && <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-bold">META</span>}
           {isE24  && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-bold">E24</span>}
         </div>
-        <p className="font-medium text-sm line-clamp-1">{displayTitle}</p>
+        <p className="font-medium text-sm line-clamp-1">
+          {displayTitle}
+          {prop.featured && <Star className="w-3 h-3 text-amber-500 fill-amber-500 inline ml-1" />}
+        </p>
         <p className="text-xs text-muted-foreground">{prop.location_name}</p>
       </td>
       <td className="px-3 py-2 hidden md:table-cell text-sm text-muted-foreground capitalize">{prop.property_type}</td>
+      <td className="px-3 py-2 hidden md:table-cell text-xs text-muted-foreground">{prop.zone ?? '—'}</td>
       <td className="px-3 py-2 hidden sm:table-cell">
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_LABELS[prop.status]?.color ?? 'bg-gray-100 text-gray-600'}`}>
           {STATUS_LABELS[prop.status]?.label ?? prop.status}
@@ -166,7 +214,7 @@ function StandardRow({ prop, onCopyLink }: { prop: Property; onCopyLink: (url: s
       <td className="px-3 py-2 hidden xl:table-cell text-xs text-muted-foreground">
         {new Date(prop.created_at).toLocaleDateString('es-CR')}
       </td>
-      <td className="px-3 py-2"><RowActions prop={prop} onCopyLink={onCopyLink} /></td>
+      <td className="px-3 py-2"><RowActions prop={prop} onCopyLink={onCopyLink} onDelete={onDelete} /></td>
     </tr>
   )
 }
@@ -182,6 +230,7 @@ export default function AdminListings() {
   const [copiedUrl, setCopiedUrl]       = useState(false)
   const [showFilters, setShowFilters]   = useState(false)
   const [savingOrder, setSavingOrder]   = useState(false)
+  const [page, setPage]                 = useState(0)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -190,10 +239,13 @@ export default function AdminListings() {
 
   useEffect(() => { loadProperties() }, [])
 
+  // Reset page when tab, search, or filters change
+  useEffect(() => { setPage(0) }, [activeTab, search, filterStatus, filterType, filterTier])
+
   async function loadProperties() {
     const { data } = await supabase
       .from('properties')
-      .select('id,title,title_es,location_name,price_sale,price_rent_monthly,status,property_type,tier,featured,featured_order,hidden,visibility,facebook_published,encuentra24_published,images,created_at,slug,reference_id')
+      .select('id,title,title_es,location_name,price_sale,price_rent_monthly,status,property_type,tier,featured,featured_order,hidden,visibility,facebook_published,encuentra24_published,images,created_at,slug,reference_id,zone')
       .order('featured_order', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: false })
     setProperties(data ?? [])
@@ -205,6 +257,10 @@ export default function AdminListings() {
       setCopiedUrl(true)
       setTimeout(() => setCopiedUrl(false), 2000)
     })
+  }, [])
+
+  const handleDelete = useCallback((id: string) => {
+    setProperties(prev => prev.filter(p => p.id !== id))
   }, [])
 
   const counts = {
@@ -242,6 +298,13 @@ export default function AdminListings() {
     ? [...displayed].sort((a, b) => (a.featured_order ?? 999) - (b.featured_order ?? 999))
     : displayed
 
+  // For featured tab (DnD), show all; for other tabs paginate
+  const paginated = activeTab === 'featured'
+    ? sortedDisplayed
+    : sortedDisplayed.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+
+  const showPagination = activeTab !== 'featured' && sortedDisplayed.length > PAGE_SIZE
+
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
     if (!over || active.id === over.id) return
@@ -278,13 +341,13 @@ export default function AdminListings() {
         <div>
           <h1 className="font-serif text-3xl font-semibold">Listings</h1>
           <p className="text-muted-foreground text-sm mt-1">
-            {displayed.length} of {properties.length} properties
+            {properties.length} propiedades totales
             {savingOrder && <span className="ml-2 text-primary animate-pulse"> · Saving order…</span>}
           </p>
         </div>
         <Link href="/admin/listings/new"
           className="flex items-center gap-2 px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors w-fit">
-          <Plus className="w-4 h-4" /> Add Listing
+          <Plus className="w-4 h-4" /> Nueva Propiedad
         </Link>
       </div>
       <div className="flex items-center gap-1 border-b border-border mb-4 overflow-x-auto">
@@ -360,6 +423,7 @@ export default function AdminListings() {
                   <th className="px-3 py-3 w-14 text-left font-medium text-muted-foreground">Photo</th>
                   <th className="px-3 py-3 text-left font-medium text-muted-foreground">Property</th>
                   <th className="px-3 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Type</th>
+                  <th className="px-3 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Zona</th>
                   <th className="px-3 py-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Status</th>
                   <th className="px-3 py-3 text-left font-medium text-muted-foreground hidden lg:table-cell">Sale Price</th>
                   <th className="px-3 py-3 text-left font-medium text-muted-foreground hidden xl:table-cell">Date</th>
@@ -370,17 +434,44 @@ export default function AdminListings() {
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                   <SortableContext items={sortedDisplayed.map((p) => p.id)} strategy={verticalListSortingStrategy}>
                     <tbody>
-                      {sortedDisplayed.map((prop) => <SortableRow key={prop.id} prop={prop} onCopyLink={handleCopyLink} />)}
+                      {paginated.map((prop) => (
+                        <SortableRow key={prop.id} prop={prop} onCopyLink={handleCopyLink} onDelete={handleDelete} />
+                      ))}
                     </tbody>
                   </SortableContext>
                 </DndContext>
               ) : (
                 <tbody>
-                  {sortedDisplayed.map((prop) => <StandardRow key={prop.id} prop={prop} onCopyLink={handleCopyLink} />)}
+                  {paginated.map((prop) => (
+                    <StandardRow key={prop.id} prop={prop} onCopyLink={handleCopyLink} onDelete={handleDelete} />
+                  ))}
                 </tbody>
               )}
             </table>
           </div>
+          {showPagination && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border text-sm">
+              <span className="text-muted-foreground">
+                {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sortedDisplayed.length)} de {sortedDisplayed.length}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  disabled={page === 0}
+                  onClick={() => setPage(p => p - 1)}
+                  className="px-3 py-1 rounded border border-border disabled:opacity-40 hover:bg-secondary transition-colors"
+                >
+                  ← Anterior
+                </button>
+                <button
+                  disabled={(page + 1) * PAGE_SIZE >= sortedDisplayed.length}
+                  onClick={() => setPage(p => p + 1)}
+                  className="px-3 py-1 rounded border border-border disabled:opacity-40 hover:bg-secondary transition-colors"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
