@@ -35,13 +35,20 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('es')
 
   useEffect(() => {
-    const stored = localStorage.getItem('drhousing_lang') as Lang | null
+    // Try cookie first, then localStorage
+    const cookieLang = document.cookie
+      .split('; ')
+      .find((r) => r.startsWith('lang='))
+      ?.split('=')[1] as Lang | undefined
+    const stored = cookieLang ?? (localStorage.getItem('drhousing_lang') as Lang | null)
     if (stored === 'en' || stored === 'es') setLangState(stored)
   }, [])
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l)
     localStorage.setItem('drhousing_lang', l)
+    document.cookie = `lang=${l};path=/;max-age=31536000;SameSite=Lax`
+    window.location.reload()
   }, [])
 
   const t = useCallback(

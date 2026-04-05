@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   Menu, X, Phone, Mail, ChevronDown,
-  BookOpen, Calculator, MapPin, Globe, Building2,
+  BookOpen, Calculator, MapPin, Building2,
 } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
 
@@ -148,8 +148,7 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded px-2 py-1"
             >
-              <Globe className="w-3.5 h-3.5" />
-              {lang === 'es' ? 'EN' : 'ES'}
+              {lang === 'es' ? '🇺🇸 EN' : '🇨🇷 ES'}
             </button>
             <Link href="/family-affairs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {t('header.familyAffairs')}
@@ -212,8 +211,7 @@ export default function Navbar() {
                   onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
                   className="flex items-center gap-2 text-muted-foreground text-sm"
                 >
-                  <Globe className="w-4 h-4" />
-                  {lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+                  {lang === 'es' ? '🇺🇸 Switch to English' : '🇨🇷 Cambiar a Español'}
                 </button>
                 <a href="tel:+50686540888" className="flex items-center gap-2 text-muted-foreground text-sm">
                   <Phone className="w-4 h-4" />
