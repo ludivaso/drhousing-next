@@ -3,19 +3,31 @@ import Image from 'next/image'
 import { Bed, Bath, Maximize } from 'lucide-react'
 import { type PropertyRow, getHeroImage, formatPrice } from '@/lib/supabase/queries'
 import FavoriteButton from '@/components/FavoriteButton'
+import en from '@/messages/en.json'
+import es from '@/messages/es.json'
 
-// Status label + badge class — exact from Lovable source
-function getStatusBadge(status: string): { label: string; className: string } {
-  const map: Record<string, { label: string; className: string }> = {
-    for_sale:       { label: 'En Venta',          className: 'badge-sale' },
-    for_rent:       { label: 'En Alquiler',        className: 'badge-rent' },
-    both:           { label: 'Venta & Alquiler',   className: 'badge-both' },
-    presale:        { label: 'Preventa',            className: 'badge-both' },
-    under_contract: { label: 'Bajo Contrato',       className: 'bg-amber-600 text-white text-xs font-medium tracking-wide px-2.5 py-1 rounded' },
-    sold:           { label: 'Vendido',             className: 'bg-muted text-muted-foreground text-xs font-medium tracking-wide px-2.5 py-1 rounded' },
-    rented:         { label: 'Alquilado',           className: 'bg-muted text-muted-foreground text-xs font-medium tracking-wide px-2.5 py-1 rounded' },
+const STATUS_CLASSES: Record<string, string> = {
+  for_sale:       'badge-sale',
+  for_rent:       'badge-rent',
+  both:           'badge-both',
+  presale:        'badge-both',
+  under_contract: 'bg-amber-600 text-white text-xs font-medium tracking-wide px-2.5 py-1 rounded',
+  sold:           'bg-muted text-muted-foreground text-xs font-medium tracking-wide px-2.5 py-1 rounded',
+  rented:         'bg-muted text-muted-foreground text-xs font-medium tracking-wide px-2.5 py-1 rounded',
+}
+
+function getStatusLabel(status: string, lang: 'es' | 'en'): string {
+  const msgs = lang === 'en' ? en : es
+  const map: Record<string, string> = {
+    for_sale:       msgs.property.status.for_sale,
+    for_rent:       msgs.property.status.for_rent,
+    both:           msgs.property.status.both,
+    presale:        msgs.property.status.presale,
+    under_contract: msgs.property.status.under_contract,
+    sold:           msgs.property.status.sold,
+    rented:         msgs.property.status.rented,
   }
-  return map[status] ?? { label: status, className: 'badge-sale' }
+  return map[status] ?? status
 }
 
 interface PropertyCardProps {
@@ -27,7 +39,9 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
   const heroImage = getHeroImage(property)
   const title = (lang === 'en' ? property.title_en : null) ?? property.title
   const subtitle = lang === 'en' ? property.subtitle_en : property.subtitle
-  const { label: statusLabel, className: statusClass } = getStatusBadge(property.status)
+  const msgs = lang === 'en' ? en : es
+  const statusLabel = getStatusLabel(property.status, lang)
+  const statusClass = STATUS_CLASSES[property.status] ?? 'badge-sale'
 
   return (
     <Link
@@ -48,7 +62,7 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm font-sans">
-            Sin imagen
+            {msgs.property.noImage}
           </div>
         )}
 
@@ -56,6 +70,7 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
         <span className={`absolute top-3 left-3 uppercase tracking-wide ${statusClass}`}>
           {statusLabel}
         </span>
+
 
         {/* Favorite button: top-2 right-2 */}
         <FavoriteButton
@@ -119,7 +134,7 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
               <span className="font-serif text-xl tracking-tight text-foreground">
                 {formatPrice(property.price_rent_monthly, property.currency)}
               </span>
-              <span className="text-sm text-muted-foreground font-sans">/mes</span>
+              <span className="text-sm text-muted-foreground font-sans">{msgs.property.perMonth}</span>
             </div>
           )}
         </div>

@@ -307,7 +307,22 @@
     "construction": "Built",
     "land": "Land",
     "bedroom": "Bedroom",
-    "bathroom": "Bathroom"
+    "bathroom": "Bathroom",
+    "reference": "REFERENCE",
+    "callNow": "Call Now",
+    "requestInfo": "Request Info",
+    "agent": "AGENT",
+    "consultWhatsApp": "Ask via WhatsApp",
+    "whatsAppMessage": "Hello, I'm interested in property {{ref}}",
+    "readMore": "Read more",
+    "readLess": "Read less",
+    "viewAllPhotosCount": "View all photos ({{count}})",
+    "noImages": "No images",
+    "videoTitle": "Property video",
+    "galleryLabel": "Image gallery",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next"
   },
   "contact": {
     "title": "Begin a Conversation",
@@ -382,20 +397,24 @@
       "both": "Sale & Rent",
       "under_contract": "Under Contract",
       "sold": "Sold",
-      "rented": "Rented"
+      "rented": "Rented",
+      "presale": "Pre-Sale"
     },
     "type": {
       "house": "House",
       "condo": "Condo",
       "land": "Land",
       "commercial": "Commercial",
-      "other": "Other"
+      "other": "Other",
+      "apartment": "Apartment",
+      "townhouse": "Townhouse"
     },
     "tier": {
       "mid": "Mid-Range",
       "high_end": "High-End",
       "ultra_luxury": "Luxury"
-    }
+    },
+    "noImage": "No image"
   },
   "propertyGrid": {
     "featuredTitle": "Featured Properties",
@@ -406,7 +425,34 @@
     "noMatches": "No properties match your criteria.",
     "clearFilters": "Clear Filters",
     "count": "{{count}} property",
-    "count_other": "{{count}} properties"
+    "count_other": "{{count}} properties",
+    "title": "Properties",
+    "clearFiltersLink": "View all properties",
+    "countOfTotal": "of {{total}} total",
+    "filters": {
+      "statusLabel": "Type",
+      "propertyType": "Property",
+      "bedrooms": "Bedrooms",
+      "priceUSD": "Price USD",
+      "min": "Min",
+      "max": "Max",
+      "zone": "Zone",
+      "communityType": "Community Type",
+      "all": "All",
+      "allF": "All",
+      "forSale": "For Sale",
+      "forRent": "For Rent",
+      "house": "House",
+      "apartment": "Apartment",
+      "lot": "Lot",
+      "commercial": "Commercial",
+      "gated": "🔒 Gated Community",
+      "independent": "🏠 Independent",
+      "clearFilters": "Clear filters",
+      "bedTag": "{{count}}+ beds",
+      "minPrice": "Min ${{amount}}",
+      "maxPrice": "Max ${{amount}}"
+    }
   },
   "agentCard": {
     "scheduleCall": "Schedule a Call",
@@ -1148,9 +1194,21 @@
         "comparison": {
           "title": "Why West GAM Outperforms Beach Zones",
           "westGam": "West GAM",
-          "westGamFeatures": ["20-35 min to international airport", "5-15 min to world-class hospitals", "Same-day international flights", "Complete year-round services", "Multinational employment anchors"],
+          "westGamFeatures": [
+            "20-35 min to international airport",
+            "5-15 min to world-class hospitals",
+            "Same-day international flights",
+            "Complete year-round services",
+            "Multinational employment anchors"
+          ],
           "beachCorridors": "Beach Corridors",
-          "beachFeatures": ["3-5 hours to main airport", "Limited medical facilities", "Domestic flight required", "Seasonal service availability", "Tourism-dependent economy"]
+          "beachFeatures": [
+            "3-5 hours to main airport",
+            "Limited medical facilities",
+            "Domestic flight required",
+            "Seasonal service availability",
+            "Tourism-dependent economy"
+          ]
         }
       }
     },

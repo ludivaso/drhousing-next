@@ -307,7 +307,22 @@
     "construction": "Construcción",
     "land": "Terreno",
     "bedroom": "Habitación",
-    "bathroom": "Baño"
+    "bathroom": "Baño",
+    "reference": "REFERENCIA",
+    "callNow": "Llamar ahora",
+    "requestInfo": "Solicitar información",
+    "agent": "AGENTE",
+    "consultWhatsApp": "Consultar por WhatsApp",
+    "whatsAppMessage": "Hola, me interesa la propiedad {{ref}}",
+    "readMore": "Leer más",
+    "readLess": "Leer menos",
+    "viewAllPhotosCount": "Ver todas las fotos ({{count}})",
+    "noImages": "Sin imágenes",
+    "videoTitle": "Video de la propiedad",
+    "galleryLabel": "Galería de imágenes",
+    "close": "Cerrar",
+    "previous": "Anterior",
+    "next": "Siguiente"
   },
   "contact": {
     "title": "Contáctenos",
@@ -382,20 +397,24 @@
       "both": "Venta y Alquiler",
       "under_contract": "Bajo Contrato",
       "sold": "Vendida",
-      "rented": "Alquilada"
+      "rented": "Alquilada",
+      "presale": "Preventa"
     },
     "type": {
       "house": "Casa",
       "condo": "Condominio",
       "land": "Terreno",
       "commercial": "Comercial",
-      "other": "Otro"
+      "other": "Otro",
+      "apartment": "Apartamento",
+      "townhouse": "Townhouse"
     },
     "tier": {
       "mid": "Gama Media",
       "high_end": "Alta Gama",
       "ultra_luxury": "Lujo"
-    }
+    },
+    "noImage": "Sin imagen"
   },
   "propertyGrid": {
     "featuredTitle": "Propiedades Destacadas",
@@ -406,7 +425,34 @@
     "noMatches": "No hay propiedades que coincidan con sus criterios.",
     "clearFilters": "Limpiar Filtros",
     "count": "{{count}} propiedad",
-    "count_other": "{{count}} propiedades"
+    "count_other": "{{count}} propiedades",
+    "title": "Propiedades",
+    "clearFiltersLink": "Ver todas las propiedades",
+    "countOfTotal": "de {{total}} en total",
+    "filters": {
+      "statusLabel": "Tipo",
+      "propertyType": "Propiedad",
+      "bedrooms": "Habitaciones",
+      "priceUSD": "Precio USD",
+      "min": "Mín",
+      "max": "Máx",
+      "zone": "Zona",
+      "communityType": "Tipo de comunidad",
+      "all": "Todos",
+      "allF": "Todas",
+      "forSale": "En Venta",
+      "forRent": "En Alquiler",
+      "house": "Casa",
+      "apartment": "Apartamento",
+      "lot": "Lote",
+      "commercial": "Comercial",
+      "gated": "🔒 Condominio / Cerrado",
+      "independent": "🏠 Independiente",
+      "clearFilters": "Limpiar filtros",
+      "bedTag": "{{count}}+ hab",
+      "minPrice": "Mín ${{amount}}",
+      "maxPrice": "Máx ${{amount}}"
+    }
   },
   "agentCard": {
     "scheduleCall": "Agendar una Llamada",
@@ -1148,9 +1194,21 @@
         "comparison": {
           "title": "Por Qué el GAM Oeste Supera las Zonas de Playa",
           "westGam": "GAM Oeste",
-          "westGamFeatures": ["20-35 min al aeropuerto internacional", "5-15 min a hospitales de clase mundial", "Vuelos internacionales el mismo día", "Servicios completos todo el año", "Anclas de empleo multinacional"],
+          "westGamFeatures": [
+            "20-35 min al aeropuerto internacional",
+            "5-15 min a hospitales de clase mundial",
+            "Vuelos internacionales el mismo día",
+            "Servicios completos todo el año",
+            "Anclas de empleo multinacional"
+          ],
           "beachCorridors": "Corredores de Playa",
-          "beachFeatures": ["3-5 horas al aeropuerto principal", "Instalaciones médicas limitadas", "Vuelo doméstico requerido", "Disponibilidad de servicios estacional", "Economía dependiente del turismo"]
+          "beachFeatures": [
+            "3-5 horas al aeropuerto principal",
+            "Instalaciones médicas limitadas",
+            "Vuelo doméstico requerido",
+            "Disponibilidad de servicios estacional",
+            "Economía dependiente del turismo"
+          ]
         }
       }
     },

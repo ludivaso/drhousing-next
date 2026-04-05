@@ -41,7 +41,16 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       .find((r) => r.startsWith('lang='))
       ?.split('=')[1] as Lang | undefined
     const stored = cookieLang ?? (localStorage.getItem('drhousing_lang') as Lang | null)
-    if (stored === 'en' || stored === 'es') setLangState(stored)
+    if (stored === 'en' || stored === 'es') {
+      setLangState(stored)
+    } else {
+      // First visit — detect from browser language
+      const nav = navigator.language ?? ''
+      const detected: Lang = nav.startsWith('en') ? 'en' : nav.startsWith('es') ? 'es' : 'en'
+      setLangState(detected)
+      localStorage.setItem('drhousing_lang', detected)
+      document.cookie = `lang=${detected};path=/;max-age=31536000;SameSite=Lax`
+    }
   }, [])
 
   const setLang = useCallback((l: Lang) => {

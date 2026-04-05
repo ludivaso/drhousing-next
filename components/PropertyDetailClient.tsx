@@ -49,17 +49,6 @@ function formatLabel(s: string): string {
     .join(' ')
 }
 
-function getPropertyTypeLabel(type: string): string {
-  const map: Record<string, string> = {
-    house:       'Casa',
-    apartment:   'Apartamento',
-    condo:       'Condominio',
-    land:        'Lote',
-    commercial:  'Comercial',
-    townhouse:   'Townhouse',
-  }
-  return map[type] ?? type
-}
 
 // ── Lightbox ─────────────────────────────────────────────────────────────────
 
@@ -73,6 +62,7 @@ function Lightbox({
   onClose: () => void
 }) {
   const [current, setCurrent] = useState(startIndex)
+  const { t } = useI18n()
 
   const prev = useCallback(() => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1)), [images.length])
   const next = useCallback(() => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1)), [images.length])
@@ -91,7 +81,7 @@ function Lightbox({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Galería de imágenes"
+      aria-label={t('propertyDetail.galleryLabel')}
       className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
       onClick={onClose}
     >
@@ -99,7 +89,7 @@ function Lightbox({
       <button
         className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
         onClick={onClose}
-        aria-label="Cerrar"
+        aria-label={t('propertyDetail.close')}
       >
         <X className="w-6 h-6" />
       </button>
@@ -108,7 +98,7 @@ function Lightbox({
       <button
         className="absolute left-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
         onClick={(e) => { e.stopPropagation(); prev() }}
-        aria-label="Anterior"
+        aria-label={t('propertyDetail.previous')}
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
@@ -134,7 +124,7 @@ function Lightbox({
       <button
         className="absolute right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
         onClick={(e) => { e.stopPropagation(); next() }}
-        aria-label="Siguiente"
+        aria-label={t('propertyDetail.next')}
       >
         <ChevronRight className="w-6 h-6" />
       </button>
@@ -153,7 +143,7 @@ interface Props {
 }
 
 export default function PropertyDetailClient({ property, relatedProperties = [], lang: langProp, agent, propertyFeatures = [] }: Props) {
-  const { lang: i18nLang } = useI18n()
+  const { lang: i18nLang, t } = useI18n()
   const lang = langProp ?? i18nLang
   const p = property
 
@@ -175,19 +165,19 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
   const title       = (lang === 'en' && p.title_en) ? p.title_en : p.title
   const description = (lang === 'en' && p.description_en) ? p.description_en : (p.description ?? '')
 
-  const whatsappText  = encodeURIComponent(`Hola, me interesa la propiedad ${p.reference_id ?? p.title}`)
+  const whatsappText  = encodeURIComponent(t('propertyDetail.whatsAppMessage', { ref: p.reference_id ?? p.title ?? '' }))
   const whatsappHref  = `https://wa.me/50686540888?text=${whatsappText}`
 
   // Status badge logic
   function getStatusBadge() {
     if (p.price_sale && p.price_rent_monthly) {
-      return { label: 'Venta y Alquiler', className: 'bg-amber-500 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+      return { label: t('property.status.both'), className: 'bg-amber-500 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
     }
     if (p.price_sale) {
-      return { label: 'En Venta', className: 'bg-green-600 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+      return { label: t('property.status.for_sale'), className: 'bg-green-600 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
     }
     if (p.price_rent_monthly) {
-      return { label: 'En Alquiler', className: 'bg-blue-600 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+      return { label: t('property.status.for_rent'), className: 'bg-blue-600 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
     }
     return null
   }
@@ -216,7 +206,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-sans"
             >
               <ArrowLeft className="w-4 h-4" />
-              Volver a propiedades
+              {t('propertyDetail.backToProperties')}
             </Link>
           </div>
         </div>
@@ -236,7 +226,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                 </span>
               )}
               <span className="text-xs font-medium px-2.5 py-1 rounded border border-border text-muted-foreground font-sans">
-                {getPropertyTypeLabel(p.property_type)}
+                {t(`property.type.${p.property_type}`) || p.property_type}
               </span>
             </div>
 
@@ -341,13 +331,13 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                     className="absolute bottom-4 right-4 bg-white/90 text-foreground text-sm font-sans font-medium px-4 py-2 rounded-lg shadow hover:bg-white transition-colors"
                     onClick={() => openLightbox(0)}
                   >
-                    Ver todas las fotos ({allImages.length})
+                    {t('propertyDetail.viewAllPhotosCount', { count: allImages.length })}
                   </button>
                 )}
               </div>
             ) : (
               <div className="aspect-[16/9] rounded-xl bg-border flex items-center justify-center text-muted-foreground font-sans text-sm">
-                Sin imágenes
+                {t('propertyDetail.noImages')}
               </div>
             )}
 
@@ -356,7 +346,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
               <div className="mt-6 aspect-video rounded-xl overflow-hidden">
                 <iframe
                   src={p.youtube_url.replace('watch?v=', 'embed/')}
-                  title="Video de la propiedad"
+                  title={t('propertyDetail.videoTitle')}
                   width="100%"
                   height="100%"
                   className="w-full h-full"
@@ -382,7 +372,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
               {description && (
                 <section>
                   <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                    Descripción
+                    {t('propertyDetail.description')}
                   </h2>
                   <div className="font-sans text-sm text-foreground leading-relaxed">
                     <p style={{ whiteSpace: 'pre-wrap' }}>{displayedDesc}</p>
@@ -392,7 +382,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                         style={{ color: '#C9A96E' }}
                         onClick={() => setDescExpanded((v) => !v)}
                       >
-                        {descExpanded ? 'Leer menos' : 'Leer más'}
+                        {descExpanded ? t('propertyDetail.readLess') : t('propertyDetail.readMore')}
                       </button>
                     )}
                   </div>
@@ -429,7 +419,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   {(p.features?.length ?? 0) > 0 && (
                     <section>
                       <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                        Características
+                        {t('propertyDetail.features')}
                       </h2>
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {(p.features ?? []).map((f) => (
@@ -445,7 +435,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   {(p.amenities?.length ?? 0) > 0 && (
                     <section>
                       <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                        Amenidades
+                        {t('propertyDetail.amenities')}
                       </h2>
                       <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         {(p.amenities ?? []).map((a) => (
@@ -467,7 +457,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   style={{ borderLeft: '3px solid #C9A96E', backgroundColor: '#F5F2EE' }}
                 >
                   <h2 className="font-serif text-xl font-semibold text-foreground mb-3">
-                    Perspectiva de Inversión
+                    {t('propertyDetail.investmentPerspective')}
                   </h2>
                   <p className="font-sans text-sm text-foreground leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>
                     {p.plusvalia_notes}
@@ -485,14 +475,14 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   style={{ backgroundColor: '#25D366' }}
                 >
                   <WhatsAppIcon />
-                  Consultar sobre esta propiedad
+                  {t('propertyDetail.askAboutProperty')}
                 </Link>
               </section>
 
               {/* Google Maps */}
               <section>
                 <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                  Ubicación
+                  {t('propertyDetail.location')}
                 </h2>
                 {p.lat !== null && p.lng !== null ? (
                   <iframe
@@ -518,7 +508,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
               {relatedProperties.length > 0 && (
                 <section>
                   <h2 className="font-serif text-xl font-semibold text-foreground mb-6">
-                    Propiedades Similares
+                    {t('propertyDetail.similarProperties')}
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {relatedProperties.map((rp) => (
@@ -538,7 +528,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                 {p.reference_id && (
                   <div>
                     <p className="text-xs font-sans text-muted-foreground uppercase tracking-wide mb-1">
-                      Referencia
+                      {t('propertyDetail.reference')}
                     </p>
                     <p className="font-mono text-sm text-foreground">{p.reference_id}</p>
                   </div>
@@ -550,7 +540,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   className="flex items-center gap-3 w-full py-3 px-4 rounded-lg border border-border font-sans text-sm font-medium text-foreground hover:bg-muted transition-colors"
                 >
                   <Phone className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                  Llamar ahora
+                  {t('propertyDetail.callNow')}
                 </a>
 
                 {/* Email inquiry */}
@@ -559,13 +549,13 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   className="flex items-center gap-3 w-full py-3 px-4 rounded-lg border border-border font-sans text-sm font-medium text-foreground hover:bg-muted transition-colors"
                 >
                   <Mail className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                  Solicitar información
+                  {t('propertyDetail.requestInfo')}
                 </button>
 
                 {/* Agent card */}
                 <div className="border-t border-border pt-4">
                   <p className="text-xs font-sans text-muted-foreground uppercase tracking-wide mb-2">
-                    Agente
+                    {t('propertyDetail.agent')}
                   </p>
                   {agent ? (
                     <div className="flex items-center gap-3">
@@ -597,7 +587,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                       </div>
                       <div>
                         <p className="font-sans text-sm font-medium text-foreground">DR Housing</p>
-                        <p className="font-sans text-xs text-muted-foreground">Agente</p>
+                        <p className="font-sans text-xs text-muted-foreground">{t('propertyDetail.agent')}</p>
                       </div>
                     </div>
                   )}
@@ -606,7 +596,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                 {/* Listed date */}
                 <div className="border-t border-border pt-4">
                   <p className="text-xs font-sans text-muted-foreground uppercase tracking-wide mb-1">
-                    Publicado
+                    {t('propertyDetail.listed')}
                   </p>
                   <p className="font-sans text-sm text-foreground">{formatDate(p.created_at)}</p>
                 </div>
@@ -620,7 +610,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   style={{ backgroundColor: '#25D366' }}
                 >
                   <WhatsAppIcon size={18} />
-                  Consultar por WhatsApp
+                  {t('propertyDetail.consultWhatsApp')}
                 </Link>
               </div>
             </aside>

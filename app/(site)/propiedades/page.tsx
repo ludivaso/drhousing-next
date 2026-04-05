@@ -6,10 +6,40 @@ import PropertyCard from '@/components/PropertyCard'
 import FilterBar from '@/components/FilterBar'
 import ActiveFilterTags from '@/components/ActiveFilterTags'
 import type { PropertyRow } from '@/lib/supabase/queries'
+import en from '@/messages/en.json'
+import es from '@/messages/es.json'
 
-export const metadata: Metadata = {
-  title: 'Propiedades',
-  description: 'Casas, apartamentos y terrenos en venta y alquiler en Costa Rica',
+function getLang(): 'es' | 'en' {
+  const cookieStore = cookies()
+  const val = cookieStore.get('lang')?.value
+  return val === 'en' ? 'en' : 'es'
+}
+
+function t(lang: 'es' | 'en', key: string, vars?: Record<string, string | number>): string {
+  const msgs: Record<string, unknown> = lang === 'en' ? en as unknown as Record<string, unknown> : es as unknown as Record<string, unknown>
+  const parts = key.split('.')
+  let cur: unknown = msgs
+  for (const part of parts) {
+    if (cur == null || typeof cur !== 'object') return key
+    cur = (cur as Record<string, unknown>)[part]
+  }
+  let str = typeof cur === 'string' ? cur : key
+  if (vars) {
+    Object.entries(vars).forEach(([k, v]) => {
+      str = str.replace(new RegExp(`\\{\\{${k}\\}\\}`, 'g'), String(v))
+    })
+  }
+  return str
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = getLang()
+  return {
+    title: lang === 'en' ? 'Properties | DR Housing' : 'Propiedades | DR Housing',
+    description: lang === 'en'
+      ? 'Houses, apartments and land for sale and rent in Costa Rica'
+      : 'Casas, apartamentos y terrenos en venta y alquiler en Costa Rica',
+  }
 }
 
 export const dynamic = 'force-dynamic'
@@ -42,8 +72,7 @@ interface PageProps {
 }
 
 export default async function PropiedadesPage({ searchParams }: PageProps) {
-  const cookieStore = cookies()
-  const lang = (cookieStore.get('lang')?.value || 'es') as 'es' | 'en'
+  const lang = getLang()
 
   // Total public count (unfiltered) for "X de N" display
   const { count: totalCount } = await supabase
@@ -85,18 +114,18 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
 
   // Build active filter tags for the removable chips
   const activeTags: { key: string; label: string }[] = []
-  if (searchParams.status === 'for_sale')    activeTags.push({ key: 'status',    label: 'En Venta' })
-  if (searchParams.status === 'for_rent')    activeTags.push({ key: 'status',    label: 'En Alquiler' })
-  if (searchParams.tipo === 'house')         activeTags.push({ key: 'tipo',      label: 'Casa' })
-  if (searchParams.tipo === 'condo')         activeTags.push({ key: 'tipo',      label: 'Apartamento' })
-  if (searchParams.tipo === 'land')          activeTags.push({ key: 'tipo',      label: 'Lote' })
-  if (searchParams.tipo === 'commercial')    activeTags.push({ key: 'tipo',      label: 'Comercial' })
-  if (searchParams.camas)                    activeTags.push({ key: 'camas',     label: `${searchParams.camas}+ hab` })
+  if (searchParams.status === 'for_sale')    activeTags.push({ key: 'status',    label: t(lang, 'propertyGrid.filters.forSale') })
+  if (searchParams.status === 'for_rent')    activeTags.push({ key: 'status',    label: t(lang, 'propertyGrid.filters.forRent') })
+  if (searchParams.tipo === 'house')         activeTags.push({ key: 'tipo',      label: t(lang, 'propertyGrid.filters.house') })
+  if (searchParams.tipo === 'condo')         activeTags.push({ key: 'tipo',      label: t(lang, 'propertyGrid.filters.apartment') })
+  if (searchParams.tipo === 'land')          activeTags.push({ key: 'tipo',      label: t(lang, 'propertyGrid.filters.lot') })
+  if (searchParams.tipo === 'commercial')    activeTags.push({ key: 'tipo',      label: t(lang, 'propertyGrid.filters.commercial') })
+  if (searchParams.camas)                    activeTags.push({ key: 'camas',     label: t(lang, 'propertyGrid.filters.bedTag', { count: searchParams.camas }) })
   if (searchParams.zona)                     activeTags.push({ key: 'zona',      label: ZONA_LABELS[searchParams.zona] ?? searchParams.zona })
-  if (searchParams.comunidad === 'gated')    activeTags.push({ key: 'comunidad', label: 'Condominio' })
-  if (searchParams.comunidad === 'independent') activeTags.push({ key: 'comunidad', label: 'Independiente' })
-  if (searchParams.min)                      activeTags.push({ key: 'min',       label: `Mín $${Number(searchParams.min).toLocaleString()}` })
-  if (searchParams.max)                      activeTags.push({ key: 'max',       label: `Máx $${Number(searchParams.max).toLocaleString()}` })
+  if (searchParams.comunidad === 'gated')    activeTags.push({ key: 'comunidad', label: t(lang, 'propertyGrid.filters.gated') })
+  if (searchParams.comunidad === 'independent') activeTags.push({ key: 'comunidad', label: t(lang, 'propertyGrid.filters.independent') })
+  if (searchParams.min)                      activeTags.push({ key: 'min',       label: t(lang, 'propertyGrid.filters.minPrice', { amount: Number(searchParams.min).toLocaleString() }) })
+  if (searchParams.max)                      activeTags.push({ key: 'max',       label: t(lang, 'propertyGrid.filters.maxPrice', { amount: Number(searchParams.max).toLocaleString() }) })
 
   return (
     <>
@@ -111,11 +140,11 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
           <div className="mb-6 space-y-3">
             <div className="flex items-baseline justify-between gap-4 flex-wrap">
               <h1 className="font-serif text-2xl font-semibold text-foreground">
-                Propiedades
+                {t(lang, 'propertyGrid.title')}
               </h1>
               <span className="text-sm text-muted-foreground">
-                {properties.length} propiedad{properties.length !== 1 ? 'es' : ''}
-                {isFiltered && totalCount != null ? ` de ${totalCount} en total` : ''}
+                {t(lang, properties.length !== 1 ? 'propertyGrid.count_other' : 'propertyGrid.count', { count: properties.length })}
+                {isFiltered && totalCount != null ? ` ${t(lang, 'propertyGrid.countOfTotal', { total: totalCount })}` : ''}
               </span>
             </div>
 
@@ -127,11 +156,11 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
           {properties.length === 0 ? (
             <div className="py-20 text-center">
               <p className="text-muted-foreground mb-4">
-                No encontramos propiedades con estos filtros.
+                {t(lang, 'propertyGrid.noMatches')}
               </p>
               <a href="/propiedades"
                 className="inline-flex items-center px-5 py-2.5 rounded border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors">
-                Ver todas las propiedades
+                {t(lang, 'propertyGrid.clearFiltersLink')}
               </a>
             </div>
           ) : (

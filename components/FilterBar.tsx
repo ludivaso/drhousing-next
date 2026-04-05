@@ -1,6 +1,7 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
+import { useI18n } from '@/lib/i18n/context'
 
 // Zone values must exactly match the `zone` TEXT column in Supabase
 const ZONES = [
@@ -17,37 +18,38 @@ const ZONES = [
   { value: 'Otras zonas',            label: 'Otras zonas' },
 ]
 
-const STATUS_OPTIONS = [
-  { value: '',         label: 'Todos' },
-  { value: 'for_sale', label: 'En Venta' },
-  { value: 'for_rent', label: 'En Alquiler' },
-]
-
-const TYPE_OPTIONS = [
-  { value: '',           label: 'Todos' },
-  { value: 'house',      label: 'Casa' },
-  { value: 'condo',      label: 'Apartamento' },
-  { value: 'land',       label: 'Lote' },
-  { value: 'commercial', label: 'Comercial' },
-]
-
-const BED_OPTIONS = [
-  { value: '', label: 'Todos' },
-  { value: '1', label: '1+' },
-  { value: '2', label: '2+' },
-  { value: '3', label: '3+' },
-  { value: '4', label: '4+' },
-]
-
-const COMUNIDAD_OPTIONS = [
-  { value: '',            label: 'Todas' },
-  { value: 'gated',       label: '🔒 Condominio / Cerrado' },
-  { value: 'independent', label: '🏠 Independiente' },
-]
-
 export default function FilterBar() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useI18n()
+
+  const STATUS_OPTIONS = [
+    { value: '',         label: t('propertyGrid.filters.all') },
+    { value: 'for_sale', label: t('propertyGrid.filters.forSale') },
+    { value: 'for_rent', label: t('propertyGrid.filters.forRent') },
+  ]
+
+  const TYPE_OPTIONS = [
+    { value: '',           label: t('propertyGrid.filters.all') },
+    { value: 'house',      label: t('propertyGrid.filters.house') },
+    { value: 'condo',      label: t('propertyGrid.filters.apartment') },
+    { value: 'land',       label: t('propertyGrid.filters.lot') },
+    { value: 'commercial', label: t('propertyGrid.filters.commercial') },
+  ]
+
+  const BED_OPTIONS = [
+    { value: '', label: t('propertyGrid.filters.all') },
+    { value: '1', label: '1+' },
+    { value: '2', label: '2+' },
+    { value: '3', label: '3+' },
+    { value: '4', label: '4+' },
+  ]
+
+  const COMUNIDAD_OPTIONS = [
+    { value: '',            label: t('propertyGrid.filters.allF') },
+    { value: 'gated',       label: t('propertyGrid.filters.gated') },
+    { value: 'independent', label: t('propertyGrid.filters.independent') },
+  ]
 
   const setParam = useCallback((key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -84,7 +86,9 @@ export default function FilterBar() {
         {/* Row 1: Status + Type + Beds + Price */}
         <div className="flex flex-wrap gap-4 items-end">
           <div>
-            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Tipo</p>
+            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
+              {t('propertyGrid.filters.statusLabel')}
+            </p>
             <div className="flex gap-1 overflow-x-auto scrollbar-hide">
               {STATUS_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setParam('status', opt.value || null)}
@@ -96,7 +100,9 @@ export default function FilterBar() {
           </div>
 
           <div>
-            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Propiedad</p>
+            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
+              {t('propertyGrid.filters.propertyType')}
+            </p>
             <div className="flex gap-1 overflow-x-auto scrollbar-hide">
               {TYPE_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setParam('tipo', opt.value || null)}
@@ -108,7 +114,9 @@ export default function FilterBar() {
           </div>
 
           <div>
-            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Habitaciones</p>
+            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
+              {t('propertyGrid.filters.bedrooms')}
+            </p>
             <div className="flex gap-1">
               {BED_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setParam('camas', opt.value || null)}
@@ -120,13 +128,15 @@ export default function FilterBar() {
           </div>
 
           <div>
-            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Precio USD</p>
+            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
+              {t('propertyGrid.filters.priceUSD')}
+            </p>
             <div className="flex items-center gap-2">
-              <input type="number" placeholder="Mín" value={min}
+              <input type="number" placeholder={t('propertyGrid.filters.min')} value={min}
                 onChange={e => setParam('min', e.target.value || null)}
                 className="w-24 px-2 py-1.5 border border-input rounded text-xs bg-background focus:outline-none" />
               <span className="text-muted-foreground text-xs">–</span>
-              <input type="number" placeholder="Máx" value={max}
+              <input type="number" placeholder={t('propertyGrid.filters.max')} value={max}
                 onChange={e => setParam('max', e.target.value || null)}
                 className="w-24 px-2 py-1.5 border border-input rounded text-xs bg-background focus:outline-none" />
             </div>
@@ -135,10 +145,12 @@ export default function FilterBar() {
 
         {/* Row 2: Zona */}
         <div>
-          <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Zona</p>
+          <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
+            {t('propertyGrid.filters.zone')}
+          </p>
           <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-0.5">
             <button onClick={() => setParam('zona', null)} className={pill(zona === '')}>
-              Todas
+              {t('propertyGrid.filters.allF')}
             </button>
             {ZONES.map(z => (
               <button key={z.value} onClick={() => setParam('zona', z.value)}
@@ -152,7 +164,9 @@ export default function FilterBar() {
         {/* Row 3: Comunidad + Clear */}
         <div className="flex flex-wrap gap-4 items-center justify-between">
           <div>
-            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Tipo de comunidad</p>
+            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
+              {t('propertyGrid.filters.communityType')}
+            </p>
             <div className="flex gap-1 overflow-x-auto scrollbar-hide">
               {COMUNIDAD_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setParam('comunidad', opt.value || null)}
@@ -167,7 +181,7 @@ export default function FilterBar() {
             <button
               onClick={() => router.push('/propiedades', { scroll: false })}
               className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors self-end pb-1.5">
-              Limpiar filtros
+              {t('propertyGrid.filters.clearFilters')}
             </button>
           )}
         </div>
