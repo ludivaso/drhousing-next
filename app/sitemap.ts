@@ -40,7 +40,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: {
       languages: {
         es: route.url,
-        en: `${route.url}?lang=en`,
+        en: route.url,
+        'x-default': route.url,
       },
     },
   }))

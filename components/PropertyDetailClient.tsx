@@ -19,7 +19,7 @@ import {
   Phone,
   Mail,
 } from 'lucide-react'
-import { formatPrice, type PropertyRow } from '@/lib/supabase/queries'
+import { formatPrice, type PropertyRow, type AgentRow } from '@/lib/supabase/queries'
 import PropertyCard from '@/components/PropertyCard'
 import FavoriteButton from '@/components/FavoriteButton'
 import { useI18n } from '@/lib/i18n/context'
@@ -32,6 +32,10 @@ function formatDate(dateStr: string): string {
     month: 'long',
     day: 'numeric',
   })
+}
+
+function formatLabel(s: string): string {
+  return s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 function getPropertyTypeLabel(type: string): string {
@@ -74,6 +78,9 @@ function Lightbox({
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Galería de imágenes"
       className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
       onClick={onClose}
     >
@@ -130,9 +137,10 @@ interface Props {
   property: PropertyRow
   relatedProperties?: PropertyRow[]
   lang?: 'es' | 'en'
+  agent?: AgentRow | null
 }
 
-export default function PropertyDetailClient({ property, relatedProperties = [], lang: langProp }: Props) {
+export default function PropertyDetailClient({ property, relatedProperties = [], lang: langProp, agent }: Props) {
   const { lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
   const p = property
@@ -212,7 +220,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
               )}
               {p.tier && (
                 <span className="text-xs font-medium px-2.5 py-1 rounded bg-muted text-muted-foreground font-sans capitalize">
-                  {p.tier}
+                  {formatLabel(p.tier)}
                 </span>
               )}
               <span className="text-xs font-medium px-2.5 py-1 rounded border border-border text-muted-foreground font-sans">
@@ -389,7 +397,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                     {(p.features ?? []).map((f) => (
                       <li key={f} className="flex items-center gap-2 font-sans text-sm text-foreground">
                         <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                        {f}
+                        {formatLabel(f)}
                       </li>
                     ))}
                   </ul>
@@ -406,7 +414,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                     {(p.amenities ?? []).map((a) => (
                       <li key={a} className="flex items-center gap-2 font-sans text-sm text-foreground">
                         <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                        {a}
+                        {formatLabel(a)}
                       </li>
                     ))}
                   </ul>
@@ -520,19 +528,40 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   <p className="text-xs font-sans text-muted-foreground uppercase tracking-wide mb-2">
                     Agente
                   </p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-serif font-semibold text-muted-foreground">
-                        {((p as PropertyRow & { listing_agent_name?: string }).listing_agent_name ?? 'A')[0].toUpperCase()}
-                      </span>
+                  {agent ? (
+                    <div className="flex items-center gap-3">
+                      {agent.photo_url ? (
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                          <Image src={agent.photo_url} alt={agent.full_name} fill className="object-cover" unoptimized />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                          <span className="text-sm font-serif font-semibold text-muted-foreground">
+                            {agent.full_name[0].toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-sans text-sm font-medium text-foreground">{agent.full_name}</p>
+                        <p className="font-sans text-xs text-muted-foreground capitalize">{agent.role}</p>
+                        {agent.phone && (
+                          <a href={`tel:${agent.phone}`} className="font-sans text-xs text-muted-foreground hover:text-foreground">
+                            {agent.phone}
+                          </a>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-sans text-sm font-medium text-foreground">
-                        {(p as PropertyRow & { listing_agent_name?: string }).listing_agent_name ?? 'Agente DR Housing'}
-                      </p>
-                      <p className="font-sans text-xs text-muted-foreground">DR Housing</p>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-serif font-semibold text-muted-foreground">D</span>
+                      </div>
+                      <div>
+                        <p className="font-sans text-sm font-medium text-foreground">DR Housing</p>
+                        <p className="font-sans text-xs text-muted-foreground">Agente</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Listed date */}

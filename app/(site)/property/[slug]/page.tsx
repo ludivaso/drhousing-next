@@ -7,7 +7,7 @@ import {
   getHeroImage,
 } from '@/lib/supabase/queries'
 import { supabase } from '@/lib/supabase/client'
-import type { PropertyRow } from '@/lib/supabase/queries'
+import type { PropertyRow, AgentRow } from '@/lib/supabase/queries'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
 
 export const dynamic = 'force-dynamic'
@@ -94,6 +94,17 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
   const property = await getPropertyBySlug(params.slug)
   if (!property) notFound()
 
+  // Fetch listing agent if set
+  let listingAgent: AgentRow | null = null
+  if (property.listing_agent_id) {
+    const { data: agentData } = await supabase
+      .from('agents')
+      .select('*')
+      .eq('id', property.listing_agent_id)
+      .maybeSingle()
+    listingAgent = agentData
+  }
+
   // Fetch related properties
   const { data: relatedData } = await supabase
     .from('properties')
@@ -101,7 +112,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
     .eq('hidden', false)
     .eq('visibility', 'public')
     .neq('id', property.id)
-    .or(`location_name.eq.${property.location_name},tier.eq.${property.tier}`)
+    .or(`location_name.eq."${property.location_name}",tier.eq."${property.tier}"`)
     .limit(4)
 
   const relatedProperties: PropertyRow[] = relatedData ?? []
@@ -143,7 +154,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PropertyDetailClient property={property} relatedProperties={relatedProperties} lang={lang as 'es' | 'en'} />
+      <PropertyDetailClient property={property} relatedProperties={relatedProperties} lang={lang as 'es' | 'en'} agent={listingAgent} />
     </>
   )
 }

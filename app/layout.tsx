@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -38,9 +39,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const lang = (await cookies()).get('lang')?.value || 'es'
   return (
-    <html lang="es">
+    <html lang={lang}>
       <body className="min-h-screen bg-background text-foreground antialiased">
         {children}
       </body>

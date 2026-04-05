@@ -1,14 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Phone, Mail, MapPin, LayoutDashboard } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
+import { supabase } from '@/lib/supabase/client'
 
 export default function Footer() {
   const { t } = useI18n()
   const [email, setEmail] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user)
+    })
+  }, [])
 
   const quickLinks = [
     { nameKey: 'header.properties', href: '/propiedades' },
@@ -115,14 +123,16 @@ export default function Footer() {
             <Link href="/terminos" className="hover:text-gold transition-colors">
               {t('footer.termsOfService')}
             </Link>
-            <Link
-              href="/admin"
-              className="flex items-center gap-1.5 text-primary-foreground/30 hover:text-gold/60 transition-all duration-200 text-xs tracking-widest uppercase"
-              title="Admin Dashboard"
-            >
-              <LayoutDashboard className="w-3 h-3" />
-              <span>Dashboard</span>
-            </Link>
+            {isLoggedIn && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-1.5 text-primary-foreground/30 hover:text-gold/60 transition-all duration-200 text-xs tracking-widest uppercase"
+                title="Admin Dashboard"
+              >
+                <LayoutDashboard className="w-3 h-3" />
+                <span>Dashboard</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>

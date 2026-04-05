@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: { absolute: 'DR Housing | Luxury Real Estate Escazú · Santa Ana · Costa Rica' },
   description:
     'Premium luxury homes and investment properties in Escazú, Santa Ana and the Ruta 27 corridor. Expert advisory for international buyers.',
+  alternates: {
+    canonical: 'https://drhousing.net',
+  },
 }
 
 export default async function HomePage() {
