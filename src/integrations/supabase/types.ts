@@ -661,6 +661,67 @@ export type Database = {
         }
         Relationships: []
       }
+      features: {
+        Row: {
+          id: string
+          name_en: string
+          name_es: string
+          category: string | null
+          icon: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          name_en: string
+          name_es: string
+          category?: string | null
+          icon?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          name_en?: string
+          name_es?: string
+          category?: string | null
+          icon?: string | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      property_features: {
+        Row: {
+          id: string
+          property_id: string
+          feature_id: string
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          property_id: string
+          feature_id: string
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          property_id?: string
+          feature_id?: string
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'property_features_feature_id_fkey'
+            columns: ['feature_id']
+            referencedRelation: 'features'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'property_features_property_id_fkey'
+            columns: ['property_id']
+            referencedRelation: 'properties'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -710,3 +771,5 @@ export type ProfileRow = Tables<'profiles'>
 export type AmenityRow = Tables<'amenities_master'>
 export type CuratedListRow = Tables<'curated_lists'>
 export type TicketRow = Tables<'support_tickets'>
+export type FeatureRow = Tables<'features'>
+export type PropertyFeatureRow = Tables<'property_features'>

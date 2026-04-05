@@ -1,7 +1,7 @@
 import { supabase } from './client'
-import type { PropertyRow, AgentRow } from '@/src/integrations/supabase/types'
+import type { PropertyRow, AgentRow, FeatureRow } from '@/src/integrations/supabase/types'
 
-export type { PropertyRow, AgentRow }
+export type { PropertyRow, AgentRow, FeatureRow }
 
 /** Hero image: prefer first featured image, fall back to first image */
 export function getHeroImage(p: PropertyRow): string | null {
@@ -83,6 +83,26 @@ export async function getPublicSlugs(): Promise<string[]> {
     return []
   }
   return (data ?? []).map((r) => r.slug).filter(Boolean) as string[]
+}
+
+/** Features for a property from normalized join table */
+export async function getPropertyFeatures(propertyId: string): Promise<FeatureRow[]> {
+  const { data, error } = await supabase
+    .from('property_features')
+    .select('features(id, name_en, name_es, category, icon, created_at)')
+    .eq('property_id', propertyId)
+
+  if (error) {
+    console.error('getPropertyFeatures error:', error.message)
+    return []
+  }
+  return (data ?? [])
+    .map((row: any) => row.features)
+    .filter(Boolean)
+    .sort((a: FeatureRow, b: FeatureRow) => {
+      const catCmp = (a.category ?? '').localeCompare(b.category ?? '')
+      return catCmp !== 0 ? catCmp : a.name_en.localeCompare(b.name_en)
+    })
 }
 
 /** All agents ordered by created_at */

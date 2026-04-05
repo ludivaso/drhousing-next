@@ -19,7 +19,7 @@ import {
   Phone,
   Mail,
 } from 'lucide-react'
-import { formatPrice, type PropertyRow, type AgentRow } from '@/lib/supabase/queries'
+import { formatPrice, type PropertyRow, type AgentRow, type FeatureRow } from '@/lib/supabase/queries'
 import PropertyCard from '@/components/PropertyCard'
 import FavoriteButton from '@/components/FavoriteButton'
 import { useI18n } from '@/lib/i18n/context'
@@ -34,8 +34,19 @@ function formatDate(dateStr: string): string {
   })
 }
 
+const LABEL_OVERRIDES: Record<string, string> = {
+  'Ac': 'A/C',
+  'Tv': 'TV',
+  'Bbq': 'BBQ',
+}
+
 function formatLabel(s: string): string {
-  return s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  return s
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+    .split(' ')
+    .map((word) => LABEL_OVERRIDES[word] ?? word)
+    .join(' ')
 }
 
 function getPropertyTypeLabel(type: string): string {
@@ -138,9 +149,10 @@ interface Props {
   relatedProperties?: PropertyRow[]
   lang?: 'es' | 'en'
   agent?: AgentRow | null
+  propertyFeatures?: FeatureRow[]
 }
 
-export default function PropertyDetailClient({ property, relatedProperties = [], lang: langProp, agent }: Props) {
+export default function PropertyDetailClient({ property, relatedProperties = [], lang: langProp, agent, propertyFeatures = [] }: Props) {
   const { lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
   const p = property
@@ -387,38 +399,65 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                 </section>
               )}
 
-              {/* Features grid */}
-              {(p.features?.length ?? 0) > 0 && (
-                <section>
-                  <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                    Características
-                  </h2>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {(p.features ?? []).map((f) => (
-                      <li key={f} className="flex items-center gap-2 font-sans text-sm text-foreground">
-                        <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                        {formatLabel(f)}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              {/* Amenities grid */}
-              {(p.amenities?.length ?? 0) > 0 && (
-                <section>
-                  <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                    Amenidades
-                  </h2>
-                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    {(p.amenities ?? []).map((a) => (
-                      <li key={a} className="flex items-center gap-2 font-sans text-sm text-foreground">
-                        <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                        {formatLabel(a)}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
+              {/* Features — normalized join, falls back to legacy arrays */}
+              {propertyFeatures.length > 0 ? (
+                (() => {
+                  const grouped = propertyFeatures.reduce<Record<string, FeatureRow[]>>((acc, f) => {
+                    const cat = f.category ?? 'General'
+                    ;(acc[cat] ??= []).push(f)
+                    return acc
+                  }, {})
+                  return Object.entries(grouped).map(([category, items]) => (
+                    <section key={category}>
+                      <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
+                        {category}
+                      </h2>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {items.map((f) => (
+                          <li key={f.id} className="flex items-center gap-2 font-sans text-sm text-foreground">
+                            <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
+                            {lang === 'en' ? f.name_en : f.name_es}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ))
+                })()
+              ) : (
+                <>
+                  {/* Legacy: features array */}
+                  {(p.features?.length ?? 0) > 0 && (
+                    <section>
+                      <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
+                        Características
+                      </h2>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {(p.features ?? []).map((f) => (
+                          <li key={f} className="flex items-center gap-2 font-sans text-sm text-foreground">
+                            <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
+                            {formatLabel(f)}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                  {/* Legacy: amenities array */}
+                  {(p.amenities?.length ?? 0) > 0 && (
+                    <section>
+                      <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
+                        Amenidades
+                      </h2>
+                      <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {(p.amenities ?? []).map((a) => (
+                          <li key={a} className="flex items-center gap-2 font-sans text-sm text-foreground">
+                            <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
+                            {formatLabel(a)}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                </>
               )}
 
               {/* Plusvalía / Investment Perspective */}

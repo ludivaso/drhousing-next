@@ -5,9 +5,10 @@ import {
   getPropertyBySlug,
   getPublicSlugs,
   getHeroImage,
+  getPropertyFeatures,
 } from '@/lib/supabase/queries'
 import { supabase } from '@/lib/supabase/client'
-import type { PropertyRow, AgentRow } from '@/lib/supabase/queries'
+import type { PropertyRow, AgentRow, FeatureRow } from '@/lib/supabase/queries'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
 
 export const dynamic = 'force-dynamic'
@@ -94,6 +95,8 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
   const property = await getPropertyBySlug(params.slug)
   if (!property) notFound()
 
+  const propertyFeatures = await getPropertyFeatures(property.id)
+
   // Fetch listing agent if set
   let listingAgent: AgentRow | null = null
   if (property.listing_agent_id) {
@@ -154,7 +157,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PropertyDetailClient property={property} relatedProperties={relatedProperties} lang={lang as 'es' | 'en'} agent={listingAgent} />
+      <PropertyDetailClient property={property} relatedProperties={relatedProperties} lang={lang as 'es' | 'en'} agent={listingAgent} propertyFeatures={propertyFeatures} />
     </>
   )
 }
