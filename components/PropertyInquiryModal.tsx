@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { X } from 'lucide-react'
+import { X, Loader2 } from 'lucide-react'
 
 interface Props {
   property: { id: string; title: string | null; reference_id?: string | null }
@@ -198,7 +198,9 @@ export default function PropertyInquiryModal({ property, open, onClose }: Props)
               className="w-full py-3 rounded font-sans text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ backgroundColor: '#C9A96E' }}
             >
-              {submitting ? 'Enviando...' : 'Enviar Consulta'}
+              {submitting ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Enviando...</>
+              ) : 'Enviar Consulta'}
             </button>
           </form>
         )}

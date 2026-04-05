@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Phone, Mail, MapPin, MessageSquare, Send, Loader2 } from 'lucide-react'
+import { Phone, Mail, MapPin, MessageSquare, Send, Loader2, CheckCircle } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
 
 const COSTA_RICA_AREAS = [
@@ -43,7 +43,11 @@ export default function ContactoPage() {
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { interestedAreas: [] },
+    defaultValues: {
+      interestedAreas: [],
+      preferredContactMethod: 'email' as const,
+      leadType: 'general' as const,
+    },
   })
 
   const interestedAreas = watch('interestedAreas')
@@ -228,14 +232,14 @@ export default function ContactoPage() {
               <div className="card-elevated p-8 sm:p-10">
                 {submitted ? (
                   <div className="text-center py-12">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                      <Send className="w-8 h-8 text-primary" />
+                    <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5">
+                      <CheckCircle className="w-8 h-8 text-green-600" />
                     </div>
                     <h2 className="font-serif text-2xl font-semibold text-foreground mb-3">
-                      {t('contactPage.successTitle')}
+                      {lang === 'en' ? 'Message sent!' : '¡Mensaje enviado!'}
                     </h2>
                     <p className="text-muted-foreground mb-6">
-                      {t('contactPage.successDesc')}
+                      {lang === 'en' ? "We'll be in touch soon." : 'Le contactaremos pronto.'}
                     </p>
                     <button
                       onClick={() => setSubmitted(false)}
@@ -307,7 +311,6 @@ export default function ContactoPage() {
                             {...register('preferredContactMethod')}
                             className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                           >
-                            <option value="">{t('contactPage.select')}</option>
                             {Object.entries(CONTACT_METHOD_OPTIONS).map(([v, l]) => (
                               <option key={v} value={v}>{l}</option>
                             ))}
@@ -327,7 +330,6 @@ export default function ContactoPage() {
                             {...register('leadType')}
                             className="w-full px-4 py-2.5 rounded border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                           >
-                            <option value="">{t('contactPage.select')}</option>
                             {Object.entries(LEAD_TYPE_OPTIONS).map(([v, l]) => (
                               <option key={v} value={v}>{l}</option>
                             ))}
