@@ -34,6 +34,26 @@ function formatDate(dateStr: string): string {
   })
 }
 
+const CATEGORY_LABELS: Record<string, { en: string; es: string }> = {
+  Security:       { en: 'Security',       es: 'Seguridad' },
+  Wellness:       { en: 'Wellness',       es: 'Bienestar' },
+  Sports:         { en: 'Sports',         es: 'Deportes' },
+  Outdoor:        { en: 'Outdoor',        es: 'Exterior' },
+  Views:          { en: 'Views',          es: 'Vistas' },
+  Climate:        { en: 'Climate',        es: 'Clima' },
+  Technology:     { en: 'Technology',     es: 'Tecnología' },
+  Kitchen:        { en: 'Kitchen',        es: 'Cocina' },
+  Interior:       { en: 'Interior',       es: 'Interior' },
+  Entertainment:  { en: 'Entertainment',  es: 'Entretenimiento' },
+  Services:       { en: 'Services',       es: 'Servicios' },
+  Kids:           { en: 'Kids',           es: 'Niños' },
+  Parking:        { en: 'Parking',        es: 'Estacionamiento' },
+  Rooms:          { en: 'Rooms',          es: 'Ambientes' },
+  Infrastructure: { en: 'Infrastructure', es: 'Infraestructura' },
+  Location:       { en: 'Location',       es: 'Ubicación' },
+  General:        { en: 'General',        es: 'General' },
+}
+
 const LABEL_OVERRIDES: Record<string, string> = {
   'Ac': 'A/C',
   'Tv': 'TV',
@@ -162,8 +182,17 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
     if (img && !seen.has(img)) { allImages.push(img); seen.add(img) }
   }
 
-  const title       = (lang === 'en' && p.title_en) ? p.title_en : p.title
-  const description = (lang === 'en' && p.description_en) ? p.description_en : (p.description ?? '')
+  const title = lang === 'en'
+    ? (p.title_en || p.title_es || p.title)
+    : (p.title_es || p.title_en || p.title)
+
+  const subtitle = lang === 'en'
+    ? (p.subtitle_en || p.subtitle)
+    : (p.subtitle || p.subtitle_en)
+
+  const description = lang === 'en'
+    ? (p.description_en || p.description_es || p.description || '')
+    : (p.description_es || p.description_en || p.description || '')
 
   const whatsappText  = encodeURIComponent(t('propertyDetail.whatsAppMessage', { ref: p.reference_id ?? p.title ?? '' }))
   const whatsappHref  = `https://wa.me/50686540888?text=${whatsappText}`
@@ -242,9 +271,9 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
             </div>
 
             {/* Subtitle */}
-            {p.subtitle && (
+            {subtitle && (
               <p className="mt-1 mb-3 font-light italic text-[15px] font-sans" style={{ color: '#6B6B6B' }}>
-                {p.subtitle}
+                {subtitle}
               </p>
             )}
 
@@ -400,13 +429,13 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   return Object.entries(grouped).map(([category, items]) => (
                     <section key={category}>
                       <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                        {category}
+                        {CATEGORY_LABELS[category]?.[lang] ?? category}
                       </h2>
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {items.map((f) => (
                           <li key={f.id} className="flex items-center gap-2 font-sans text-sm text-foreground">
                             <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                            {lang === 'en' ? f.name_en : f.name_es}
+                            {lang === 'en' ? (f.name_en || f.name_es) : (f.name_es || f.name_en)}
                           </li>
                         ))}
                       </ul>
