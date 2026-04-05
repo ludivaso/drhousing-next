@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { cookies } from 'next/headers'
 import {
   getPropertyBySlug,
   getPublicSlugs,
@@ -9,7 +10,7 @@ import { supabase } from '@/lib/supabase/client'
 import type { PropertyRow } from '@/lib/supabase/queries'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
 
-export const revalidate = 1800
+export const dynamic = 'force-dynamic'
 export const dynamicParams = true
 
 export async function generateStaticParams() {
@@ -18,6 +19,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const cookieStore = cookies()
+  const lang = cookieStore.get('lang')?.value || 'es'
+
   const property = await getPropertyBySlug(params.slug)
   if (!property) return {}
 
@@ -38,10 +42,16 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     property.construction_size_sqm ? `${property.construction_size_sqm}m²` : null,
   ].filter(Boolean).join(' · ')
 
-  const title = property.title_en || property.title || 'Propiedad en Costa Rica'
+  const title = lang === 'en'
+    ? (property.title_en || property.title_es || property.title || 'Property in Costa Rica')
+    : (property.title || 'Propiedad en Costa Rica')
 
   // Description: price — specs — first 120 chars of copy
-  const rawDesc = (property.description_en || property.description || '').slice(0, 120)
+  const rawDesc = (
+    lang === 'en'
+      ? (property.description_en || property.description_es || property.description || '')
+      : (property.description || '')
+  ).slice(0, 120)
   const description = [price, specs, rawDesc].filter(Boolean).join(' — ')
 
   const url = `https://drhousing.net/property/${property.slug}`
@@ -78,6 +88,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function PropertyDetailPage({ params }: { params: { slug: string } }) {
+  const cookieStore = cookies()
+  const lang = cookieStore.get('lang')?.value || 'es'
+
   const property = await getPropertyBySlug(params.slug)
   if (!property) notFound()
 
@@ -130,7 +143,7 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PropertyDetailClient property={property} relatedProperties={relatedProperties} />
+      <PropertyDetailClient property={property} relatedProperties={relatedProperties} lang={lang as 'es' | 'en'} />
     </>
   )
 }

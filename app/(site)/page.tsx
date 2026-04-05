@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import { getFeaturedProperties } from '@/lib/supabase/queries'
 import HomeClient from '@/components/HomeClient'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: { absolute: 'DR Housing | Luxury Real Estate Escazú · Santa Ana · Costa Rica' },
@@ -11,6 +12,9 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
+  const cookieStore = cookies()
+  const lang = (cookieStore.get('lang')?.value || 'es') as 'es' | 'en'
+
   const featuredProperties = await getFeaturedProperties()
-  return <HomeClient featuredProperties={featuredProperties} />
+  return <HomeClient featuredProperties={featuredProperties} lang={lang} />
 }

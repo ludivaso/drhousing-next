@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   Plus, Search, Loader2, Pencil, ExternalLink,
-  Link2, FileText, Star, GripVertical, Trash2, X,
+  Link2, FileText, Star, GripVertical, Trash2, X, LayoutDashboard,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import {
@@ -116,12 +116,12 @@ function RowActions({
         <ExternalLink className="w-3.5 h-3.5" />
       </Link>
       <button onClick={() => onEdit(prop.id)}
-        className="p-1.5 rounded text-muted-foreground hover:text-primary hover:bg-secondary transition-colors" title="Quick Edit">
+        className="p-1.5 rounded text-muted-foreground hover:text-primary hover:bg-secondary transition-colors" title="Edición rápida">
         <Pencil className="w-3.5 h-3.5" />
       </button>
       <Link href={`/admin/listings/${prop.id}`}
-        className="p-1.5 rounded text-muted-foreground hover:text-primary hover:bg-secondary transition-colors" title="Full Edit">
-        <ExternalLink className="w-3.5 h-3.5" />
+        className="p-1.5 rounded text-muted-foreground hover:text-green-700 hover:bg-green-50 transition-colors" title="Edición completa">
+        <LayoutDashboard className="w-3.5 h-3.5" />
       </Link>
       <button
         onClick={async () => {
@@ -243,7 +243,7 @@ function SortableRow({
   onEdit: (id: string) => void
   selected: string[]
   onToggle: (id: string) => void
-  onHoverEnter: (prop: Property, top: number) => void
+  onHoverEnter: (prop: Property, rect: DOMRect) => void
   onHoverLeave: () => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
@@ -258,11 +258,6 @@ function SortableRow({
       ref={setNodeRef}
       style={style}
       className={`border-b border-border last:border-b-0 hover:bg-secondary/20 transition-colors ${isSelected ? 'bg-primary/5' : ''}`}
-      onMouseEnter={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        onHoverEnter(prop, rect.top + rect.height / 2)
-      }}
-      onMouseLeave={onHoverLeave}
     >
       <td className="px-3 py-2 w-8">
         <input
@@ -278,7 +273,14 @@ function SortableRow({
           <GripVertical className="w-4 h-4" />
         </button>
       </td>
-      <td className="px-3 py-2 w-28">
+      <td
+        className="px-3 py-2 w-28"
+        onMouseEnter={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect()
+          onHoverEnter(prop, rect)
+        }}
+        onMouseLeave={onHoverLeave}
+      >
         {thumb
           ? <div className="relative w-24 h-24 rounded overflow-hidden"><Image src={thumb} alt="" fill className="object-cover" unoptimized /></div>
           : <div className="w-24 h-24 rounded bg-secondary" />}
@@ -326,7 +328,7 @@ function StandardRow({
   onEdit: (id: string) => void
   selected: string[]
   onToggle: (id: string) => void
-  onHoverEnter: (prop: Property, top: number) => void
+  onHoverEnter: (prop: Property, rect: DOMRect) => void
   onHoverLeave: () => void
 }) {
   const thumb = prop.featured_images?.[0] ?? prop.images?.[0]
@@ -338,11 +340,6 @@ function StandardRow({
   return (
     <tr
       className={`border-b border-border last:border-b-0 hover:bg-secondary/20 transition-colors ${isSelected ? 'bg-primary/5' : ''}`}
-      onMouseEnter={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        onHoverEnter(prop, rect.top + rect.height / 2)
-      }}
-      onMouseLeave={onHoverLeave}
     >
       <td className="px-3 py-2 w-8">
         <input
@@ -352,7 +349,14 @@ function StandardRow({
           className="rounded"
         />
       </td>
-      <td className="px-3 py-2 w-28">
+      <td
+        className="px-3 py-2 w-28"
+        onMouseEnter={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect()
+          onHoverEnter(prop, rect)
+        }}
+        onMouseLeave={onHoverLeave}
+      >
         {thumb
           ? <div className="relative w-24 h-24 rounded overflow-hidden"><Image src={thumb} alt="" fill className="object-cover" unoptimized /></div>
           : <div className="w-24 h-24 rounded bg-secondary" />}
@@ -406,7 +410,7 @@ export default function AdminListings() {
   const [editForm, setEditForm]           = useState<EditForm>({
     title: '', status: '', zone: '', price_sale: '', hidden: false, featured: false,
   })
-  const [hovered, setHovered]             = useState<{ prop: Property; top: number } | null>(null)
+  const [hovered, setHovered]             = useState<{ prop: Property; rect: DOMRect } | null>(null)
   const hoverTimer                        = useRef<NodeJS.Timeout | null>(null)
 
   const sensors = useSensors(
@@ -484,11 +488,11 @@ export default function AdminListings() {
   }
 
   // ─── Hover handlers ──────────────────────────────────────────────────────────
-  const handleHoverEnter = useCallback((prop: Property, top: number) => {
+  const handleHoverEnter = useCallback((prop: Property, rect: DOMRect) => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current)
     hoverTimer.current = setTimeout(() => {
-      setHovered({ prop, top })
-    }, 600)
+      setHovered({ prop, rect })
+    }, 1500)
   }, [])
 
   const handleHoverLeave = useCallback(() => {
@@ -623,11 +627,10 @@ export default function AdminListings() {
   const colSpanFeatured = 9
   const colSpanStandard = 8
 
-  // ─── Hover card safe top ──────────────────────────────────────────────────────
-  // Avoid window.innerHeight directly in JSX; compute only when hovered state is set
-  const hoverCardTop = hovered
-    ? Math.max(80, Math.min(hovered.top - 200, 500))
-    : 80
+  // ─── Hover card position ─────────────────────────────────────────────────────
+  const hoverCardTop  = hovered ? Math.max(80, Math.min(hovered.rect.top - 100, 500)) : 80
+  const wouldOverflow = hovered ? hovered.rect.right + 336 > (typeof window !== 'undefined' ? window.innerWidth : 1200) : false
+  const hoverCardLeft = hovered ? (wouldOverflow ? hovered.rect.left - 336 : hovered.rect.right + 16) : 0
 
   return (
     <div>
@@ -720,7 +723,7 @@ export default function AdminListings() {
       {/* ── Hover preview card ── */}
       {hovered !== null && (
         <div
-          style={{ position: 'fixed', right: 16, top: hoverCardTop, zIndex: 9999 }}
+          style={{ position: 'fixed', top: hoverCardTop, left: hoverCardLeft, zIndex: 9999 }}
           className="w-80 bg-card border border-border rounded-lg shadow-2xl overflow-hidden pointer-events-none"
         >
           {/* Hero image */}

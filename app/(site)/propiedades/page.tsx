@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { cookies } from 'next/headers'
 import { supabase } from '@/lib/supabase/client'
 import type { Metadata } from 'next'
 import PropertyCard from '@/components/PropertyCard'
@@ -41,6 +42,9 @@ interface PageProps {
 }
 
 export default async function PropiedadesPage({ searchParams }: PageProps) {
+  const cookieStore = cookies()
+  const lang = (cookieStore.get('lang')?.value || 'es') as 'es' | 'en'
+
   // Total public count (unfiltered) for "X de N" display
   const { count: totalCount } = await supabase
     .from('properties')
@@ -133,7 +137,7 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {properties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard key={property.id} property={property} lang={lang} />
               ))}
             </div>
           )}

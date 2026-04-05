@@ -18,8 +18,9 @@ import PropertyCard from '@/components/PropertyCard'
 import { useI18n } from '@/lib/i18n/context'
 import type { PropertyRow } from '@/lib/supabase/queries'
 
-export default function HomeClient({ featuredProperties }: { featuredProperties: PropertyRow[] }) {
-  const { t, lang } = useI18n()
+export default function HomeClient({ featuredProperties, lang: langProp }: { featuredProperties: PropertyRow[]; lang?: 'es' | 'en' }) {
+  const { t, lang: i18nLang } = useI18n()
+  const lang = langProp ?? i18nLang
 
   const howWeHelp = [
     { icon: HomeIcon, titleKey: 'home.howWeHelp.realEstate',          descKey: 'home.howWeHelp.realEstateDesc',          href: '/servicios' },

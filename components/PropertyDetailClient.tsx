@@ -129,10 +129,12 @@ function Lightbox({
 interface Props {
   property: PropertyRow
   relatedProperties?: PropertyRow[]
+  lang?: 'es' | 'en'
 }
 
-export default function PropertyDetailClient({ property, relatedProperties = [] }: Props) {
-  const { lang } = useI18n()
+export default function PropertyDetailClient({ property, relatedProperties = [], lang: langProp }: Props) {
+  const { lang: i18nLang } = useI18n()
+  const lang = langProp ?? i18nLang
   const p = property
 
   const [lightboxOpen, setLightboxOpen] = useState(false)
