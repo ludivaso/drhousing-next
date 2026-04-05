@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Blog & Insights | DR Housing',
+  title: 'Blog & Insights',
   description: 'Market analysis, relocation guides, investment insights, and real estate news for Costa Rica.',
 }
 

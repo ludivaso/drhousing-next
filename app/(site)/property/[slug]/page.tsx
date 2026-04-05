@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   ogImageUrl.searchParams.set('sqm', String(property.construction_size_sqm ?? ''))
 
   return {
-    title: `${property.title_en || property.title} | DR Housing`,
+    title: property.title_en || property.title || 'Propiedad',
     description: (property.description_en || property.description)?.slice(0, 160),
     openGraph: {
       title: property.title_en || property.title,

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Shield, Landmark, TrendingUp, Lock, Phone, Mail, Calendar, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Family Affairs | DR Housing',
+  title: 'Family Affairs',
   description: 'Asesoría privada e integral para familias que se relocalizan o invierten en Costa Rica. Servicio exclusivo y confidencial.',
   robots: { index: false, follow: false },
 }

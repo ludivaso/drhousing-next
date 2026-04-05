@@ -15,7 +15,7 @@ export async function generateMetadata({
   const post = POSTS_BY_SLUG[params.slug]
   if (!post) return {}
   return {
-    title: `${post.title} | DR Housing`,
+    title: post.title,
     description: post.title,
     openGraph: {
       title: post.title,

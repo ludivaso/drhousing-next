@@ -33,6 +33,7 @@ export default function FavoriteButton({ propertyId, className = '' }: Props) {
       ? current.filter((id) => id !== propertyId)
       : [...current, propertyId]
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+    window.dispatchEvent(new CustomEvent('drh-favorites-changed', { detail: { updated } }))
     setIsFaved(!current.includes(propertyId))
   }
 

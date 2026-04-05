@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Política de Privacidad | DR Housing',
+  title: 'Política de Privacidad',
 }
 
 export default function PrivacidadPage() {

@@ -5,7 +5,7 @@ import { Building2, MapPin, TrendingUp, Calendar, CheckCircle, Phone, ArrowRight
 import WhatsAppCTA from '@/components/WhatsAppCTA'
 
 export const metadata: Metadata = {
-  title: 'Desarrollos & Preventa | DR Housing',
+  title: 'Desarrollos & Preventa',
   description: 'Proyectos exclusivos de nueva construcción y preventa en Escazú, Santa Ana y el Corredor Ruta 27. Precios de preventa con alta plusvalía.',
 }
 

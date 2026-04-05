@@ -7,12 +7,24 @@ import type { PropertyRow } from '@/lib/supabase/queries'
 
 const STORAGE_KEY = 'drh_favorites'
 
+function getStoredIds(): string[] {
+  if (typeof window === 'undefined') return []
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as string[]
+  } catch {
+    return []
+  }
+}
+
 export default function FavoritosPage() {
   const [properties, setProperties] = useState<PropertyRow[]>([])
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Initial load
   useEffect(() => {
-    const ids: string[] = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
+    const ids = getStoredIds()
+    setFavoriteIds(ids)
     if (ids.length === 0) { setLoading(false); return }
 
     supabase
@@ -24,6 +36,17 @@ export default function FavoritosPage() {
         setProperties(data ?? [])
         setLoading(false)
       })
+  }, [])
+
+  // Re-render immediately when a FavoriteButton fires
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const updated: string[] = (e as CustomEvent<{ updated: string[] }>).detail.updated
+      setFavoriteIds(updated)
+      setProperties((prev) => prev.filter((p) => updated.includes(p.id)))
+    }
+    window.addEventListener('drh-favorites-changed', handler)
+    return () => window.removeEventListener('drh-favorites-changed', handler)
   }, [])
 
   if (loading) {
@@ -41,7 +64,7 @@ export default function FavoritosPage() {
           Mis Propiedades Guardadas
         </h1>
         <p className="text-muted-foreground text-sm mb-8">
-          {properties.length} propiedad{properties.length !== 1 ? 'es' : ''} guardada{properties.length !== 1 ? 's' : ''}
+          {favoriteIds.length} propiedad{favoriteIds.length !== 1 ? 'es' : ''} guardada{favoriteIds.length !== 1 ? 's' : ''}
         </p>
 
         {properties.length === 0 ? (

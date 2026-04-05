@@ -15,7 +15,7 @@ export async function generateMetadata({
   const dev = DEVS_BY_SLUG[params.slug]
   if (!dev) return {}
   return {
-    title: `${dev.name} | DR Housing Desarrollos`,
+    title: dev.name,
     description: dev.description,
   }
 }

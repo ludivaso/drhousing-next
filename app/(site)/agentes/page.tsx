@@ -5,7 +5,7 @@ import AgentesClient from './AgentesClient'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Our Advisors | DR Housing',
+  title: 'Our Advisors',
   description: 'Meet our real estate advisors specialized in luxury properties in Costa Rica.',
 }
 

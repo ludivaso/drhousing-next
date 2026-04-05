@@ -85,7 +85,7 @@ export default function FilterBar() {
         <div className="flex flex-wrap gap-4 items-end">
           <div>
             <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Tipo</p>
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
               {STATUS_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setParam('status', opt.value || null)}
                   className={pill(status === opt.value)}>
@@ -97,7 +97,7 @@ export default function FilterBar() {
 
           <div>
             <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Propiedad</p>
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
               {TYPE_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setParam('tipo', opt.value || null)}
                   className={pill(tipo === opt.value)}>
@@ -136,7 +136,7 @@ export default function FilterBar() {
         {/* Row 2: Zona */}
         <div>
           <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Zona</p>
-          <div className="flex gap-1 flex-wrap overflow-x-auto pb-0.5">
+          <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-0.5">
             <button onClick={() => setParam('zona', null)} className={pill(zona === '')}>
               Todas
             </button>
@@ -153,7 +153,7 @@ export default function FilterBar() {
         <div className="flex flex-wrap gap-4 items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">Tipo de comunidad</p>
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
               {COMUNIDAD_OPTIONS.map(opt => (
                 <button key={opt.value} onClick={() => setParam('comunidad', opt.value || null)}
                   className={pill(comunidad === opt.value)}>

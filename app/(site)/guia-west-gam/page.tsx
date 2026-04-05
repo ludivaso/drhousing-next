@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { MapPin, Home, TrendingUp, Users, Leaf, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Guía West GAM — Vivir en el Corredor Oeste | DR Housing',
+  title: 'Guía West GAM — Vivir en el Corredor Oeste',
   description:
     'La guía completa para vivir e invertir en el Corredor Oeste de Costa Rica: Escazú, Santa Ana, Lindora y la Ruta 27.',
 }

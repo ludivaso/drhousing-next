@@ -7,7 +7,7 @@ import ActiveFilterTags from '@/components/ActiveFilterTags'
 import type { PropertyRow } from '@/lib/supabase/queries'
 
 export const metadata: Metadata = {
-  title: 'Propiedades | DR Housing',
+  title: 'Propiedades',
   description: 'Casas, apartamentos y terrenos en venta y alquiler en Costa Rica',
 }
 

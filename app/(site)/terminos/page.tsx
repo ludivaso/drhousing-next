@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Términos de Servicio | DR Housing',
+  title: 'Términos de Servicio',
 }
 
 export default function TerminosPage() {
