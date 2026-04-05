@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import {
   getPropertyBySlug,
   getPublicSlugs,
+  getHeroImage,
 } from '@/lib/supabase/queries'
 import { supabase } from '@/lib/supabase/client'
 import type { PropertyRow } from '@/lib/supabase/queries'
@@ -20,45 +21,57 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const property = await getPropertyBySlug(params.slug)
   if (!property) return {}
 
-  const ogImageUrl = new URL('/api/og/property', 'https://drhousing-next.vercel.app')
-  ogImageUrl.searchParams.set('title', property.title ?? '')
-  ogImageUrl.searchParams.set(
-    'price',
-    property.price_sale
-      ? `$${property.price_sale.toLocaleString()}`
-      : property.price_rent_monthly
-      ? `$${property.price_rent_monthly.toLocaleString()}/mes`
-      : ''
-  )
-  ogImageUrl.searchParams.set('subtitle', property.subtitle ?? '')
-  ogImageUrl.searchParams.set('status', property.status ?? 'for_sale')
-  ogImageUrl.searchParams.set('location', property.location_name ?? '')
-  ogImageUrl.searchParams.set('image', property.images?.[0] ?? '')
-  ogImageUrl.searchParams.set('beds', String(property.bedrooms ?? ''))
-  ogImageUrl.searchParams.set('baths', String(property.bathrooms ?? ''))
-  ogImageUrl.searchParams.set('sqm', String(property.construction_size_sqm ?? ''))
+  // Best available image: featured_images first, then gallery
+  const heroImage = getHeroImage(property)
+
+  // Price string
+  const price = property.price_sale
+    ? `$${property.price_sale.toLocaleString()}`
+    : property.price_rent_monthly
+    ? `$${property.price_rent_monthly.toLocaleString()}/mes`
+    : ''
+
+  // Specs string
+  const specs = [
+    property.bedrooms            ? `${property.bedrooms} hab`              : null,
+    property.bathrooms           ? `${property.bathrooms} baños`           : null,
+    property.construction_size_sqm ? `${property.construction_size_sqm}m²` : null,
+  ].filter(Boolean).join(' · ')
+
+  const title = property.title_en || property.title || 'Propiedad en Costa Rica'
+
+  // Description: price — specs — first 120 chars of copy
+  const rawDesc = (property.description_en || property.description || '').slice(0, 120)
+  const description = [price, specs, rawDesc].filter(Boolean).join(' — ')
+
+  const url = `https://drhousing.net/property/${property.slug}`
 
   return {
-    title: property.title_en || property.title || 'Propiedad',
-    description: (property.description_en || property.description)?.slice(0, 160),
+    title,
+    description,
     openGraph: {
-      title: property.title_en || property.title,
-      description: (property.description_en || property.description)?.slice(0, 160) ?? '',
-      images: [{ url: ogImageUrl.toString(), width: 1200, height: 630, alt: property.title ?? '' }],
+      title,
+      description,
+      url,
       type: 'website',
       locale: 'es_CR',
+      siteName: 'DR Housing',
+      images: heroImage
+        ? [{ url: heroImage, width: 1200, height: 630, alt: title }]
+        : [],
     },
     twitter: {
       card: 'summary_large_image',
-      title: property.title_en || property.title,
-      images: [ogImageUrl.toString()],
+      title,
+      description,
+      images: heroImage ? [heroImage] : [],
     },
     alternates: {
-      canonical: `https://drhousing.net/property/${property.slug}`,
+      canonical: url,
       languages: {
-        'es': `https://drhousing.net/property/${property.slug}`,
-        'en': `https://drhousing.net/property/${property.slug}`,
-        'x-default': `https://drhousing.net/property/${property.slug}`,
+        'es': url,
+        'en': url,
+        'x-default': url,
       },
     },
   }
