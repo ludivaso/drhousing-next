@@ -26,8 +26,8 @@ import { useI18n } from '@/lib/i18n/context'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('es-CR', {
+function formatDate(dateStr: string, lang: 'es' | 'en' = 'es'): string {
+  return new Date(dateStr).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-CR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -288,7 +288,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
               {p.price_rent_monthly && (
                 <p className="font-serif text-xl font-bold text-blue-600">
                   {formatPrice(p.price_rent_monthly, p.currency)}
-                  <span className="text-sm font-sans text-muted-foreground font-normal ml-1">/mes</span>
+                  <span className="text-sm font-sans text-muted-foreground font-normal ml-1">{lang === 'en' ? '/month' : '/mes'}</span>
                 </p>
               )}
               {p.price_note && (
@@ -623,7 +623,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   <p className="text-xs font-sans text-muted-foreground uppercase tracking-wide mb-1">
                     {t('propertyDetail.listed')}
                   </p>
-                  <p className="font-sans text-sm text-foreground">{formatDate(p.created_at)}</p>
+                  <p className="font-sans text-sm text-foreground">{formatDate(p.created_at, lang)}</p>
                 </div>
 
                 {/* WhatsApp in sidebar */}
