@@ -32,7 +32,7 @@ const I18nContext = createContext<I18nContextValue>({
 })
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('es')
+  const [lang, setLangState] = useState<Lang>('en')
 
   useEffect(() => {
     // Try cookie first, then localStorage
@@ -57,7 +57,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setLangState(l)
     localStorage.setItem('drhousing_lang', l)
     document.cookie = `lang=${l};path=/;max-age=31536000;SameSite=Lax`
-    window.location.reload()
   }, [])
 
   const t = useCallback(
