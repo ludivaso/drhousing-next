@@ -157,14 +157,18 @@ function Lightbox({
 interface Props {
   property: PropertyRow
   relatedProperties?: PropertyRow[]
-  lang?: 'es' | 'en'
   agent?: AgentRow | null
   propertyFeatures?: FeatureRow[]
+  titleEn: string
+  titleEs: string
+  subtitleEn: string
+  subtitleEs: string
+  descriptionEn: string
+  descriptionEs: string
 }
 
-export default function PropertyDetailClient({ property, relatedProperties = [], lang: langProp, agent, propertyFeatures = [] }: Props) {
-  const { lang: i18nLang, t } = useI18n()
-  const lang = langProp ?? i18nLang
+export default function PropertyDetailClient({ property, relatedProperties = [], agent, propertyFeatures = [], titleEn, titleEs, subtitleEn, subtitleEs, descriptionEn, descriptionEs }: Props) {
+  const { lang, t } = useI18n()
   const p = property
 
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -182,17 +186,9 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
     if (img && !seen.has(img)) { allImages.push(img); seen.add(img) }
   }
 
-  const title = lang === 'en'
-    ? (p.title_en || p.title_es || p.title)
-    : (p.title_es || p.title_en || p.title)
-
-  const subtitle = lang === 'en'
-    ? (p.subtitle_en || p.subtitle)
-    : (p.subtitle || p.subtitle_en)
-
-  const description = lang === 'en'
-    ? (p.description_en || p.description_es || p.description || '')
-    : (p.description_es || p.description_en || p.description || '')
+  const title       = lang === 'en' ? titleEn       : titleEs
+  const subtitle    = lang === 'en' ? subtitleEn    : subtitleEs
+  const description = lang === 'en' ? descriptionEn : descriptionEs
 
   const whatsappText  = encodeURIComponent(t('propertyDetail.whatsAppMessage', { ref: p.reference_id ?? p.title ?? '' }))
   const whatsappHref  = `https://wa.me/50686540888?text=${whatsappText}`

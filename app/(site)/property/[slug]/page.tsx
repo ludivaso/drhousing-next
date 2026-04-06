@@ -157,7 +157,18 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PropertyDetailClient property={property} relatedProperties={relatedProperties} lang={lang as 'es' | 'en'} agent={listingAgent} propertyFeatures={propertyFeatures} />
+      <PropertyDetailClient
+        property={property}
+        relatedProperties={relatedProperties}
+        agent={listingAgent}
+        propertyFeatures={propertyFeatures}
+        titleEn={property.title_en || property.title || ''}
+        titleEs={property.title_es || property.title || ''}
+        subtitleEn={property.subtitle_en || property.subtitle || ''}
+        subtitleEs={property.subtitle || property.subtitle_en || ''}
+        descriptionEn={property.description_en || property.description || ''}
+        descriptionEs={property.description_es || property.description || ''}
+      />
     </>
   )
 }
