@@ -30,16 +30,19 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const heroImage = getHeroImage(property)
 
   // Price string
+  const monthSuffix = lang === 'en' ? '/month' : '/mes'
   const price = property.price_sale
     ? `$${property.price_sale.toLocaleString()}`
     : property.price_rent_monthly
-    ? `$${property.price_rent_monthly.toLocaleString()}/mes`
+    ? `$${property.price_rent_monthly.toLocaleString()}${monthSuffix}`
     : ''
 
   // Specs string
+  const bedsWord  = lang === 'en' ? 'beds'   : 'hab'
+  const bathsWord = lang === 'en' ? 'baths'  : 'baños'
   const specs = [
-    property.bedrooms            ? `${property.bedrooms} hab`              : null,
-    property.bathrooms           ? `${property.bathrooms} baños`           : null,
+    property.bedrooms             ? `${property.bedrooms} ${bedsWord}`    : null,
+    property.bathrooms            ? `${property.bathrooms} ${bathsWord}`   : null,
     property.construction_size_sqm ? `${property.construction_size_sqm}m²` : null,
   ].filter(Boolean).join(' · ')
 
@@ -168,6 +171,9 @@ export default async function PropertyDetailPage({ params }: { params: { slug: s
         subtitleEs={property.subtitle || property.subtitle_en || ''}
         descriptionEn={property.description_en || property.description || ''}
         descriptionEs={property.description_es || property.description || ''}
+        priceSale={property.price_sale ?? null}
+        priceRent={property.price_rent_monthly ?? null}
+        currency={property.currency || 'USD'}
       />
     </>
   )

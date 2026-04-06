@@ -165,9 +165,12 @@ interface Props {
   subtitleEs: string
   descriptionEn: string
   descriptionEs: string
+  priceSale?: number | null
+  priceRent?: number | null
+  currency?: string
 }
 
-export default function PropertyDetailClient({ property, relatedProperties = [], agent, propertyFeatures = [], titleEn, titleEs, subtitleEn, subtitleEs, descriptionEn, descriptionEs }: Props) {
+export default function PropertyDetailClient({ property, relatedProperties = [], agent, propertyFeatures = [], titleEn, titleEs, subtitleEn, subtitleEs, descriptionEn, descriptionEs, priceSale, priceRent, currency = 'USD' }: Props) {
   const { lang, t } = useI18n()
   const p = property
 
@@ -246,12 +249,29 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                 <span className={statusBadge.className}>{statusBadge.label}</span>
               )}
               {p.tier && (
-                <span className="text-xs font-medium px-2.5 py-1 rounded bg-muted text-muted-foreground font-sans capitalize">
-                  {formatLabel(p.tier)}
+                <span className="text-xs font-medium px-2.5 py-1 rounded bg-muted text-muted-foreground font-sans">
+                  {({
+                    luxury:       { en: 'Luxury',       es: 'Lujo' },
+                    ultra_luxury: { en: 'Ultra Luxury', es: 'Ultra Lujo' },
+                    high_end:     { en: 'High End',     es: 'Alta Gama' },
+                    mid_range:    { en: 'Mid Range',    es: 'Precio Medio' },
+                    high:         { en: 'High End',     es: 'Alta Gama' },
+                    mid:          { en: 'Mid Range',    es: 'Precio Medio' },
+                  } as Record<string, { en: string; es: string }>)[p.tier]?.[lang] ?? formatLabel(p.tier)}
                 </span>
               )}
               <span className="text-xs font-medium px-2.5 py-1 rounded border border-border text-muted-foreground font-sans">
-                {t(`property.type.${p.property_type}`) || p.property_type}
+                {({
+                  house:      { en: 'House',      es: 'Casa' },
+                  apartment:  { en: 'Apartment',  es: 'Apartamento' },
+                  condo:      { en: 'Condo',      es: 'Condominio' },
+                  land:       { en: 'Land',       es: 'Terreno' },
+                  commercial: { en: 'Commercial', es: 'Comercial' },
+                  office:     { en: 'Office',     es: 'Oficina' },
+                  farm:       { en: 'Farm',       es: 'Finca' },
+                  penthouse:  { en: 'Penthouse',  es: 'Penthouse' },
+                  townhouse:  { en: 'Townhouse',  es: 'Townhouse' },
+                } as Record<string, { en: string; es: string }>)[p.property_type]?.[lang] ?? p.property_type}
               </span>
             </div>
 
@@ -391,7 +411,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
             <div className="lg:col-span-2 space-y-10">
 
               {/* Spec bar */}
-              <SpecBar property={p} />
+              <SpecBar property={p} lang={lang} />
 
               {/* Description */}
               {description && (
@@ -675,7 +695,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function SpecBar({ property: p }: { property: PropertyRow }) {
+function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'es' | 'en' }) {
   type SpecItem = { icon: React.ReactNode; value: React.ReactNode; label: string }
 
   const specs: SpecItem[] = []
@@ -684,14 +704,14 @@ function SpecBar({ property: p }: { property: PropertyRow }) {
     specs.push({
       icon: <BedDouble className="w-5 h-5" />,
       value: p.bedrooms,
-      label: 'Habitaciones',
+      label: lang === 'en' ? 'Bedrooms' : 'Habitaciones',
     })
   }
   if (p.bathrooms > 0) {
     specs.push({
       icon: <Bath className="w-5 h-5" />,
       value: p.bathrooms,
-      label: 'Baños',
+      label: lang === 'en' ? 'Bathrooms' : 'Baños',
     })
   }
   if (p.construction_size_sqm) {
@@ -704,23 +724,23 @@ function SpecBar({ property: p }: { property: PropertyRow }) {
           <span className="text-xs text-muted-foreground font-normal">({ft2} ft²)</span>
         </span>
       ),
-      label: 'Construcción',
+      label: lang === 'en' ? 'Built' : 'Construcción',
     })
   }
   if (p.land_size_sqm && p.land_size_sqm > 0) {
     specs.push({
       icon: <TreePine className="w-5 h-5" />,
       value: `${p.land_size_sqm} m²`,
-      label: 'Terreno',
+      label: lang === 'en' ? 'Land' : 'Terreno',
     })
   }
   if (p.levels && p.levels > 0) {
     specs.push({
       icon: <Layers className="w-5 h-5" />,
       value: p.levels === 1 ? (
-        <span style={{ color: '#C9A96E' }}>Un Nivel</span>
+        <span style={{ color: '#C9A96E' }}>{lang === 'en' ? 'Single Level' : 'Un Nivel'}</span>
       ) : p.levels,
-      label: 'Niveles',
+      label: lang === 'en' ? 'Levels' : 'Niveles',
     })
   }
 
