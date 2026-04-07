@@ -35,8 +35,11 @@ const HEIGHT_OPTIONS: { value: HeroHeight; label: string; desc: string }[] = [
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
 export default function HomepageSettingsPage() {
-  const [heroVideoUrl, setHeroVideoUrl] = useState('')
-  const [heroHeight, setHeroHeight] = useState<HeroHeight>('cinematic')
+  const [heroVideoUrl,   setHeroVideoUrl]   = useState('')
+  const [heroHeight,     setHeroHeight]     = useState<HeroHeight>('cinematic')
+  const [heroOverlay,    setHeroOverlay]    = useState(45)    // 0–100
+  const [heroBrightness, setHeroBrightness] = useState(100)  // 50–150
+  const [panelOverlay,   setPanelOverlay]   = useState(55)   // 0–100
   const [cards, setCards] = useState<ServiceCardConfig[]>(DEFAULT_CARDS)
   const [status, setStatus] = useState<SaveStatus>('idle')
   const [statusMsg, setStatusMsg] = useState('')
@@ -48,8 +51,11 @@ export default function HomepageSettingsPage() {
     fetch('/api/admin/settings')
       .then((r) => r.json())
       .then((data) => {
-        if (data.hero_video_url) setHeroVideoUrl(data.hero_video_url)
-        if (data.hero_height)    setHeroHeight(data.hero_height as HeroHeight)
+        if (data.hero_video_url)  setHeroVideoUrl(data.hero_video_url)
+        if (data.hero_height)     setHeroHeight(data.hero_height as HeroHeight)
+        if (data.hero_overlay)    setHeroOverlay(Number(data.hero_overlay))
+        if (data.hero_brightness) setHeroBrightness(Number(data.hero_brightness))
+        if (data.panel_overlay)   setPanelOverlay(Number(data.panel_overlay))
         if (data.service_cards) {
           try { setCards(JSON.parse(data.service_cards)) } catch { /* keep defaults */ }
         }
@@ -66,9 +72,12 @@ export default function HomepageSettingsPage() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          hero_video_url: heroVideoUrl,
-          hero_height:    heroHeight,
-          service_cards:  JSON.stringify(cards),
+          hero_video_url:   heroVideoUrl,
+          hero_height:      heroHeight,
+          hero_overlay:     String(heroOverlay),
+          hero_brightness:  String(heroBrightness),
+          panel_overlay:    String(panelOverlay),
+          service_cards:    JSON.stringify(cards),
         }),
       })
       const json = await res.json()
@@ -217,6 +226,81 @@ export default function HomepageSettingsPage() {
             </video>
           </div>
         )}
+      </section>
+
+      {/* ── Appearance — overlay & brightness ── */}
+      <section className="card-elevated p-6 space-y-6">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-lg">🎨</span>
+          <h2 className="font-serif text-lg font-semibold">Appearance</h2>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Control how dark or bright the hero video and service panels look.
+          Changes take effect on the next page load after saving.
+        </p>
+
+        {/* Hero Overlay */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">
+              Hero Video — Overlay Darkness
+            </label>
+            <span className="text-sm font-mono text-primary tabular-nums w-10 text-right">
+              {heroOverlay}%
+            </span>
+          </div>
+          <input
+            type="range" min={0} max={100} step={1}
+            value={heroOverlay}
+            onChange={(e) => setHeroOverlay(Number(e.target.value))}
+            className="w-full accent-primary"
+          />
+          <p className="text-xs text-muted-foreground">
+            0 = fully transparent overlay (video fully visible) · 100 = completely black
+          </p>
+        </div>
+
+        {/* Hero Brightness */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">
+              Hero Video — Brightness
+            </label>
+            <span className="text-sm font-mono text-primary tabular-nums w-12 text-right">
+              {heroBrightness}%
+            </span>
+          </div>
+          <input
+            type="range" min={50} max={150} step={1}
+            value={heroBrightness}
+            onChange={(e) => setHeroBrightness(Number(e.target.value))}
+            className="w-full accent-primary"
+          />
+          <p className="text-xs text-muted-foreground">
+            50 = darker · 100 = original · 150 = brighter
+          </p>
+        </div>
+
+        {/* Panel Overlay */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">
+              Service Panels — Overlay Darkness
+            </label>
+            <span className="text-sm font-mono text-primary tabular-nums w-10 text-right">
+              {panelOverlay}%
+            </span>
+          </div>
+          <input
+            type="range" min={0} max={100} step={1}
+            value={panelOverlay}
+            onChange={(e) => setPanelOverlay(Number(e.target.value))}
+            className="w-full accent-primary"
+          />
+          <p className="text-xs text-muted-foreground">
+            0 = full-colour panels · 100 = completely black. Hover always lifts to half this value.
+          </p>
+        </div>
       </section>
 
       {/* ── Hero Height ── */}

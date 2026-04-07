@@ -8,7 +8,7 @@ import PropertyCard from '@/components/PropertyCard'
 import ServicesPanels from '@/components/ServicesPanels'
 import { useI18n } from '@/lib/i18n/context'
 import type { PropertyRow } from '@/lib/supabase/queries'
-import type { ServiceCardConfig, HeroHeight } from '@/lib/supabase/settings'
+import type { ServiceCardConfig, HeroHeight, SiteSettings } from '@/lib/supabase/settings'
 
 // ── Detect MIME type from URL extension ──────────────────────────────────────
 function mimeType(url: string): string {
@@ -25,7 +25,13 @@ const HEIGHT: Record<HeroHeight, string> = {
 }
 
 // ── Hero background: video loop with static image fallback ────────────────────
-function HeroBackground({ videoUrl }: { videoUrl?: string }) {
+function HeroBackground({
+  videoUrl,
+  brightness,
+}: {
+  videoUrl?: string
+  brightness: number   // 50–150, CSS filter brightness %
+}) {
   const [videoFailed, setVideoFailed] = useState(false)
 
   if (videoUrl && !videoFailed) {
@@ -38,8 +44,8 @@ function HeroBackground({ videoUrl }: { videoUrl?: string }) {
         poster="/hero-costa-rica.jpg"
         onError={() => setVideoFailed(true)}
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: `brightness(${brightness}%)` }}
       >
-        {/* Explicit MIME type fixes silent rejection in Safari/iOS */}
         <source src={videoUrl} type={mimeType(videoUrl)} />
       </video>
     )
@@ -60,6 +66,9 @@ interface HomeClientProps {
   lang?: 'es' | 'en'
   heroVideoUrl?: string
   heroHeight?: HeroHeight
+  heroOverlay?: number
+  heroBrightness?: number
+  panelOverlay?: number
   serviceCards?: ServiceCardConfig[]
 }
 
@@ -68,6 +77,9 @@ export default function HomeClient({
   lang: langProp,
   heroVideoUrl,
   heroHeight,
+  heroOverlay,
+  heroBrightness,
+  panelOverlay,
   serviceCards,
 }: HomeClientProps) {
   const { t, lang: i18nLang } = useI18n()
@@ -87,16 +99,25 @@ export default function HomeClient({
         style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
       >
         {/* Background — video if available, static image as fallback */}
-        <HeroBackground videoUrl={heroVideoUrl} />
+        <HeroBackground
+          videoUrl={heroVideoUrl}
+          brightness={heroBrightness ?? 100}
+        />
 
         {/*
-          Overlay strategy:
-          - Video present → lighter black (45%) so the video is clearly visible
-          - Static image  → keep the brand gradient (text contrast is critical)
+          Overlay:
+          - Video  → dynamic black at heroOverlay % (default 45)
+          - Static → brand gradient (high opacity keeps text readable)
         */}
         {heroVideoUrl
-          ? <div className="absolute inset-0 bg-black/45" />
-          : <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }} />
+          ? (
+            <div
+              className="absolute inset-0 transition-opacity duration-300"
+              style={{ backgroundColor: `rgba(0,0,0,${(heroOverlay ?? 45) / 100})` }}
+            />
+          ) : (
+            <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }} />
+          )
         }
 
         {/* Subtle grid texture */}
@@ -158,7 +179,7 @@ export default function HomeClient({
       <div className="h-10 md:h-16 bg-background" />
 
       {/* ── 2. Services Panels ── */}
-      <ServicesPanels cards={serviceCards} />
+      <ServicesPanels cards={serviceCards} panelOverlay={panelOverlay} />
 
       {/* ── 3. Featured Properties ── */}
       <section className="section-padding bg-background">

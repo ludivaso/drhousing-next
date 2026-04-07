@@ -13,6 +13,12 @@ export type HeroHeight = 'cinematic' | 'landscape' | 'full'
 export type SiteSettings = {
   heroVideoUrl?: string
   heroHeight?: HeroHeight
+  /** 0–100  — black overlay opacity on the hero. Default 45 */
+  heroOverlay?: number
+  /** 50–150 — CSS brightness filter on the video. Default 100 */
+  heroBrightness?: number
+  /** 0–100  — black overlay opacity on each service panel. Default 55 */
+  panelOverlay?: number
   serviceCards?: ServiceCardConfig[]
 }
 
@@ -49,8 +55,11 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     const map = Object.fromEntries(rows.map((r) => [r.key, r.value]))
 
     return {
-      heroVideoUrl: map.hero_video_url || undefined,
-      heroHeight:   (map.hero_height as HeroHeight) || undefined,
+      heroVideoUrl:   map.hero_video_url || undefined,
+      heroHeight:     (map.hero_height as HeroHeight) || undefined,
+      heroOverlay:    map.hero_overlay    ? Number(map.hero_overlay)    : undefined,
+      heroBrightness: map.hero_brightness ? Number(map.hero_brightness) : undefined,
+      panelOverlay:   map.panel_overlay   ? Number(map.panel_overlay)   : undefined,
       serviceCards: map.service_cards
         ? (JSON.parse(map.service_cards) as ServiceCardConfig[])
         : undefined,

@@ -30,6 +30,9 @@ export default async function HomePage() {
       lang={lang}
       heroVideoUrl={settings.heroVideoUrl}
       heroHeight={settings.heroHeight}
+      heroOverlay={settings.heroOverlay}
+      heroBrightness={settings.heroBrightness}
+      panelOverlay={settings.panelOverlay}
       serviceCards={settings.serviceCards}
     />
   )
