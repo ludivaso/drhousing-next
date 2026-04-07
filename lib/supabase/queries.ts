@@ -43,7 +43,7 @@ export async function getFeaturedProperties(): Promise<PropertyRow[]> {
     .eq('hidden', false)
     .eq('visibility', 'public')
     .order('featured_order', { ascending: true, nullsFirst: false })
-    .limit(4)
+    .limit(3)
 
   if (error) {
     console.error('getFeaturedProperties error:', error.message)
