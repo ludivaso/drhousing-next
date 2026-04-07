@@ -23,6 +23,8 @@ import { formatPrice, type PropertyRow, type AgentRow, type FeatureRow } from '@
 import PropertyCard from '@/components/PropertyCard'
 import FavoriteButton from '@/components/FavoriteButton'
 import { useI18n } from '@/lib/i18n/context'
+import { useTranslation } from 'react-i18next'
+import '@/lib/i18next'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -171,7 +173,9 @@ interface Props {
 }
 
 export default function PropertyDetailClient({ property, relatedProperties = [], agent, propertyFeatures = [], titleEn, titleEs, subtitleEn, subtitleEs, descriptionEn, descriptionEs, priceSale, priceRent, currency = 'USD' }: Props) {
-  const { lang, t } = useI18n()
+  const { i18n } = useTranslation()
+  const lang: 'es' | 'en' = i18n.language?.startsWith('es') ? 'es' : 'en'
+  const { t } = useI18n()
   const p = property
 
   const [lightboxOpen, setLightboxOpen] = useState(false)

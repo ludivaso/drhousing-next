@@ -9,6 +9,8 @@ import {
   BookOpen, Calculator, MapPin, Building2,
 } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
+import { useTranslation } from 'react-i18next'
+import '@/lib/i18next'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -16,6 +18,7 @@ export default function Navbar() {
   const pathname = usePathname()
   const dropdownRef = useRef<HTMLDivElement>(null)
   const { t, lang, setLang } = useI18n()
+  const { i18n } = useTranslation()
 
   const navigation = [
     { name: t('header.home'),       href: '/' },
@@ -145,7 +148,11 @@ export default function Navbar() {
 
           <div className="hidden lg:flex items-center gap-4">
             <button
-              onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+              onClick={() => {
+                const next = lang === 'es' ? 'en' : 'es'
+                i18n.changeLanguage(next)
+                setLang(next)
+              }}
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded px-2 py-1"
             >
               {lang === 'es' ? '🇺🇸 EN' : '🇨🇷 ES'}
@@ -160,7 +167,11 @@ export default function Navbar() {
 
           <div className="lg:hidden flex items-center gap-2">
             <button
-              onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+              onClick={() => {
+                const next = lang === 'es' ? 'en' : 'es'
+                i18n.changeLanguage(next)
+                setLang(next)
+              }}
               className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded px-2 py-1"
             >
               {lang === 'es' ? '🇺🇸 EN' : '🇨🇷 ES'}
@@ -216,7 +227,11 @@ export default function Navbar() {
               </Link>
               <div className="pt-4 border-t border-border flex flex-col gap-3">
                 <button
-                  onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+                  onClick={() => {
+                    const next = lang === 'es' ? 'en' : 'es'
+                    i18n.changeLanguage(next)
+                    setLang(next)
+                  }}
                   className="flex items-center gap-2 text-muted-foreground text-sm"
                 >
                   {lang === 'es' ? '🇺🇸 Switch to English' : '🇨🇷 Cambiar a Español'}
