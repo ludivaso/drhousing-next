@@ -16,6 +16,7 @@ import {
   Bookmark,
   Ticket,
   Settings2,
+  BookOpen,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -27,7 +28,8 @@ const adminNav = [
   { name: 'Pipeline CRM', href: '/admin/leads/pipeline', icon: KanbanSquare },
   { name: 'Curated',      href: '/admin/curated',        icon: Bookmark },
   { name: 'Tickets',      href: '/admin/tickets',        icon: Ticket },
-  { name: 'Agentes',      href: '/admin/agents',         icon: UserCircle },
+  { name: 'Agentes',      href: '/admin/agents',            icon: UserCircle },
+  { name: 'Blog',         href: '/admin/blog',              icon: BookOpen },
   { name: 'Homepage',     href: '/admin/settings/homepage', icon: Settings2 },
 ]
 
