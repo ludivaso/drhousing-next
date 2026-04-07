@@ -26,7 +26,7 @@ function resolve(obj: Record<string, unknown>, key: string): string {
 }
 
 const I18nContext = createContext<I18nContextValue>({
-  lang: 'es',
+  lang: 'en',
   setLang: () => {},
   t: (k) => k,
 })
@@ -57,6 +57,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setLangState(l)
     localStorage.setItem('drhousing_lang', l)
     document.cookie = `lang=${l};path=/;max-age=31536000;SameSite=Lax`
+    document.documentElement.lang = l
   }, [])
 
   const t = useCallback(
