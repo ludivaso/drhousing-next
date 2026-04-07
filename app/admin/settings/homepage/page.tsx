@@ -339,7 +339,7 @@ export default function HomepageSettingsPage() {
             to enable settings storage:
           </p>
           <pre className="bg-muted rounded p-4 text-xs overflow-x-auto whitespace-pre select-all">
-{`-- 1. Settings table
+{`-- 1. Settings table (safe to re-run — all idempotent)
 CREATE TABLE IF NOT EXISTS site_settings (
   key         TEXT PRIMARY KEY,
   value       TEXT,
@@ -348,41 +348,42 @@ CREATE TABLE IF NOT EXISTS site_settings (
 
 ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public read"
-  ON site_settings FOR SELECT USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Public read" ON site_settings FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE POLICY "Auth write"
-  ON site_settings FOR ALL
+DO $$ BEGIN
+  CREATE POLICY "Auth write" ON site_settings FOR ALL
   USING (auth.role() = 'authenticated');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- 2. Storage bucket for hero video uploads
+-- 2. Storage bucket for hero video (safe to re-run)
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
-  'site-assets',
-  'site-assets',
-  true,
-  52428800,
+  'site-assets', 'site-assets', true, 52428800,
   ARRAY['video/mp4','video/webm','video/ogg','image/jpeg','image/png','image/webp']
 )
 ON CONFLICT (id) DO NOTHING;
 
--- Allow public read of site-assets
-CREATE POLICY "site-assets public read"
-  ON storage.objects FOR SELECT
-  USING (bucket_id = 'site-assets');
+DO $$ BEGIN
+  CREATE POLICY "site-assets public read" ON storage.objects
+  FOR SELECT USING (bucket_id = 'site-assets');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- Allow authenticated users to upload/update/delete
-CREATE POLICY "site-assets auth write"
-  ON storage.objects FOR INSERT
-  WITH CHECK (bucket_id = 'site-assets' AND auth.role() = 'authenticated');
+DO $$ BEGIN
+  CREATE POLICY "site-assets auth write" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'site-assets' AND auth.role() = 'authenticated');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE POLICY "site-assets auth update"
-  ON storage.objects FOR UPDATE
-  USING (bucket_id = 'site-assets' AND auth.role() = 'authenticated');
+DO $$ BEGIN
+  CREATE POLICY "site-assets auth update" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'site-assets' AND auth.role() = 'authenticated');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE POLICY "site-assets auth delete"
-  ON storage.objects FOR DELETE
-  USING (bucket_id = 'site-assets' AND auth.role() = 'authenticated');`}
+DO $$ BEGIN
+  CREATE POLICY "site-assets auth delete" ON storage.objects
+  FOR DELETE USING (bucket_id = 'site-assets' AND auth.role() = 'authenticated');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;`}
           </pre>
         </div>
       </details>
