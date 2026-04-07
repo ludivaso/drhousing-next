@@ -7,29 +7,15 @@ import {
   Shield,
   MapPin,
   Users,
-  Briefcase,
-  Building2,
-  Scale,
-  HomeIcon,
-  Sparkles,
-  Palette,
 } from 'lucide-react'
 import PropertyCard from '@/components/PropertyCard'
+import ServicesPanels from '@/components/ServicesPanels'
 import { useI18n } from '@/lib/i18n/context'
 import type { PropertyRow } from '@/lib/supabase/queries'
 
 export default function HomeClient({ featuredProperties, lang: langProp }: { featuredProperties: PropertyRow[]; lang?: 'es' | 'en' }) {
   const { t, lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
-
-  const howWeHelp = [
-    { icon: HomeIcon, titleKey: 'home.howWeHelp.realEstate',          descKey: 'home.howWeHelp.realEstateDesc',          href: '/servicios' },
-    { icon: Scale,    titleKey: 'home.howWeHelp.legalImmigration',    descKey: 'home.howWeHelp.legalImmigrationDesc',    href: '/servicios' },
-    { icon: Building2,titleKey: 'home.howWeHelp.development',         descKey: 'home.howWeHelp.developmentDesc',         href: '/desarrollos' },
-    { icon: Palette,  titleKey: 'home.howWeHelp.interiorDesign',      descKey: 'home.howWeHelp.interiorDesignDesc',      href: '/servicios' },
-    { icon: Briefcase,titleKey: 'home.howWeHelp.propertyManagement',  descKey: 'home.howWeHelp.propertyManagementDesc',  href: '/servicios' },
-    { icon: Sparkles, titleKey: 'home.howWeHelp.familyAffairs',       descKey: 'home.howWeHelp.familyAffairsDesc',       href: '/family-affairs', dimmed: true },
-  ]
 
   const trustPoints = [
     { icon: Shield,  titleKey: 'home.trust.experience', descKey: 'home.trust.experienceDesc' },
@@ -147,41 +133,8 @@ export default function HomeClient({ featuredProperties, lang: langProp }: { fea
         </div>
       </section>
 
-      {/* ── How We Help ── */}
-      <section className="section-padding bg-secondary">
-        <div className="container-wide">
-          <div className="text-center mb-14">
-            <h2 className="font-serif text-2xl sm:text-3xl font-medium text-foreground mb-4">
-              {t('home.howWeHelp.title')}
-            </h2>
-            <p className="text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
-              {t('home.howWeHelp.description')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {howWeHelp.map((item) => (
-              <Link
-                key={item.titleKey}
-                href={item.href}
-                className={`card-elevated p-8 text-center hover:border-primary/30 transition-all ${
-                  item.dimmed ? 'opacity-80 hover:opacity-100' : ''
-                }`}
-              >
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                  <item.icon className="w-5 h-5 text-primary" />
-                </div>
-                <h3 className="font-serif text-base font-medium text-foreground mb-3">
-                  {t(item.titleKey)}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t(item.descKey)}
-                </p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── Services Panels ── */}
+      <ServicesPanels />
 
       {/* ── Trust Section ── */}
       <section className="section-padding bg-background">
