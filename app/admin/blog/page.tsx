@@ -74,15 +74,11 @@ export default async function AdminBlogPage() {
 
 ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
 
-DO $$ BEGIN
-  CREATE POLICY "Public read published"
-    ON blog_posts FOR SELECT USING (published = true);
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+CREATE POLICY "Public read published"
+  ON blog_posts FOR SELECT USING (published = true);
 
-DO $$ BEGIN
-  CREATE POLICY "Auth full access"
-    ON blog_posts FOR ALL USING (auth.role() = 'authenticated');
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;`}
+CREATE POLICY "Auth full access"
+  ON blog_posts FOR ALL USING (auth.role() = 'authenticated');`}
             </pre>
           </details>
         </div>
