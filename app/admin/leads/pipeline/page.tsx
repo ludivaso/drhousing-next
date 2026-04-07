@@ -137,7 +137,7 @@ function LeadCard({
         </a>
         {lead.phone && (
           <a
-            href={`https://wa.me/50660775000?text=${waText}`}
+            href={`https://wa.me/50686540888?text=${waText}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-[#25D366] transition-colors"
@@ -225,7 +225,7 @@ function LeadDetailPanel({
                   {lead.phone}
                 </a>
                 <a
-                  href={`https://wa.me/50660775000?text=${waText}`}
+                  href={`https://wa.me/50686540888?text=${waText}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 text-sm text-[#25D366] hover:underline"

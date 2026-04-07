@@ -62,7 +62,7 @@ export default function ChatBot() {
         ...prev,
         {
           role: 'assistant',
-          content: 'Disculpe, ocurrió un error. Por favor contáctenos directamente al +506 6077-5000.',
+          content: 'Disculpe, ocurrió un error. Por favor contáctenos directamente al +506 8654-0888.',
         },
       ])
     } finally {

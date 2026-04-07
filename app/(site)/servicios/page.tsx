@@ -147,7 +147,7 @@ export default function ServiciosPage() {
                 {t('common.scheduleConsultation')}
               </Link>
               <a
-                href="tel:+50660775000"
+                href="tel:+50686540888"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded border border-primary-foreground/30 text-primary-foreground text-sm font-medium hover:bg-primary-foreground/10 transition-colors"
               >
                 <Phone className="w-4 h-4" />

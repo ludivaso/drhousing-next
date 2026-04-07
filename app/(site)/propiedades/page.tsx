@@ -75,18 +75,19 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
   const lang = getLang()
 
   // Total public count (unfiltered) for "X de N" display
+  // Use hidden=false only; visibility may be null for older records (treat null as public)
   const { count: totalCount } = await supabase
     .from('properties')
     .select('*', { count: 'exact', head: true })
     .eq('hidden', false)
-    .eq('visibility', 'public')
+    .or('visibility.eq.public,visibility.is.null')
 
   // Build filtered query
   let query = supabase
     .from('properties')
     .select('*')
     .eq('hidden', false)
-    .eq('visibility', 'public')
+    .or('visibility.eq.public,visibility.is.null')
     .order('created_at', { ascending: false })
 
   if (searchParams.status)   query = query.eq('status', searchParams.status)

@@ -88,7 +88,7 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
                   {lang === 'en' ? 'Schedule a Consultation' : 'Agendar Consulta'}
                 </Link>
                 <a
-                  href="https://wa.me/50660775000"
+                  href="https://wa.me/50686540888"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-border text-foreground text-sm font-medium hover:bg-secondary transition-colors"

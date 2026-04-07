@@ -164,7 +164,7 @@ export default function DesarrolloDetailClient({
                 <p className="text-xs text-muted-foreground mb-6">USD</p>
 
                 <a
-                  href={`https://wa.me/50660775000?text=${waMessage}`}
+                  href={`https://wa.me/50686540888?text=${waMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded bg-[#25D366] text-white text-sm font-medium hover:bg-[#25D366]/90 transition-colors mb-3"

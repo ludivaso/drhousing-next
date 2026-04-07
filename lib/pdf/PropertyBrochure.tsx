@@ -456,7 +456,7 @@ export function PropertyBrochure({ property: p, lang = 'es' }: Props) {
           <Text style={s.footerText}>
             © {new Date().getFullYear()} DR Housing · Costa Rica Real Estate
           </Text>
-          <Text style={s.footerText}>+506 6077-5000 · info@drhousing.net</Text>
+          <Text style={s.footerText}>+506 8654-0888 · info@drhousing.net</Text>
           <Text style={s.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
         </View>
       </Page>

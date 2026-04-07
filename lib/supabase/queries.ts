@@ -17,13 +17,13 @@ export function formatPrice(amount: number, currency = 'USD'): string {
   }).format(amount)
 }
 
-/** All public properties — hidden=false, visibility=public, ordered by featured_order then created_at DESC */
+/** All public properties — hidden=false; visibility null treated as public for legacy records */
 export async function getPublicProperties(): Promise<PropertyRow[]> {
   const { data, error } = await supabase
     .from('properties')
     .select('*')
     .eq('hidden', false)
-    .eq('visibility', 'public')
+    .or('visibility.eq.public,visibility.is.null')
     .order('featured_order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
 
@@ -34,14 +34,14 @@ export async function getPublicProperties(): Promise<PropertyRow[]> {
   return data ?? []
 }
 
-/** Featured properties for homepage — exactly 4, ordered by featured_order from Supabase */
+/** Featured properties for homepage — exactly 3, ordered by featured_order from Supabase */
 export async function getFeaturedProperties(): Promise<PropertyRow[]> {
   const { data, error } = await supabase
     .from('properties')
     .select('*')
     .eq('featured', true)
     .eq('hidden', false)
-    .eq('visibility', 'public')
+    .or('visibility.eq.public,visibility.is.null')
     .order('featured_order', { ascending: true, nullsFirst: false })
     .limit(3)
 

@@ -125,7 +125,7 @@ export default function CuratedPortfolioClient({
             )}
           </div>
           <a
-            href={`https://wa.me/50660775000?text=${waMessage}`}
+            href={`https://wa.me/50686540888?text=${waMessage}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-[#25D366] text-white text-sm font-medium hover:bg-[#25D366]/90 transition-colors"
@@ -178,7 +178,7 @@ export default function CuratedPortfolioClient({
               : '¿Preguntas sobre alguna propiedad? Comuníquese con su asesor.'}
           </p>
           <a
-            href={`https://wa.me/50660775000?text=${waMessage}`}
+            href={`https://wa.me/50686540888?text=${waMessage}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-gold text-[#1A1A1A] font-medium hover:bg-gold/90 transition-colors"

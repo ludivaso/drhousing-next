@@ -67,11 +67,11 @@ function WaMessageModal({
     `Ver portafolio completo:`,
     `${BASE}/for/${list.slug}`,
     '',
-    '— Equipo DR Housing\n+506 6077-5000',
+    '— Equipo DR Housing\n+506 8654-0888',
   ]
 
   const message = lines.join('\n')
-  const waLink = `https://wa.me/50660775000?text=${encodeURIComponent(message)}`
+  const waLink = `https://wa.me/50686540888?text=${encodeURIComponent(message)}`
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message)
