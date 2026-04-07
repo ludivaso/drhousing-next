@@ -106,8 +106,8 @@ export default function HomepageSettingsPage() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Upload failed'
       setStatusMsg(
-        msg.includes('Bucket not found')
-          ? 'Storage bucket "site-assets" not found. Create it in Supabase → Storage (set to public), then retry.'
+        msg.includes('Bucket not found') || msg.includes('Bucket not found')
+          ? '⚠ Bucket "site-assets" not found — run the SQL migration at the bottom of this page (it creates the bucket too), then retry.'
           : `Upload error: ${msg}`
       )
     } finally {
@@ -339,7 +339,8 @@ export default function HomepageSettingsPage() {
             to enable settings storage:
           </p>
           <pre className="bg-muted rounded p-4 text-xs overflow-x-auto whitespace-pre select-all">
-{`CREATE TABLE IF NOT EXISTS site_settings (
+{`-- 1. Settings table
+CREATE TABLE IF NOT EXISTS site_settings (
   key         TEXT PRIMARY KEY,
   value       TEXT,
   updated_at  TIMESTAMPTZ DEFAULT NOW()
@@ -352,7 +353,36 @@ CREATE POLICY "Public read"
 
 CREATE POLICY "Auth write"
   ON site_settings FOR ALL
-  USING (auth.role() = 'authenticated');`}
+  USING (auth.role() = 'authenticated');
+
+-- 2. Storage bucket for hero video uploads
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'site-assets',
+  'site-assets',
+  true,
+  52428800,
+  ARRAY['video/mp4','video/webm','video/ogg','image/jpeg','image/png','image/webp']
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Allow public read of site-assets
+CREATE POLICY "site-assets public read"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'site-assets');
+
+-- Allow authenticated users to upload/update/delete
+CREATE POLICY "site-assets auth write"
+  ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id = 'site-assets' AND auth.role() = 'authenticated');
+
+CREATE POLICY "site-assets auth update"
+  ON storage.objects FOR UPDATE
+  USING (bucket_id = 'site-assets' AND auth.role() = 'authenticated');
+
+CREATE POLICY "site-assets auth delete"
+  ON storage.objects FOR DELETE
+  USING (bucket_id = 'site-assets' AND auth.role() = 'authenticated');`}
           </pre>
         </div>
       </details>
