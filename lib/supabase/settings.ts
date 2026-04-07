@@ -1,5 +1,3 @@
-import { supabase } from './client'
-
 export type ServiceCardConfig = {
   titleEn: string
   titleEs: string
@@ -20,34 +18,39 @@ export type SiteSettings = {
 
 /**
  * Reads site-wide settings from the `site_settings` table.
- * Returns an empty object (using component defaults) if the table
- * doesn't exist yet — so the site works before the migration is run.
- *
- * SQL to create the table in Supabase:
- *   CREATE TABLE site_settings (
- *     key TEXT PRIMARY KEY,
- *     value TEXT,
- *     updated_at TIMESTAMPTZ DEFAULT NOW()
- *   );
- *   ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
- *   CREATE POLICY "Public read" ON site_settings FOR SELECT USING (true);
- *   CREATE POLICY "Auth write" ON site_settings FOR ALL USING (auth.role() = 'authenticated');
+ * Uses the Supabase REST API directly (plain fetch) so it works reliably
+ * in Next.js Server Components, Edge, and API Routes — no browser client.
+ * Returns {} gracefully if the table does not exist yet.
  */
 export async function getSiteSettings(): Promise<SiteSettings> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anonKey    = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !anonKey) return {}
+
   try {
-    const { data, error } = await (supabase as any)
-      .from('site_settings')
-      .select('key, value')
-
-    if (error) return {}
-
-    const map = Object.fromEntries(
-      (data ?? []).map((r: { key: string; value: string }) => [r.key, r.value])
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/site_settings?select=key,value`,
+      {
+        headers: {
+          apikey:        anonKey,
+          Authorization: `Bearer ${anonKey}`,
+          Accept:        'application/json',
+        },
+        cache: 'no-store', // always fresh — never serve stale hero video
+      }
     )
+
+    if (!res.ok) return {}
+
+    const rows: { key: string; value: string }[] = await res.json()
+    if (!Array.isArray(rows)) return {}
+
+    const map = Object.fromEntries(rows.map((r) => [r.key, r.value]))
 
     return {
       heroVideoUrl: map.hero_video_url || undefined,
-      heroHeight: (map.hero_height as HeroHeight) || undefined,
+      heroHeight:   (map.hero_height as HeroHeight) || undefined,
       serviceCards: map.service_cards
         ? (JSON.parse(map.service_cards) as ServiceCardConfig[])
         : undefined,
