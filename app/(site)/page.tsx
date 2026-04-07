@@ -29,6 +29,7 @@ export default async function HomePage() {
       featuredProperties={featuredProperties}
       lang={lang}
       heroVideoUrl={settings.heroVideoUrl}
+      heroHeight={settings.heroHeight}
       serviceCards={settings.serviceCards}
     />
   )

@@ -8,7 +8,21 @@ import PropertyCard from '@/components/PropertyCard'
 import ServicesPanels from '@/components/ServicesPanels'
 import { useI18n } from '@/lib/i18n/context'
 import type { PropertyRow } from '@/lib/supabase/queries'
-import type { ServiceCardConfig } from '@/lib/supabase/settings'
+import type { ServiceCardConfig, HeroHeight } from '@/lib/supabase/settings'
+
+// ── Detect MIME type from URL extension ──────────────────────────────────────
+function mimeType(url: string): string {
+  if (/\.webm(\?|$)/i.test(url)) return 'video/webm'
+  if (/\.og[gv](\?|$)/i.test(url)) return 'video/ogg'
+  return 'video/mp4'
+}
+
+// ── Hero height map ───────────────────────────────────────────────────────────
+const HEIGHT: Record<HeroHeight, string> = {
+  cinematic: '50vh',
+  landscape:  '65vh',
+  full:       '85vh',
+}
 
 // ── Hero background: video loop with static image fallback ────────────────────
 function HeroBackground({ videoUrl }: { videoUrl?: string }) {
@@ -17,14 +31,17 @@ function HeroBackground({ videoUrl }: { videoUrl?: string }) {
   if (videoUrl && !videoFailed) {
     return (
       <video
-        src={videoUrl}
         autoPlay
         muted
         loop
         playsInline
+        poster="/hero-costa-rica.jpg"
         onError={() => setVideoFailed(true)}
         className="absolute inset-0 w-full h-full object-cover"
-      />
+      >
+        {/* Explicit MIME type fixes silent rejection in Safari/iOS */}
+        <source src={videoUrl} type={mimeType(videoUrl)} />
+      </video>
     )
   }
 
@@ -42,6 +59,7 @@ interface HomeClientProps {
   featuredProperties: PropertyRow[]
   lang?: 'es' | 'en'
   heroVideoUrl?: string
+  heroHeight?: HeroHeight
   serviceCards?: ServiceCardConfig[]
 }
 
@@ -49,6 +67,7 @@ export default function HomeClient({
   featuredProperties,
   lang: langProp,
   heroVideoUrl,
+  heroHeight,
   serviceCards,
 }: HomeClientProps) {
   const { t, lang: i18nLang } = useI18n()
@@ -63,12 +82,22 @@ export default function HomeClient({
   return (
     <>
       {/* ── 1. Hero ── */}
-      <section className="relative flex items-center" style={{ minHeight: '85vh' }}>
+      <section
+        className="relative flex items-center"
+        style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
+      >
         {/* Background — video if available, static image as fallback */}
         <HeroBackground videoUrl={heroVideoUrl} />
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }} />
+        {/*
+          Overlay strategy:
+          - Video present → lighter black (45%) so the video is clearly visible
+          - Static image  → keep the brand gradient (text contrast is critical)
+        */}
+        {heroVideoUrl
+          ? <div className="absolute inset-0 bg-black/45" />
+          : <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }} />
+        }
 
         {/* Subtle grid texture */}
         <div
@@ -124,6 +153,9 @@ export default function HomeClient({
           </div>
         </div>
       </section>
+
+      {/* ── White gap ── */}
+      <div className="h-10 md:h-16 bg-background" />
 
       {/* ── 2. Services Panels ── */}
       <ServicesPanels cards={serviceCards} />

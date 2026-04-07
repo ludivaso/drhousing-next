@@ -9,8 +9,12 @@ export type ServiceCardConfig = {
   image: string
 }
 
+/** Cinematic (~50vh letterbox) | Landscape (~65vh) | Full (~85vh immersive) */
+export type HeroHeight = 'cinematic' | 'landscape' | 'full'
+
 export type SiteSettings = {
   heroVideoUrl?: string
+  heroHeight?: HeroHeight
   serviceCards?: ServiceCardConfig[]
 }
 
@@ -43,6 +47,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
     return {
       heroVideoUrl: map.hero_video_url || undefined,
+      heroHeight: (map.hero_height as HeroHeight) || undefined,
       serviceCards: map.service_cards
         ? (JSON.parse(map.service_cards) as ServiceCardConfig[])
         : undefined,
