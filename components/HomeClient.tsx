@@ -1,41 +1,76 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  ArrowRight,
-  Shield,
-  MapPin,
-  Users,
-} from 'lucide-react'
+import { ArrowRight, Shield, MapPin, Users } from 'lucide-react'
 import PropertyCard from '@/components/PropertyCard'
 import ServicesPanels from '@/components/ServicesPanels'
 import { useI18n } from '@/lib/i18n/context'
 import type { PropertyRow } from '@/lib/supabase/queries'
+import type { ServiceCardConfig } from '@/lib/supabase/settings'
 
-export default function HomeClient({ featuredProperties, lang: langProp }: { featuredProperties: PropertyRow[]; lang?: 'es' | 'en' }) {
+// ── Hero background: video loop with static image fallback ────────────────────
+function HeroBackground({ videoUrl }: { videoUrl?: string }) {
+  const [videoFailed, setVideoFailed] = useState(false)
+
+  if (videoUrl && !videoFailed) {
+    return (
+      <video
+        src={videoUrl}
+        autoPlay
+        muted
+        loop
+        playsInline
+        onError={() => setVideoFailed(true)}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+    )
+  }
+
+  return (
+    <div
+      className="absolute inset-0 bg-cover bg-center"
+      style={{ backgroundImage: 'url(/hero-costa-rica.jpg)' }}
+    />
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface HomeClientProps {
+  featuredProperties: PropertyRow[]
+  lang?: 'es' | 'en'
+  heroVideoUrl?: string
+  serviceCards?: ServiceCardConfig[]
+}
+
+export default function HomeClient({
+  featuredProperties,
+  lang: langProp,
+  heroVideoUrl,
+  serviceCards,
+}: HomeClientProps) {
   const { t, lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
 
   const trustPoints = [
-    { icon: Shield,  titleKey: 'home.trust.experience', descKey: 'home.trust.experienceDesc' },
-    { icon: Users,   titleKey: 'home.trust.families',   descKey: 'home.trust.familiesDesc' },
-    { icon: MapPin,  titleKey: 'home.trust.local',      descKey: 'home.trust.localDesc' },
+    { icon: Shield, titleKey: 'home.trust.experience', descKey: 'home.trust.experienceDesc' },
+    { icon: Users,  titleKey: 'home.trust.families',   descKey: 'home.trust.familiesDesc' },
+    { icon: MapPin, titleKey: 'home.trust.local',      descKey: 'home.trust.localDesc' },
   ]
 
   return (
     <>
-      {/* ── Hero ── */}
-      <section
-        className="relative flex items-center"
-        style={{
-          minHeight: '85vh',
-          backgroundImage: 'url(/hero-costa-rica.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
+      {/* ── 1. Hero ── */}
+      <section className="relative flex items-center" style={{ minHeight: '85vh' }}>
+        {/* Background — video if available, static image as fallback */}
+        <HeroBackground videoUrl={heroVideoUrl} />
+
+        {/* Gradient overlay */}
         <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }} />
+
+        {/* Subtle grid texture */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -76,22 +111,13 @@ export default function HomeClient({ featuredProperties, lang: langProp }: { fea
               className="flex flex-wrap gap-8 mt-16 pt-8 border-t border-primary-foreground/10 animate-fade-in"
               style={{ animationDelay: '0.3s' }}
             >
-              <Link
-                href="/servicios"
-                className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase"
-              >
+              <Link href="/servicios" className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
                 {t('home.hero.relocationGuidance')} →
               </Link>
-              <Link
-                href="/servicios"
-                className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase"
-              >
+              <Link href="/servicios" className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
                 {t('home.hero.investorServices')} →
               </Link>
-              <Link
-                href="/herramientas"
-                className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase"
-              >
+              <Link href="/herramientas" className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
                 {t('home.hero.calculatorsTools')} →
               </Link>
             </div>
@@ -99,7 +125,10 @@ export default function HomeClient({ featuredProperties, lang: langProp }: { fea
         </div>
       </section>
 
-      {/* ── Featured Properties ── */}
+      {/* ── 2. Services Panels ── */}
+      <ServicesPanels cards={serviceCards} />
+
+      {/* ── 3. Featured Properties ── */}
       <section className="section-padding bg-background">
         <div className="container-wide">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
@@ -133,10 +162,7 @@ export default function HomeClient({ featuredProperties, lang: langProp }: { fea
         </div>
       </section>
 
-      {/* ── Services Panels ── */}
-      <ServicesPanels />
-
-      {/* ── Trust Section ── */}
+      {/* ── 4. Trust Section ── */}
       <section className="section-padding bg-background">
         <div className="container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -191,7 +217,7 @@ export default function HomeClient({ featuredProperties, lang: langProp }: { fea
         </div>
       </section>
 
-      {/* ── Contact Strip ── */}
+      {/* ── 5. Contact Strip ── */}
       <section className="bg-forest-dark text-primary-foreground py-16">
         <div className="container-wide">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">

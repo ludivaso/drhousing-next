@@ -1,138 +1,149 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Phone, Mail, MapPin, LayoutDashboard } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
-import { supabase } from '@/lib/supabase/client'
 
 export default function Footer() {
-  const { t } = useI18n()
+  const { lang } = useI18n()
   const [email, setEmail] = useState('')
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setIsLoggedIn(!!data.user)
-    })
-  }, [])
-
-  const quickLinks = [
-    { nameKey: 'header.properties', href: '/propiedades' },
-    { nameKey: 'header.agents', href: '/agentes' },
-    { nameKey: 'header.services', href: '/servicios' },
-    { name: 'Blog & Market Insights', href: '/blog' },
-    { name: 'Desarrollos & Preventa', href: '/desarrollos' },
-    { nameKey: 'header.toolsInsights', href: '/herramientas' },
-    { name: 'West GAM Guide', href: '/guia-west-gam' },
-    { nameKey: 'header.contact', href: '/contacto' },
-  ]
-
-  const services = [
-    { nameKey: 'footer.buySell', href: '/servicios#brokerage' },
-    { nameKey: 'footer.propertyManagement', href: '/servicios#management' },
-    { nameKey: 'footer.legalImmigration', href: '/servicios#legal' },
-    { nameKey: 'footer.development', href: '/servicios#development' },
-    { nameKey: 'header.familyAffairs', href: '/family-affairs' },
-  ]
+  const [submitted, setSubmitted] = useState(false)
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitted(true)
     setEmail('')
   }
 
   return (
     <footer className="bg-forest-dark text-primary-foreground">
-      <div className="container-wide py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div className="lg:col-span-1">
+      {/* Main body */}
+      <div className="container-wide py-16 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-10 items-start">
+
+          {/* ── Brand + Contact ── */}
+          <div>
             <div className="flex items-center gap-3 mb-5">
-              <Image src="/logo.png" alt="DR Housing" width={48} height={48} className="h-12 w-auto brightness-0 invert" />
+              <Image
+                src="/logo.png"
+                alt="DR Housing"
+                width={44}
+                height={44}
+                className="h-11 w-auto brightness-0 invert"
+              />
               <span className="font-serif text-xl font-semibold">DR Housing</span>
             </div>
-            <p className="text-primary-foreground/70 text-sm leading-relaxed mb-6">{t('footer.description')}</p>
-            <div className="flex flex-col gap-3 text-sm">
-              <a href="tel:+50686540888" className="flex items-center gap-3 text-primary-foreground/80 hover:text-gold transition-colors">
-                <Phone className="w-4 h-4" />
+
+            <div className="flex items-start gap-2 text-primary-foreground/50 text-sm mb-6">
+              <MapPin className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-gold/50" />
+              <span>Escazú · Santa Ana · Costa Rica</span>
+            </div>
+
+            <div className="space-y-2.5">
+              <a
+                href="tel:+50686540888"
+                className="flex items-center gap-2.5 text-sm text-primary-foreground/60 hover:text-gold transition-colors duration-300"
+              >
+                <Phone className="w-3.5 h-3.5 flex-shrink-0" />
                 +506 8654-0888
               </a>
-              <a href="mailto:info@drhousing.net" className="flex items-center gap-3 text-primary-foreground/80 hover:text-gold transition-colors">
-                <Mail className="w-4 h-4" />
+              <a
+                href="mailto:info@drhousing.net"
+                className="flex items-center gap-2.5 text-sm text-primary-foreground/60 hover:text-gold transition-colors duration-300"
+              >
+                <Mail className="w-3.5 h-3.5 flex-shrink-0" />
                 info@drhousing.net
               </a>
-              <div className="flex items-start gap-3 text-primary-foreground/80">
-                <MapPin className="w-4 h-4 mt-0.5" />
-                <span>{t('footer.location')}</span>
-              </div>
             </div>
           </div>
 
-          <div>
-            <h4 className="font-serif text-lg font-medium mb-4">{t('footer.quickLinks')}</h4>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">
-                    {link.nameKey ? t(link.nameKey) : link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* ── CTA ── */}
+          <div className="flex flex-col items-center justify-center text-center md:pt-2">
+            <p className="font-serif text-lg font-medium text-primary-foreground mb-2">
+              {lang === 'en' ? 'Ready to Begin?' : '¿Listo para Empezar?'}
+            </p>
+            <p className="text-xs text-primary-foreground/40 mb-8 max-w-[200px] leading-relaxed">
+              {lang === 'en'
+                ? 'Private advisory. No commitment required.'
+                : 'Asesoría privada. Sin compromiso.'}
+            </p>
+            <Link
+              href="/contacto"
+              className="inline-block px-8 py-3 border border-gold/40 text-gold/90 text-xs
+                         tracking-widest uppercase hover:bg-gold hover:text-forest-dark
+                         transition-all duration-300 font-medium"
+            >
+              {lang === 'en' ? 'Request Consultation' : 'Solicitar Consulta'}
+            </Link>
           </div>
 
+          {/* ── Newsletter ── */}
           <div>
-            <h4 className="font-serif text-lg font-medium mb-4">{t('footer.ourServices')}</h4>
-            <ul className="space-y-3">
-              {services.map((service) => (
-                <li key={service.href}>
-                  <Link href={service.href} className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">
-                    {t(service.nameKey)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <p className="font-serif text-base font-medium text-primary-foreground mb-2">
+              {lang === 'en' ? 'Market Intelligence' : 'Inteligencia de Mercado'}
+            </p>
+            <p className="text-xs text-primary-foreground/40 mb-5 leading-relaxed">
+              {lang === 'en'
+                ? 'Curated insights and exclusive listings — delivered privately.'
+                : 'Análisis de mercado y propiedades exclusivas, en privado.'}
+            </p>
 
-          <div>
-            <h4 className="font-serif text-lg font-medium mb-4">{t('footer.stayInformed')}</h4>
-            <p className="text-sm text-primary-foreground/70 mb-4">{t('footer.newsletterText')}</p>
-            <form onSubmit={handleSubscribe} className="flex flex-col gap-4">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('common.yourEmail')}
-                className="px-4 py-3 rounded bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-gold text-sm"
-              />
-              <button type="submit" className="px-4 py-3 rounded bg-gold text-forest-dark font-medium text-sm tracking-wide hover:bg-gold/90 transition-colors">
-                {t('common.subscribe')}
-              </button>
-            </form>
+            {submitted ? (
+              <p className="text-sm text-gold/80 italic">
+                {lang === 'en'
+                  ? "Thank you — we'll be in touch."
+                  : 'Gracias, estaremos en contacto.'}
+              </p>
+            ) : (
+              <form onSubmit={handleSubscribe} className="flex flex-col gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder={
+                    lang === 'en' ? 'Your email address' : 'Tu correo electrónico'
+                  }
+                  className="px-4 py-3 bg-primary-foreground/5 border border-primary-foreground/15
+                             text-primary-foreground placeholder:text-primary-foreground/30
+                             focus:outline-none focus:border-gold/40 text-sm transition-colors"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-3 bg-transparent border border-primary-foreground/20
+                             text-primary-foreground/60 text-xs tracking-widest uppercase
+                             hover:border-gold/40 hover:text-gold transition-all duration-300"
+                >
+                  {lang === 'en' ? 'Subscribe' : 'Suscribirse'}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
 
+      {/* ── Bottom bar ── */}
       <div className="border-t border-primary-foreground/10">
-        <div className="container-wide py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/60">
-          <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
-          <div className="flex items-center gap-6 mr-20">
-            <Link href="/privacidad" className="hover:text-gold transition-colors">
-              {t('footer.privacyPolicy')}
+        <div className="container-wide py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/30">
+          <p>© {new Date().getFullYear()} DR Housing. All rights reserved.</p>
+          <div className="flex items-center gap-6">
+            <Link href="/privacidad" className="hover:text-primary-foreground/60 transition-colors">
+              Privacy
             </Link>
-            <Link href="/terminos" className="hover:text-gold transition-colors">
-              {t('footer.termsOfService')}
+            <Link href="/terminos" className="hover:text-primary-foreground/60 transition-colors">
+              Terms
             </Link>
-            {isLoggedIn && (
-              <Link
-                href="/admin"
-                className="flex items-center gap-1.5 text-primary-foreground/30 hover:text-gold/60 transition-all duration-200 text-xs tracking-widest uppercase"
-                title="Admin Dashboard"
-              >
-                <LayoutDashboard className="w-3 h-3" />
-                <span>Dashboard</span>
-              </Link>
-            )}
+            <Link
+              href="/admin"
+              className="flex items-center gap-1.5 text-primary-foreground/20
+                         hover:text-gold/50 transition-all duration-300"
+              title="Admin Dashboard"
+            >
+              <LayoutDashboard className="w-3 h-3" />
+              <span>Admin</span>
+            </Link>
           </div>
         </div>
       </div>

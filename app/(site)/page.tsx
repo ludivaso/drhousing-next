@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { getFeaturedProperties } from '@/lib/supabase/queries'
+import { getSiteSettings } from '@/lib/supabase/settings'
 import HomeClient from '@/components/HomeClient'
 
 export const dynamic = 'force-dynamic'
@@ -16,8 +17,19 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const cookieStore = cookies()
-  const lang = (cookieStore.get('lang')?.value || 'es') as 'es' | 'en'
+  const lang = (cookieStore.get('lang')?.value || 'en') as 'es' | 'en'
 
-  const featuredProperties = await getFeaturedProperties()
-  return <HomeClient featuredProperties={featuredProperties} lang={lang} />
+  const [featuredProperties, settings] = await Promise.all([
+    getFeaturedProperties(),
+    getSiteSettings(),
+  ])
+
+  return (
+    <HomeClient
+      featuredProperties={featuredProperties}
+      lang={lang}
+      heroVideoUrl={settings.heroVideoUrl}
+      serviceCards={settings.serviceCards}
+    />
+  )
 }

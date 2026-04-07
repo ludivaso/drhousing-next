@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useI18n } from '@/lib/i18n/context'
+import type { ServiceCardConfig } from '@/lib/supabase/settings'
 
-const CARDS = [
+const DEFAULT_CARDS: ServiceCardConfig[] = [
   {
     titleEn: 'Portfolio',
     titleEs: 'Portafolio',
@@ -34,12 +35,18 @@ const CARDS = [
   },
 ]
 
-export default function ServicesPanels() {
+interface ServicesPanelsProps {
+  /** Optional override from CMS/admin settings — falls back to DEFAULT_CARDS */
+  cards?: ServiceCardConfig[]
+}
+
+export default function ServicesPanels({ cards }: ServicesPanelsProps) {
   const { lang } = useI18n()
+  const activeCards = cards ?? DEFAULT_CARDS
 
   return (
     <div className="flex flex-col md:grid md:grid-cols-3 w-full md:h-[520px]">
-      {CARDS.map((card) => (
+      {activeCards.map((card) => (
         <Link
           key={card.href}
           href={card.href}
@@ -58,9 +65,8 @@ export default function ServicesPanels() {
           {/* Dark overlay — lightens on hover */}
           <div className="absolute inset-0 bg-black/55 group-hover:bg-black/30 transition-colors duration-500" />
 
-          {/* Centered text content */}
+          {/* Centered text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
-            {/* Title — scales up on hover */}
             <h3
               className="font-serif text-[28px] font-semibold text-white leading-tight
                          transition-transform duration-500 group-hover:scale-105"
@@ -68,7 +74,6 @@ export default function ServicesPanels() {
               {lang === 'en' ? card.titleEn : card.titleEs}
             </h3>
 
-            {/* Subtitle — fades in on hover */}
             <p
               className="mt-3 text-sm font-sans text-white/80
                          opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -76,7 +81,6 @@ export default function ServicesPanels() {
               {lang === 'en' ? card.subtitleEn : card.subtitleEs}
             </p>
 
-            {/* CTA — slides up + fades in on hover */}
             <span
               className="mt-5 text-xs font-sans font-medium tracking-widest uppercase text-white/90
                          opacity-0 group-hover:opacity-100
