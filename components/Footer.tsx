@@ -4,10 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { LayoutDashboard } from 'lucide-react'
-import { useI18n } from '@/lib/i18n/context'
+import { usePathname } from 'next/navigation'
 
 export default function Footer() {
-  const { lang } = useI18n()
+  const pathname = usePathname()
+  const lang = pathname.startsWith('/es') ? 'es' : 'en'
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
 
@@ -95,10 +96,10 @@ export default function Footer() {
         <div className="container-wide py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/25">
           <p>© {new Date().getFullYear()} DR Housing</p>
           <div className="flex items-center gap-6">
-            <Link href="/privacidad" className="hover:text-primary-foreground/50 transition-colors">
+            <Link href={`/${lang}/privacidad`} className="hover:text-primary-foreground/50 transition-colors">
               Privacy
             </Link>
-            <Link href="/terminos" className="hover:text-primary-foreground/50 transition-colors">
+            <Link href={`/${lang}/terminos`} className="hover:text-primary-foreground/50 transition-colors">
               Terms
             </Link>
             <Link

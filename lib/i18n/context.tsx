@@ -35,7 +35,21 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('en')
 
   useEffect(() => {
-    // Try cookie first, then localStorage
+    // Primary: read from URL path — this is the source of truth
+    const detectFromPath = (): Lang => {
+      const path = window.location.pathname
+      if (path.startsWith('/es')) return 'es'
+      if (path.startsWith('/en')) return 'en'
+      return null as unknown as Lang
+    }
+
+    const pathLang = detectFromPath()
+    if (pathLang) {
+      setLangState(pathLang)
+      return
+    }
+
+    // Fallback: cookie then localStorage
     const cookieLang = document.cookie
       .split('; ')
       .find((r) => r.startsWith('lang='))
@@ -48,15 +62,22 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       const nav = navigator.language ?? ''
       const detected: Lang = nav.startsWith('en') ? 'en' : nav.startsWith('es') ? 'es' : 'en'
       setLangState(detected)
-      localStorage.setItem('drhousing_lang', detected)
-      document.cookie = `lang=${detected};path=/;max-age=31536000;SameSite=Lax`
     }
+  }, [])
+
+  // Keep lang in sync when user navigates (popstate = back/forward)
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const path = window.location.pathname
+      const detected: Lang = path.startsWith('/es') ? 'es' : 'en'
+      setLangState(detected)
+    }
+    window.addEventListener('popstate', handleRouteChange)
+    return () => window.removeEventListener('popstate', handleRouteChange)
   }, [])
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l)
-    localStorage.setItem('drhousing_lang', l)
-    document.cookie = `lang=${l};path=/;max-age=31536000;SameSite=Lax`
     document.documentElement.lang = l
   }, [])
 

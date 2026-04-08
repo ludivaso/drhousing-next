@@ -3,60 +3,80 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   Menu, X, Phone, Mail, ChevronDown,
   BookOpen, Calculator, MapPin, Building2,
 } from 'lucide-react'
-import { useI18n } from '@/lib/i18n/context'
-import { useTranslation } from 'react-i18next'
-import '@/lib/i18next'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [resourcesOpen, setResourcesOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const { t, lang, setLang } = useI18n()
-  const { i18n } = useTranslation()
+
+  // Derive lang from URL — the ONLY source of truth
+  const currentLang = pathname.startsWith('/es') ? 'es' : 'en'
+
+  const toggleLang = () => {
+    const nextLang = currentLang === 'en' ? 'es' : 'en'
+    const newPath = pathname.replace(/^\/(en|es)/, `/${nextLang}`)
+    router.push(newPath)
+  }
+
+  const labels = {
+    home:         currentLang === 'es' ? 'Inicio'            : 'Home',
+    properties:   currentLang === 'es' ? 'Propiedades'       : 'Properties',
+    agents:       currentLang === 'es' ? 'Agentes'           : 'Advisors',
+    services:     currentLang === 'es' ? 'Servicios'         : 'Solutions',
+    contact:      currentLang === 'es' ? 'Contacto'          : 'Contact',
+    toolsInsights:currentLang === 'es' ? 'Recursos'          : 'Resources',
+    familyAffairs:currentLang === 'es' ? 'Asesoría Privada'  : 'Private Advisory',
+    talkToUs:     currentLang === 'es' ? 'Solicitar Consulta': 'Request Consultation',
+    tagline:      currentLang === 'es'
+      ? 'Bienes Raíces de Lujo · Escazú · Santa Ana · Costa Rica'
+      : 'Luxury Real Estate · Escazú · Santa Ana · Costa Rica',
+    switchLang:   currentLang === 'es' ? '🇺🇸 Switch to English' : '🇨🇷 Cambiar a Español',
+  }
 
   const navigation = [
-    { name: t('header.home'),       href: '/' },
-    { name: t('header.properties'), href: '/propiedades' },
-    { name: t('header.agents'),     href: '/agentes' },
-    { name: t('header.services'),   href: '/servicios' },
-    { name: t('header.contact'),    href: '/contacto' },
+    { name: labels.home,       href: `/${currentLang}` },
+    { name: labels.properties, href: `/${currentLang}/propiedades` },
+    { name: labels.agents,     href: `/${currentLang}/agents` },
+    { name: labels.services,   href: `/${currentLang}/servicios` },
+    { name: labels.contact,    href: `/${currentLang}/contacto` },
   ]
 
   const resourcesItems = [
     {
-      name: lang === 'en' ? 'Blog & Insights' : 'Blog & Market Insights',
-      href: '/blog',
-      description: lang === 'en' ? 'Market analysis and guides' : 'Análisis de mercado y guías',
+      name:        currentLang === 'es' ? 'Blog & Market Insights'       : 'Blog & Insights',
+      href:        `/${currentLang}/blog`,
+      description: currentLang === 'es' ? 'Análisis de mercado y guías'  : 'Market analysis and guides',
       icon: BookOpen,
     },
     {
-      name: lang === 'en' ? 'Developments' : 'Desarrollos & Preventa',
-      href: '/desarrollos',
-      description: lang === 'en' ? 'New construction & pre-sales' : 'Nueva construcción y preventa',
+      name:        currentLang === 'es' ? 'Desarrollos & Preventa'       : 'Developments',
+      href:        `/${currentLang}/desarrollos`,
+      description: currentLang === 'es' ? 'Nueva construcción y preventa': 'New construction & pre-sales',
       icon: Building2,
     },
     {
-      name: lang === 'en' ? 'West GAM Guide' : 'Guía West GAM',
-      href: '/guia-west-gam',
-      description: lang === 'en' ? 'Complete luxury living guide' : 'Guía completa de vida de lujo',
+      name:        currentLang === 'es' ? 'Guía West GAM'                : 'West GAM Guide',
+      href:        `/${currentLang}/guia-west-gam`,
+      description: currentLang === 'es' ? 'Guía completa de vida de lujo': 'Complete luxury living guide',
       icon: MapPin,
     },
     {
-      name: lang === 'en' ? 'Tools & Calculators' : 'Herramientas y Calculadoras',
-      href: '/herramientas',
-      description: lang === 'en' ? 'Mortgage calculator and more' : 'Calculadora de hipotecas y más',
+      name:        currentLang === 'es' ? 'Herramientas y Calculadoras'  : 'Tools & Calculators',
+      href:        `/${currentLang}/herramientas`,
+      description: currentLang === 'es' ? 'Calculadora de hipotecas y más': 'Mortgage calculator and more',
       icon: Calculator,
     },
   ]
 
   const isActive = (href: string) => {
-    if (href === '/') return pathname === '/'
+    if (href === `/${currentLang}`) return pathname === `/${currentLang}` || pathname === `/${currentLang}/`
     return pathname.startsWith(href)
   }
 
@@ -78,11 +98,7 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
       <div className="hidden md:block bg-primary text-primary-foreground">
         <div className="container-wide py-2 flex items-center justify-between text-sm">
-          <span className="font-medium">
-            {lang === 'en'
-              ? 'Luxury Real Estate · Escazú · Santa Ana · Costa Rica'
-              : 'Bienes Raíces de Lujo · Escazú · Santa Ana · Costa Rica'}
-          </span>
+          <span className="font-medium">{labels.tagline}</span>
           <div className="flex items-center gap-6">
             <a href="tel:+50686540888" className="flex items-center gap-2 hover:text-gold transition-colors">
               <Phone className="w-4 h-4" />
@@ -98,7 +114,7 @@ export default function Navbar() {
 
       <nav className="container-wide py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href={`/${currentLang}`} className="flex items-center gap-3">
             <Image src="/logo.png" alt="DR Housing" width={56} height={56} className="h-14 w-auto" />
             <div>
               <span className="font-serif text-xl font-semibold text-foreground tracking-tight">DR Housing</span>
@@ -122,7 +138,7 @@ export default function Navbar() {
                 className={`text-sm font-medium transition-colors link-underline flex items-center gap-1 ${isResourcesActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 <BookOpen className="w-4 h-4" />
-                {t('header.toolsInsights')}
+                {labels.toolsInsights}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${resourcesOpen ? 'rotate-180' : ''}`} />
               </button>
               {resourcesOpen && (
@@ -148,33 +164,25 @@ export default function Navbar() {
 
           <div className="hidden lg:flex items-center gap-4">
             <button
-              onClick={() => {
-                const next = lang === 'es' ? 'en' : 'es'
-                i18n.changeLanguage(next)
-                setLang(next)
-              }}
+              onClick={toggleLang}
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded px-2 py-1"
             >
-              {lang === 'es' ? '🇺🇸 EN' : '🇨🇷 ES'}
+              {currentLang === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
             </button>
-            <Link href="/family-affairs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {t('header.familyAffairs')}
+            <Link href={`/${currentLang}/family-affairs`} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              {labels.familyAffairs}
             </Link>
-            <Link href="/contacto" className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
-              {t('common.talkToUs')}
+            <Link href={`/${currentLang}/contacto`} className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+              {labels.talkToUs}
             </Link>
           </div>
 
           <div className="lg:hidden flex items-center gap-2">
             <button
-              onClick={() => {
-                const next = lang === 'es' ? 'en' : 'es'
-                i18n.changeLanguage(next)
-                setLang(next)
-              }}
+              onClick={toggleLang}
               className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded px-2 py-1"
             >
-              {lang === 'es' ? '🇺🇸 EN' : '🇨🇷 ES'}
+              {currentLang === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
             </button>
             <button
               type="button"
@@ -202,7 +210,7 @@ export default function Navbar() {
               <div className="py-2">
                 <div className="flex items-center gap-2 text-base font-medium text-foreground mb-2">
                   <BookOpen className="w-4 h-4" />
-                  {t('header.toolsInsights')}
+                  {labels.toolsInsights}
                 </div>
                 <div className="pl-6 flex flex-col gap-2">
                   {resourcesItems.map((item) => (
@@ -219,33 +227,32 @@ export default function Navbar() {
                 </div>
               </div>
               <Link
-                href="/family-affairs"
+                href={`/${currentLang}/family-affairs`}
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-base font-medium py-2 text-muted-foreground hover:text-foreground"
               >
-                {t('header.familyAffairs')}
+                {labels.familyAffairs}
               </Link>
               <div className="pt-4 border-t border-border flex flex-col gap-3">
                 <button
                   onClick={() => {
-                    const next = lang === 'es' ? 'en' : 'es'
-                    i18n.changeLanguage(next)
-                    setLang(next)
+                    toggleLang()
+                    setMobileMenuOpen(false)
                   }}
                   className="flex items-center gap-2 text-muted-foreground text-sm"
                 >
-                  {lang === 'es' ? '🇺🇸 Switch to English' : '🇨🇷 Cambiar a Español'}
+                  {labels.switchLang}
                 </button>
                 <a href="tel:+50686540888" className="flex items-center gap-2 text-muted-foreground text-sm">
                   <Phone className="w-4 h-4" />
                   +506 8654-0888
                 </a>
                 <Link
-                  href="/contacto"
+                  href={`/${currentLang}/contacto`}
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center px-4 py-3 rounded bg-primary text-primary-foreground text-sm font-medium"
                 >
-                  {t('common.talkToUs')}
+                  {labels.talkToUs}
                 </Link>
               </div>
             </div>

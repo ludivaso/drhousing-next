@@ -150,7 +150,7 @@ export default function HomeClient({
 
             <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
               <Link
-                href="/contacto"
+                href={`/${lang}/contacto`}
                 className="inline-flex items-center px-6 py-4 rounded bg-transparent border border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground/60 transition-all text-base font-medium"
               >
                 {t('home.hero.advisoryCta')}
@@ -161,13 +161,13 @@ export default function HomeClient({
               className="flex flex-wrap gap-8 mt-16 pt-8 border-t border-primary-foreground/10 animate-fade-in"
               style={{ animationDelay: '0.3s' }}
             >
-              <Link href="/servicios" className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
+              <Link href={`/${lang}/servicios`} className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
                 {t('home.hero.relocationGuidance')} →
               </Link>
-              <Link href="/servicios" className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
+              <Link href={`/${lang}/servicios`} className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
                 {t('home.hero.investorServices')} →
               </Link>
-              <Link href="/herramientas" className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
+              <Link href={`/${lang}/herramientas`} className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
                 {t('home.hero.calculatorsTools')} →
               </Link>
             </div>
@@ -194,7 +194,7 @@ export default function HomeClient({
               </p>
             </div>
             <Link
-              href="/propiedades"
+              href={`/${lang}/propiedades`}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors tracking-wide uppercase"
             >
               {t('common.viewAll')} →
@@ -247,7 +247,7 @@ export default function HomeClient({
 
               <div className="mt-10">
                 <Link
-                  href="/agentes"
+                  href={`/${lang}/agents`}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors tracking-wide uppercase"
                 >
                   {t('home.trust.meetTeam')} →
@@ -283,7 +283,7 @@ export default function HomeClient({
               </p>
             </div>
             <Link
-              href="/contacto"
+              href={`/${lang}/contacto`}
               className="inline-flex items-center gap-2 px-6 py-4 rounded bg-transparent border border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10 transition-all text-sm font-medium"
             >
               {t('home.hero.advisoryCta')}

@@ -23,8 +23,7 @@ import { formatPrice, type PropertyRow, type AgentRow, type FeatureRow } from '@
 import PropertyCard from '@/components/PropertyCard'
 import FavoriteButton from '@/components/FavoriteButton'
 import { useI18n } from '@/lib/i18n/context'
-import { useTranslation } from 'react-i18next'
-import '@/lib/i18next'
+import { usePathname } from 'next/navigation'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -173,8 +172,8 @@ interface Props {
 }
 
 export default function PropertyDetailClient({ property, relatedProperties = [], agent, propertyFeatures = [], titleEn, titleEs, subtitleEn, subtitleEs, descriptionEn, descriptionEs, priceSale, priceRent, currency = 'USD' }: Props) {
-  const { i18n } = useTranslation()
-  const lang: 'es' | 'en' = i18n.language?.startsWith('es') ? 'es' : 'en'
+  const pathname = usePathname()
+  const lang: 'es' | 'en' = pathname.startsWith('/es') ? 'es' : 'en'
   const { t } = useI18n()
   const p = property
 
@@ -234,7 +233,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
         <div className="bg-card border-b border-border">
           <div className="container-wide py-4">
             <Link
-              href="/propiedades"
+              href={`/${lang}/propiedades`}
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-sans"
             >
               <ArrowLeft className="w-4 h-4" />

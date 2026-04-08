@@ -45,7 +45,7 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
 
   return (
     <Link
-      href={`/property/${property.slug}`}
+      href={`/${lang}/property/${property.slug}`}
       // Exact class from Lovable: block group overflow-hidden bg-card rounded-[10px] border border-border shadow-sm hover:shadow-md transition-shadow duration-300
       className="block group overflow-hidden bg-card rounded-[10px] border border-border shadow-sm hover:shadow-md transition-shadow duration-300"
     >

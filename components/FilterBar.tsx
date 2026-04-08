@@ -1,5 +1,5 @@
 'use client'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useCallback } from 'react'
 import { useI18n } from '@/lib/i18n/context'
 
@@ -21,6 +21,8 @@ const ZONES = [
 export default function FilterBar() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const lang = pathname.startsWith('/es') ? 'es' : 'en'
   const { t } = useI18n()
 
   const STATUS_OPTIONS = [
@@ -59,7 +61,7 @@ export default function FilterBar() {
       params.set(key, value)
     }
     const qs = params.toString()
-    router.push(qs ? `/propiedades?${qs}` : '/propiedades', { scroll: false })
+    router.push(qs ? `/${lang}/propiedades?${qs}` : `/${lang}/propiedades`, { scroll: false })
   }, [router, searchParams])
 
   const status    = searchParams.get('status')    ?? ''
@@ -179,7 +181,7 @@ export default function FilterBar() {
 
           {hasFilters && (
             <button
-              onClick={() => router.push('/propiedades', { scroll: false })}
+              onClick={() => router.push(`/${lang}/propiedades`, { scroll: false })}
               className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors self-end pb-1.5">
               {t('propertyGrid.filters.clearFilters')}
             </button>
