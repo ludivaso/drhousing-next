@@ -61,7 +61,7 @@ export default function FilterBar() {
       params.set(key, value)
     }
     const qs = params.toString()
-    router.push(qs ? `/${lang}/propiedades?${qs}` : `/${lang}/propiedades`, { scroll: false })
+    router.push(qs ? `/${lang}/propiedades?${qs}` : `/${lang}/properties`, { scroll: false })
   }, [router, searchParams])
 
   const status    = searchParams.get('status')    ?? ''
@@ -181,7 +181,7 @@ export default function FilterBar() {
 
           {hasFilters && (
             <button
-              onClick={() => router.push(`/${lang}/propiedades`, { scroll: false })}
+              onClick={() => router.push(`/${lang}/properties`, { scroll: false })}
               className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors self-end pb-1.5">
               {t('propertyGrid.filters.clearFilters')}
             </button>

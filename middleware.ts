@@ -62,13 +62,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/en', request.url))
   }
 
-  // ── Legacy Spanish URLs → /es/... ────────────────────────────────────────────
+  // ── Legacy Spanish URLs → /es/[English route] ───────────────────────────────
   const oldToNew: Record<string, string> = {
-    '/propiedades':    '/es/propiedades',
+    '/propiedades':    '/es/properties',
     '/agentes':        '/es/agents',
-    '/servicios':      '/es/servicios',
-    '/contacto':       '/es/contacto',
-    '/herramientas':   '/es/herramientas',
+    '/servicios':      '/es/services',
+    '/contacto':       '/es/contact',
+    '/herramientas':   '/es/tools',
     '/family-affairs': '/es/family-affairs',
     '/blog':           '/es/blog',
     '/desarrollos':    '/es/desarrollos',

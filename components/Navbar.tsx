@@ -42,10 +42,10 @@ export default function Navbar() {
 
   const navigation = [
     { name: labels.home,       href: `/${currentLang}` },
-    { name: labels.properties, href: `/${currentLang}/propiedades` },
+    { name: labels.properties, href: `/${currentLang}/properties` },
     { name: labels.agents,     href: `/${currentLang}/agents` },
-    { name: labels.services,   href: `/${currentLang}/servicios` },
-    { name: labels.contact,    href: `/${currentLang}/contacto` },
+    { name: labels.services,   href: `/${currentLang}/services` },
+    { name: labels.contact,    href: `/${currentLang}/contact` },
   ]
 
   const resourcesItems = [
@@ -69,7 +69,7 @@ export default function Navbar() {
     },
     {
       name:        currentLang === 'es' ? 'Herramientas y Calculadoras'  : 'Tools & Calculators',
-      href:        `/${currentLang}/herramientas`,
+      href:        `/${currentLang}/tools`,
       description: currentLang === 'es' ? 'Calculadora de hipotecas y más': 'Mortgage calculator and more',
       icon: Calculator,
     },
@@ -172,7 +172,7 @@ export default function Navbar() {
             <Link href={`/${currentLang}/family-affairs`} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {labels.familyAffairs}
             </Link>
-            <Link href={`/${currentLang}/contacto`} className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+            <Link href={`/${currentLang}/contact`} className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
               {labels.talkToUs}
             </Link>
           </div>
@@ -248,7 +248,7 @@ export default function Navbar() {
                   +506 8654-0888
                 </a>
                 <Link
-                  href={`/${currentLang}/contacto`}
+                  href={`/${currentLang}/contact`}
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center px-4 py-3 rounded bg-primary text-primary-foreground text-sm font-medium"
                 >

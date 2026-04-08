@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useI18n } from '@/lib/i18n/context'
+import { usePathname } from 'next/navigation'
 import type { ServiceCardConfig } from '@/lib/supabase/settings'
 
 const DEFAULT_CARDS: ServiceCardConfig[] = [
@@ -12,7 +12,7 @@ const DEFAULT_CARDS: ServiceCardConfig[] = [
     titleEs: 'Portafolio',
     subtitleEn: 'Luxury homes & investments',
     subtitleEs: 'Propiedades de lujo e inversión',
-    href: '/propiedades',
+    href: 'properties',
     image:
       'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80&auto=format&fit=crop',
   },
@@ -21,7 +21,7 @@ const DEFAULT_CARDS: ServiceCardConfig[] = [
     titleEs: 'Desarrollos',
     subtitleEn: 'New construction & pre-sales',
     subtitleEs: 'Construcción nueva y preventas',
-    href: '/desarrollos',
+    href: 'desarrollos',
     image:
       'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80&auto=format&fit=crop',
   },
@@ -30,7 +30,7 @@ const DEFAULT_CARDS: ServiceCardConfig[] = [
     titleEs: 'Diseño Interior',
     subtitleEn: 'Curated living spaces',
     subtitleEs: 'Espacios diseñados a medida',
-    href: '/servicios',
+    href: 'services',
     image:
       'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80&auto=format&fit=crop',
   },
@@ -50,9 +50,12 @@ function PanelCard({
   // On hover the overlay lifts to ~half the resting opacity (same feel as before)
   const hoverOpacity = overlayOpacity * 0.5
 
+  // card.href may be a full path (legacy DB values) or just a slug
+  const href = card.href.startsWith('/') ? card.href : `/${lang}/${card.href}`
+
   return (
     <Link
-      href={card.href}
+      href={href}
       className="group relative overflow-hidden h-72 md:h-full cursor-pointer block"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -113,7 +116,8 @@ interface ServicesPanelsProps {
 }
 
 export default function ServicesPanels({ cards, panelOverlay }: ServicesPanelsProps) {
-  const { lang } = useI18n()
+  const pathname = usePathname()
+  const lang: 'en' | 'es' = pathname.startsWith('/es') ? 'es' : 'en'
   const activeCards   = cards ?? DEFAULT_CARDS
   const overlayOpacity = panelOverlay ?? 55
 

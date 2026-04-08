@@ -233,7 +233,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
         <div className="bg-card border-b border-border">
           <div className="container-wide py-4">
             <Link
-              href={`/${lang}/propiedades`}
+              href={`/${lang}/properties`}
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-sans"
             >
               <ArrowLeft className="w-4 h-4" />

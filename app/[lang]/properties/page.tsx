@@ -153,7 +153,7 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
               <p className="text-muted-foreground mb-4">
                 {t(lang, 'propertyGrid.noMatches')}
               </p>
-              <a href={`/${lang}/propiedades`}
+              <a href={`/${lang}/properties`}
                 className="inline-flex items-center px-5 py-2.5 rounded border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors">
                 {t(lang, 'propertyGrid.clearFiltersLink')}
               </a>
