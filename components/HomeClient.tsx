@@ -85,6 +85,18 @@ export default function HomeClient({
   const { t, lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
 
+  // Normalise any legacy Spanish href values from the DB before passing to ServicesPanels
+  const normalizedCards = (serviceCards ?? []).map((card) => ({
+    ...card,
+    href: card.href
+      .replace(/^\//, '')
+      .replace('propiedades', 'properties')
+      .replace('servicios', 'services')
+      .replace('agentes', 'agents')
+      .replace('contacto', 'contact')
+      .replace('herramientas', 'tools'),
+  }))
+
   const trustPoints = [
     { icon: Shield, titleKey: 'home.trust.experience', descKey: 'home.trust.experienceDesc' },
     { icon: Users,  titleKey: 'home.trust.families',   descKey: 'home.trust.familiesDesc' },
@@ -179,7 +191,7 @@ export default function HomeClient({
       <div className="h-10 md:h-16 bg-background" />
 
       {/* ── 2. Services Panels ── */}
-      <ServicesPanels cards={serviceCards} panelOverlay={panelOverlay} />
+      <ServicesPanels cards={normalizedCards.length ? normalizedCards : undefined} panelOverlay={panelOverlay} />
 
       {/* ── 3. Featured Properties ── */}
       <section className="section-padding bg-background">
