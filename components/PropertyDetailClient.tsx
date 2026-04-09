@@ -166,12 +166,15 @@ interface Props {
   subtitleEs: string
   descriptionEn: string
   descriptionEs: string
+  featuresEn?: string[]
+  featuresEs?: string[]
+  lang?: 'en' | 'es'
   priceSale?: number | null
   priceRent?: number | null
   currency?: string
 }
 
-export default function PropertyDetailClient({ property, relatedProperties = [], agent, propertyFeatures = [], titleEn, titleEs, subtitleEn, subtitleEs, descriptionEn, descriptionEs, priceSale, priceRent, currency = 'USD' }: Props) {
+export default function PropertyDetailClient({ property, relatedProperties = [], agent, propertyFeatures = [], titleEn, titleEs, subtitleEn, subtitleEs, descriptionEn, descriptionEs, featuresEn, featuresEs, priceSale, priceRent, currency = 'USD' }: Props) {
   const pathname = usePathname()
   const lang: 'es' | 'en' = pathname.startsWith('/es') ? 'es' : 'en'
   const { t } = useI18n()
@@ -463,22 +466,31 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                 })()
               ) : (
                 <>
-                  {/* Legacy: features array */}
-                  {(p.features?.length ?? 0) > 0 && (
-                    <section>
-                      <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                        {t('propertyDetail.features')}
-                      </h2>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {(p.features ?? []).map((f) => (
-                          <li key={f} className="flex items-center gap-2 font-sans text-sm text-foreground">
-                            <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                            {formatLabel(f)}
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  )}
+                  {/* Legacy: features array — use bilingual version when available */}
+                  {(() => {
+                    const rawFeatures = lang === 'es'
+                      ? (featuresEs?.length ? featuresEs : p.features ?? [])
+                      : (featuresEn?.length ? featuresEn : p.features ?? [])
+                    if (rawFeatures.length === 0) return null
+                    // If items look like translated labels (contain spaces/accents), show as-is;
+                    // otherwise run formatLabel() on the raw key
+                    const isTranslated = rawFeatures.some((f) => /[ ñáéíóúü]/i.test(f))
+                    return (
+                      <section>
+                        <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
+                          {t('propertyDetail.features')}
+                        </h2>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {rawFeatures.map((f) => (
+                            <li key={f} className="flex items-center gap-2 font-sans text-sm text-foreground">
+                              <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
+                              {isTranslated ? f : formatLabel(f)}
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )
+                  })()}
                   {/* Legacy: amenities array */}
                   {(p.amenities?.length ?? 0) > 0 && (
                     <section>

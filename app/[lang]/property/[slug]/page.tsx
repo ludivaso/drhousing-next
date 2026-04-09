@@ -46,13 +46,13 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
 
   const title = lang === 'en'
     ? (property.title_en || property.title_es || property.title || 'Property in Costa Rica')
-    : (property.title || 'Propiedad en Costa Rica')
+    : (property.title_es || property.title_en || property.title || 'Propiedad en Costa Rica')
 
   // Description: price — specs — first 120 chars of copy
   const rawDesc = (
     lang === 'en'
       ? (property.description_en || property.description_es || property.description || '')
-      : (property.description || '')
+      : (property.description_es || property.description_en || property.description || '')
   ).slice(0, 120)
   const description = [price, specs, rawDesc].filter(Boolean).join(' — ')
 
@@ -113,7 +113,7 @@ export default async function PropertyDetailPage({ params }: { params: { lang: s
     .from('properties')
     .select('*')
     .eq('hidden', false)
-    .eq('visibility', 'public')
+    .or('visibility.eq.public,visibility.is.null')
     .neq('id', property.id)
     .or(`location_name.eq."${property.location_name}",tier.eq."${property.tier}"`)
     .limit(4)
@@ -162,12 +162,15 @@ export default async function PropertyDetailPage({ params }: { params: { lang: s
         relatedProperties={relatedProperties}
         agent={listingAgent}
         propertyFeatures={propertyFeatures}
+        lang={lang}
         titleEn={property.title_en || property.title || ''}
         titleEs={property.title_es || property.title || ''}
         subtitleEn={property.subtitle_en || property.subtitle || ''}
         subtitleEs={property.subtitle || property.subtitle_en || ''}
         descriptionEn={property.description_en || property.description || ''}
         descriptionEs={property.description_es || property.description || ''}
+        featuresEn={property.features_en ?? property.features ?? []}
+        featuresEs={property.features_es ?? property.features ?? []}
         priceSale={property.price_sale ?? null}
         priceRent={property.price_rent_monthly ?? null}
         currency={property.currency || 'USD'}

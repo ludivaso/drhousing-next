@@ -37,8 +37,12 @@ interface PropertyCardProps {
 
 export default function PropertyCard({ property, lang = 'es' }: PropertyCardProps) {
   const heroImage = getHeroImage(property)
-  const title = (lang === 'en' ? property.title_en : null) ?? property.title
-  const subtitle = lang === 'en' ? property.subtitle_en : property.subtitle
+  const title = lang === 'es'
+    ? (property.title_es || property.title_en || property.title || '')
+    : (property.title_en || property.title_es || property.title || '')
+  const subtitle = lang === 'es'
+    ? (property.subtitle || property.subtitle_en || '')
+    : (property.subtitle_en || property.subtitle || '')
   const msgs = lang === 'en' ? en : es
   const statusLabel = getStatusLabel(property.status, lang)
   const statusClass = STATUS_CLASSES[property.status] ?? 'badge-sale'
