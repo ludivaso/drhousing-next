@@ -50,8 +50,18 @@ function PanelCard({
   // On hover the overlay lifts to ~half the resting opacity (same feel as before)
   const hoverOpacity = overlayOpacity * 0.5
 
-  // card.href may be a full path (legacy DB values) or just a slug
-  const href = card.href.startsWith('/') ? card.href : `/${lang}/${card.href}`
+  // Normalise legacy Spanish full-paths stored in DB before the EN routing migration
+  const LEGACY_PATH_MAP: Record<string, string> = {
+    '/propiedades':  'properties',
+    '/desarrollos':  'desarrollos',
+    '/servicios':    'services',
+    '/contacto':     'contact',
+    '/herramientas': 'tools',
+    '/agentes':      'agents',
+  }
+  const normalised = LEGACY_PATH_MAP[card.href] ?? card.href
+  // normalised may be a full lang-prefixed path already or just a slug
+  const href = normalised.startsWith('/') ? normalised : `/${lang}/${normalised}`
 
   return (
     <Link

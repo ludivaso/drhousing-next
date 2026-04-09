@@ -9,19 +9,19 @@ const DEFAULT_CARDS: ServiceCardConfig[] = [
   {
     titleEn: 'Portfolio',       titleEs: 'Portafolio',
     subtitleEn: 'Luxury homes & investments', subtitleEs: 'Propiedades de lujo e inversión',
-    href: '/propiedades',
+    href: 'properties',
     image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80&auto=format&fit=crop',
   },
   {
     titleEn: 'Developments',    titleEs: 'Desarrollos',
     subtitleEn: 'New construction & pre-sales', subtitleEs: 'Construcción nueva y preventas',
-    href: '/desarrollos',
+    href: 'desarrollos',
     image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80&auto=format&fit=crop',
   },
   {
     titleEn: 'Interior Design', titleEs: 'Diseño Interior',
     subtitleEn: 'Curated living spaces', subtitleEs: 'Espacios diseñados a medida',
-    href: '/servicios',
+    href: 'services',
     image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80&auto=format&fit=crop',
   },
 ]

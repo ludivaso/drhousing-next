@@ -83,7 +83,7 @@ export default function DesarrolloDetailClient({
         <div className="container-wide">
           {/* Back */}
           <Link
-            href="/desarrollos"
+            href={`/${lang}/desarrollos`}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -173,7 +173,7 @@ export default function DesarrolloDetailClient({
                   WhatsApp
                 </a>
                 <Link
-                  href="/contacto"
+                  href={`/${lang}/contact`}
                   className="flex items-center justify-center w-full py-3 rounded border border-border text-foreground text-sm font-medium hover:bg-secondary transition-colors"
                 >
                   {lang === 'en' ? 'Contact Form' : 'Formulario de Contacto'}

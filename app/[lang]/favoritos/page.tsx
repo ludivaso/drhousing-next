@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import PropertyCard from '@/components/PropertyCard'
 import type { PropertyRow } from '@/lib/supabase/queries'
@@ -17,6 +18,8 @@ function getStoredIds(): string[] {
 }
 
 export default function FavoritosPage() {
+  const pathname = usePathname()
+  const lang: 'en' | 'es' = pathname.startsWith('/es') ? 'es' : 'en'
   const [properties, setProperties] = useState<PropertyRow[]>([])
   const [favoriteIds, setFavoriteIds] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
@@ -70,14 +73,14 @@ export default function FavoritosPage() {
         {properties.length === 0 ? (
           <div className="py-20 text-center">
             <p className="text-muted-foreground mb-4">No tiene propiedades guardadas.</p>
-            <Link href="/propiedades" className="text-sm text-primary hover:underline">
-              Explorar propiedades
+            <Link href={`/${lang}/properties`} className="text-sm text-primary hover:underline">
+              {lang === 'en' ? 'Explore properties' : 'Explorar propiedades'}
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties.map((p) => (
-              <PropertyCard key={p.id} property={p} />
+              <PropertyCard key={p.id} property={p} lang={lang} />
             ))}
           </div>
         )}
