@@ -23,6 +23,23 @@ export type SiteSettings = {
 }
 
 /**
+ * Legacy Spanish paths that may be stored in the DB from before the EN routing migration.
+ * Normalise them to bare English slugs so ServicesPanels can prepend /${lang}/ correctly.
+ */
+const LEGACY_HREF_MAP: Record<string, string> = {
+  '/propiedades':  'properties',
+  '/desarrollos':  'desarrollos',
+  '/servicios':    'services',
+  '/contacto':     'contact',
+  '/herramientas': 'tools',
+  '/agentes':      'agents',
+}
+
+function normaliseCardHref(href: string): string {
+  return LEGACY_HREF_MAP[href] ?? href
+}
+
+/**
  * Reads site-wide settings from the `site_settings` table.
  * Uses the Supabase REST API directly (plain fetch) so it works reliably
  * in Next.js Server Components, Edge, and API Routes — no browser client.
@@ -61,7 +78,10 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       heroBrightness: map.hero_brightness ? Number(map.hero_brightness) : undefined,
       panelOverlay:   map.panel_overlay   ? Number(map.panel_overlay)   : undefined,
       serviceCards: map.service_cards
-        ? (JSON.parse(map.service_cards) as ServiceCardConfig[])
+        ? (JSON.parse(map.service_cards) as ServiceCardConfig[]).map((c) => ({
+            ...c,
+            href: normaliseCardHref(c.href),
+          }))
         : undefined,
     }
   } catch {
