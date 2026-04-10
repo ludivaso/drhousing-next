@@ -1,9 +1,9 @@
 import { Suspense } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import type { Metadata } from 'next'
-import PropertyCard from '@/components/PropertyCard'
 import FilterBar from '@/components/FilterBar'
 import ActiveFilterTags from '@/components/ActiveFilterTags'
+import PropertiesGrid from '@/components/PropertiesGrid'
 import type { PropertyRow } from '@/lib/supabase/queries'
 import en from '@/messages/en.json'
 import es from '@/messages/es.json'
@@ -37,8 +37,6 @@ export async function generateMetadata({ params }: { params: { lang: string } })
       : 'Casas, apartamentos y terrenos en venta y alquiler en Costa Rica',
   }
 }
-
-export const dynamic = 'force-dynamic'
 
 // Zone values match the `zone` TEXT column in Supabase (populated by migration SQL)
 const ZONA_LABELS: Record<string, string> = {
@@ -131,7 +129,7 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
         <FilterBar />
       </Suspense>
 
-      <section className="pt-6 pb-16 bg-background">
+      <section id="filters" className="pt-24 md:pt-28 pb-16 bg-background" style={{ scrollMarginTop: '96px' }}>
         <div className="container-wide">
 
           {/* Header + active tags */}
@@ -151,23 +149,13 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
             </Suspense>
           </div>
 
-          {properties.length === 0 ? (
-            <div className="py-20 text-center">
-              <p className="text-muted-foreground mb-4">
-                {t(lang, 'propertyGrid.noMatches')}
-              </p>
-              <a href={`/${lang}/properties`}
-                className="inline-flex items-center px-5 py-2.5 rounded border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors">
-                {t(lang, 'propertyGrid.clearFiltersLink')}
-              </a>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties.map((property) => (
-                <PropertyCard key={property.id} property={property} lang={lang} />
-              ))}
-            </div>
-          )}
+          <PropertiesGrid
+            properties={properties}
+            lang={lang}
+            noMatchesText={t(lang, 'propertyGrid.noMatches')}
+            clearFiltersHref={`/${lang}/properties`}
+            clearFiltersText={t(lang, 'propertyGrid.clearFiltersLink')}
+          />
 
         </div>
       </section>

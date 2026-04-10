@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   getPropertyBySlug,
-  getPublicSlugs,
   getHeroImage,
   getPropertyFeatures,
 } from '@/lib/supabase/queries'
@@ -15,8 +14,7 @@ export const revalidate = 0
 export const dynamicParams = true
 
 export async function generateStaticParams() {
-  const slugs = await getPublicSlugs()
-  return slugs.map((slug) => ({ slug }))
+  return [] // All paths rendered on demand — no pre-building
 }
 
 export async function generateMetadata({ params }: { params: { lang: string; slug: string } }): Promise<Metadata> {
