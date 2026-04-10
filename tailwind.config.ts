@@ -128,6 +128,7 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
   safelist: [
+    'aspect-[4/3]',
     'grid-cols-1',
     'grid-cols-2',
     'grid-cols-3',

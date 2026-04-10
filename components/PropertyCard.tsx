@@ -54,7 +54,7 @@ export default function PropertyCard({ property, lang = 'es' }: PropertyCardProp
       className="block group overflow-hidden bg-card rounded-[10px] border border-border shadow-sm hover:shadow-md transition-shadow duration-300"
     >
       {/* Image — aspect-[4/3] exact from audit */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+      <div className="relative w-full aspect-[4/3] overflow-hidden bg-muted">
         {heroImage ? (
           <Image
             src={heroImage}
