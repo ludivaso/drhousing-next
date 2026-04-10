@@ -46,13 +46,13 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
 
   const title = lang === 'en'
     ? (property.title_en || property.title_es || property.title || 'Property in Costa Rica')
-    : (property.title_es || property.title_en || property.title || 'Propiedad en Costa Rica')
+    : (property.title_es || property.ai_generated_title_es || property.title_en || property.title || 'Propiedad en Costa Rica')
 
   // Description: price — specs — first 120 chars of copy
   const rawDesc = (
     lang === 'en'
       ? (property.description_en || property.description_es || property.description || '')
-      : (property.description_es || property.description_en || property.description || '')
+      : (property.description_es || property.ai_generated_description_es || property.description_en || property.description || '')
   ).slice(0, 120)
   const description = [price, specs, rawDesc].filter(Boolean).join(' — ')
 
@@ -164,11 +164,11 @@ export default async function PropertyDetailPage({ params }: { params: { lang: s
         propertyFeatures={propertyFeatures}
         lang={lang}
         titleEn={property.title_en || property.title || ''}
-        titleEs={property.title_es || property.title || ''}
+        titleEs={property.title_es || property.ai_generated_title_es || property.title_en || property.title || ''}
         subtitleEn={property.subtitle_en || property.subtitle || ''}
         subtitleEs={property.subtitle || property.subtitle_en || ''}
         descriptionEn={property.description_en || property.description || ''}
-        descriptionEs={property.description_es || property.description || ''}
+        descriptionEs={property.description_es || property.ai_generated_description_es || property.description_en || property.description || ''}
         featuresEn={property.features_en ?? property.features ?? []}
         featuresEs={property.features_es ?? property.features ?? []}
         priceSale={property.price_sale ?? null}
