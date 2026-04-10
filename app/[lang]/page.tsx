@@ -4,6 +4,7 @@ import { getSiteSettings } from '@/lib/supabase/settings'
 import HomeClient from '@/components/HomeClient'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: { absolute: 'DR Housing | Luxury Real Estate Escazú · Santa Ana · Costa Rica' },

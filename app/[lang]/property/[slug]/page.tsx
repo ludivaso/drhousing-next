@@ -11,6 +11,7 @@ import type { PropertyRow, AgentRow, FeatureRow } from '@/lib/supabase/queries'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 export const dynamicParams = true
 
 export async function generateStaticParams() {

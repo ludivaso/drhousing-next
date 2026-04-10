@@ -8,6 +8,9 @@ import type { PropertyRow } from '@/lib/supabase/queries'
 import en from '@/messages/en.json'
 import es from '@/messages/es.json'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 function t(lang: 'es' | 'en', key: string, vars?: Record<string, string | number>): string {
   const msgs: Record<string, unknown> = lang === 'en' ? en as unknown as Record<string, unknown> : es as unknown as Record<string, unknown>
   const parts = key.split('.')
