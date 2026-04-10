@@ -38,8 +38,8 @@ interface PropertyCardProps {
 export default function PropertyCard({ property, lang = 'es' }: PropertyCardProps) {
   const heroImage = getHeroImage(property)
   const title = lang === 'es'
-    ? (property.title_es || property.title_en || property.title || '')
-    : (property.title_en || property.title_es || property.title || '')
+    ? (property.title_es || property.ai_generated_title_es || property.title_en || property.title || '')
+    : (property.title_en || property.ai_generated_title_en || property.title_es || property.title || '')
   const subtitle = lang === 'es'
     ? (property.subtitle || property.subtitle_en || '')
     : (property.subtitle_en || property.subtitle || '')
