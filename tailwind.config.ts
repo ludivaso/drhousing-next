@@ -127,4 +127,15 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  safelist: [
+    'grid-cols-1',
+    'grid-cols-2',
+    'grid-cols-3',
+    'sm:grid-cols-2',
+    'sm:grid-cols-3',
+    'md:grid-cols-2',
+    'md:grid-cols-3',
+    'lg:grid-cols-2',
+    'lg:grid-cols-3',
+  ],
 } satisfies Config;
