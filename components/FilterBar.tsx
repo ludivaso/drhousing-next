@@ -61,7 +61,7 @@ export default function FilterBar() {
       params.set(key, value)
     }
     const qs = params.toString()
-    router.push(qs ? `/${lang}/propiedades?${qs}` : `/${lang}/properties`, { scroll: false })
+    router.push(qs ? `/${lang}/properties?${qs}` : `/${lang}/properties`, { scroll: false })
   }, [router, searchParams])
 
   const status    = searchParams.get('status')    ?? ''
