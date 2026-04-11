@@ -40,7 +40,7 @@ export default function ListingBrief({ property: p }: ListingBriefProps) {
 
   return (
     <Link
-      href={`/property/${p.slug}`}
+      href={`/property/${p.reference_id || p.slug}`}
       className="group flex items-start gap-5 py-5 border-b border-border last:border-b-0 hover:bg-secondary/40 -mx-4 px-4 transition-colors rounded"
     >
       {/* Thumbnail */}

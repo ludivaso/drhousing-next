@@ -26,7 +26,7 @@ function PropertyCard({ property, lang }: { property: PropertyRow; lang: string 
 
   return (
     <Link
-      href={`/property/${property.slug}`}
+      href={`/property/${property.reference_id || property.slug}`}
       target="_blank"
       rel="noopener noreferrer"
       className="group block card-elevated overflow-hidden hover:shadow-xl transition-shadow"

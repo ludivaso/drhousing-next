@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import {
-  getPropertyBySlug,
   getHeroImage,
   getPropertyFeatures,
 } from '@/lib/supabase/queries'
@@ -17,10 +16,31 @@ export async function generateStaticParams() {
   return [] // All paths rendered on demand — no pre-building
 }
 
+// Lookup by slug first; fall back to reference_id so stable ref-links never 404
+async function findProperty(slug: string): Promise<PropertyRow | null> {
+  const { data: bySlug } = await supabase
+    .from('properties')
+    .select('*')
+    .eq('slug', slug)
+    .eq('hidden', false)
+    .neq('visibility', 'hidden')
+    .maybeSingle()
+  if (bySlug) return bySlug
+
+  const { data: byRef } = await supabase
+    .from('properties')
+    .select('*')
+    .ilike('reference_id', slug)
+    .eq('hidden', false)
+    .neq('visibility', 'hidden')
+    .maybeSingle()
+  return byRef ?? null
+}
+
 export async function generateMetadata({ params }: { params: { lang: string; slug: string } }): Promise<Metadata> {
   const lang = params.lang === 'es' ? 'es' : 'en'
 
-  const property = await getPropertyBySlug(params.slug)
+  const property = await findProperty(params.slug)
   if (!property) return {}
 
   // Best available image: featured_images first, then gallery
@@ -91,8 +111,13 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
 export default async function PropertyDetailPage({ params }: { params: { lang: string; slug: string } }) {
   const lang = params.lang === 'es' ? 'es' : 'en'
 
-  const property = await getPropertyBySlug(params.slug)
+  const property = await findProperty(params.slug)
   if (!property) notFound()
+
+  // Redirect to canonical slug when navigated via reference_id or a stale slug
+  if (property.slug && property.slug !== params.slug) {
+    redirect(`/${params.lang}/property/${property.slug}`)
+  }
 
   const propertyFeatures = await getPropertyFeatures(property.id)
 
