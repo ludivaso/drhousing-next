@@ -73,14 +73,6 @@ function formatLabel(s: string): string {
 
 // ── Feature data split for PropertyDetails ────────────────────────────────────
 
-// Categories that represent unit-specific residence features
-const RESIDENCE_CATEGORIES = new Set([
-  'Interior', 'Kitchen', 'Climate', 'Technology', 'Views', 'Rooms', 'Location', 'General',
-])
-// Categories that represent private/exclusive amenities
-const EXCLUSIVE_CATEGORIES = new Set(['Entertainment'])
-// Everything else is treated as shared/community
-
 function toFeatureItem(f: FeatureRow, lang: 'en' | 'es'): PropertyFeatureItem {
   return {
     label: (lang === 'en' ? f.name_en : f.name_es) || f.name_en || f.name_es || '',
@@ -98,24 +90,34 @@ function buildPropertyDetailsData(
   lang: 'en' | 'es',
 ): { highlights: PropertyFeatureItem[]; shared: PropertyFeatureItem[]; exclusive: PropertyFeatureItem[] } {
   if (propertyFeatures.length > 0) {
-    const highlights  = propertyFeatures.filter(f => RESIDENCE_CATEGORIES.has(f.category ?? 'General')).map(f => toFeatureItem(f, lang))
-    const shared      = propertyFeatures.filter(f => !RESIDENCE_CATEGORIES.has(f.category ?? 'General') && !EXCLUSIVE_CATEGORIES.has(f.category ?? 'General')).map(f => toFeatureItem(f, lang))
-    const exclusive   = propertyFeatures.filter(f => EXCLUSIVE_CATEGORIES.has(f.category ?? 'General')).map(f => toFeatureItem(f, lang))
+    // All normalized features linked to this property → Residence Highlights.
+    // We use the category field for grouping within the section, NOT for deciding
+    // which section to put them in — that avoids misclassifying e.g. a private
+    // pool (Wellness category) as a community amenity.
+    const highlights = propertyFeatures.map(f => toFeatureItem(f, lang))
 
-    // Add legacy amenities to shared
-    const legacyAmenities = (amenities ?? []).map(a => ({ label: formatLabel(a), category: 'Amenities', icon: a }))
-    return { highlights, shared: [...shared, ...legacyAmenities], exclusive }
+    // The legacy amenities[] column is explicitly a community/building amenities
+    // field, so it goes to the Shared section.
+    const shared = (amenities ?? []).map(a => ({ label: formatLabel(a), category: lang === 'es' ? 'Amenidades' : 'Amenities', icon: a }))
+
+    return { highlights, shared, exclusive: [] }
   }
 
-  // Legacy fallback
-  const rawFeatures = lang === 'es' ? (featuresEs?.length ? featuresEs : features ?? []) : (featuresEn?.length ? featuresEn : features ?? [])
+  // Legacy fallback — no normalized features in the join table
+  const rawFeatures = lang === 'es'
+    ? (featuresEs?.length ? featuresEs : features ?? [])
+    : (featuresEn?.length ? featuresEn : features ?? [])
   const isTranslated = rawFeatures.some(f => /[ ñáéíóúü]/i.test(f))
   const highlights = rawFeatures.map(f => ({
     label: isTranslated ? f : formatLabel(f),
     category: 'General',
     icon: f,
   }))
-  const shared = (amenities ?? []).map(a => ({ label: formatLabel(a), category: 'Amenities', icon: a }))
+  const shared = (amenities ?? []).map(a => ({
+    label: formatLabel(a),
+    category: lang === 'es' ? 'Amenidades' : 'Amenities',
+    icon: a,
+  }))
   return { highlights, shared, exclusive: [] }
 }
 
