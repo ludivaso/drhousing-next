@@ -5,6 +5,7 @@ import FilterBar from '@/components/FilterBar'
 import ActiveFilterTags from '@/components/ActiveFilterTags'
 import PropertiesGrid from '@/components/PropertiesGrid'
 import type { PropertyRow } from '@/lib/supabase/queries'
+import { sortProperties } from '@/lib/utils/sortProperties'
 import en from '@/messages/en.json'
 import es from '@/messages/es.json'
 
@@ -83,6 +84,8 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
     .select('*')
     .eq('hidden', false)
     .or('visibility.eq.public,visibility.is.null')
+    .order('featured', { ascending: false })
+    .order('featured_order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
 
   if (searchParams.status)   query = query.eq('status', searchParams.status)
@@ -101,7 +104,7 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
   }
 
   const { data } = await query
-  const properties: PropertyRow[] = data ?? []
+  const properties: PropertyRow[] = sortProperties(data ?? [])
 
   const isFiltered = !!(
     searchParams.status || searchParams.tipo || searchParams.min ||
