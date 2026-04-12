@@ -24,6 +24,7 @@ import PropertyCard from '@/components/PropertyCard'
 import FavoriteButton from '@/components/FavoriteButton'
 import { useI18n } from '@/lib/i18n/context'
 import { usePathname } from 'next/navigation'
+import PropertyDetails, { type PropertyFeatureItem } from '@/components/properties/PropertyDetails'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -70,6 +71,53 @@ function formatLabel(s: string): string {
     .join(' ')
 }
 
+// ── Feature data split for PropertyDetails ────────────────────────────────────
+
+// Categories that represent unit-specific residence features
+const RESIDENCE_CATEGORIES = new Set([
+  'Interior', 'Kitchen', 'Climate', 'Technology', 'Views', 'Rooms', 'Location', 'General',
+])
+// Categories that represent private/exclusive amenities
+const EXCLUSIVE_CATEGORIES = new Set(['Entertainment'])
+// Everything else is treated as shared/community
+
+function toFeatureItem(f: FeatureRow, lang: 'en' | 'es'): PropertyFeatureItem {
+  return {
+    label: (lang === 'en' ? f.name_en : f.name_es) || f.name_en || f.name_es || '',
+    category: f.category || 'General',
+    icon: f.icon || f.category || '',
+  }
+}
+
+function buildPropertyDetailsData(
+  propertyFeatures: FeatureRow[],
+  amenities: string[] | null,
+  features: string[] | null,
+  featuresEn: string[] | undefined,
+  featuresEs: string[] | undefined,
+  lang: 'en' | 'es',
+): { highlights: PropertyFeatureItem[]; shared: PropertyFeatureItem[]; exclusive: PropertyFeatureItem[] } {
+  if (propertyFeatures.length > 0) {
+    const highlights  = propertyFeatures.filter(f => RESIDENCE_CATEGORIES.has(f.category ?? 'General')).map(f => toFeatureItem(f, lang))
+    const shared      = propertyFeatures.filter(f => !RESIDENCE_CATEGORIES.has(f.category ?? 'General') && !EXCLUSIVE_CATEGORIES.has(f.category ?? 'General')).map(f => toFeatureItem(f, lang))
+    const exclusive   = propertyFeatures.filter(f => EXCLUSIVE_CATEGORIES.has(f.category ?? 'General')).map(f => toFeatureItem(f, lang))
+
+    // Add legacy amenities to shared
+    const legacyAmenities = (amenities ?? []).map(a => ({ label: formatLabel(a), category: 'Amenities', icon: a }))
+    return { highlights, shared: [...shared, ...legacyAmenities], exclusive }
+  }
+
+  // Legacy fallback
+  const rawFeatures = lang === 'es' ? (featuresEs?.length ? featuresEs : features ?? []) : (featuresEn?.length ? featuresEn : features ?? [])
+  const isTranslated = rawFeatures.some(f => /[ ñáéíóúü]/i.test(f))
+  const highlights = rawFeatures.map(f => ({
+    label: isTranslated ? f : formatLabel(f),
+    category: 'General',
+    icon: f,
+  }))
+  const shared = (amenities ?? []).map(a => ({ label: formatLabel(a), category: 'Amenities', icon: a }))
+  return { highlights, shared, exclusive: [] }
+}
 
 // ── Lightbox ─────────────────────────────────────────────────────────────────
 
@@ -227,6 +275,11 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
   const DESC_LIMIT = 300
   const isLong = description.length > DESC_LIMIT
   const displayedDesc = isLong && !descExpanded ? description.slice(0, DESC_LIMIT) + '…' : description
+
+  // Build data for PropertyDetails component
+  const { highlights, shared, exclusive } = buildPropertyDetailsData(
+    propertyFeatures, p.amenities, p.features, featuresEn, featuresEs, lang,
+  )
 
   return (
     <>
@@ -440,74 +493,16 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                 </section>
               )}
 
-              {/* Features — normalized join, falls back to legacy arrays */}
-              {propertyFeatures.length > 0 ? (
-                (() => {
-                  const grouped = propertyFeatures.reduce<Record<string, FeatureRow[]>>((acc, f) => {
-                    const cat = f.category ?? 'General'
-                    ;(acc[cat] ??= []).push(f)
-                    return acc
-                  }, {})
-                  return Object.entries(grouped).map(([category, items]) => (
-                    <section key={category}>
-                      <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                        {CATEGORY_LABELS[category]?.[lang] ?? category}
-                      </h2>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {items.map((f) => (
-                          <li key={f.id} className="flex items-center gap-2 font-sans text-sm text-foreground">
-                            <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                            {lang === 'en' ? (f.name_en || f.name_es) : (f.name_es || f.name_en)}
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  ))
-                })()
-              ) : (
-                <>
-                  {/* Legacy: features array — use bilingual version when available */}
-                  {(() => {
-                    const rawFeatures = lang === 'es'
-                      ? (featuresEs?.length ? featuresEs : p.features ?? [])
-                      : (featuresEn?.length ? featuresEn : p.features ?? [])
-                    if (rawFeatures.length === 0) return null
-                    // If items look like translated labels (contain spaces/accents), show as-is;
-                    // otherwise run formatLabel() on the raw key
-                    const isTranslated = rawFeatures.some((f) => /[ ñáéíóúü]/i.test(f))
-                    return (
-                      <section>
-                        <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                          {t('propertyDetail.features')}
-                        </h2>
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {rawFeatures.map((f) => (
-                            <li key={f} className="flex items-center gap-2 font-sans text-sm text-foreground">
-                              <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                              {isTranslated ? f : formatLabel(f)}
-                            </li>
-                          ))}
-                        </ul>
-                      </section>
-                    )
-                  })()}
-                  {/* Legacy: amenities array */}
-                  {(p.amenities?.length ?? 0) > 0 && (
-                    <section>
-                      <h2 className="font-serif text-xl font-semibold text-foreground mb-4">
-                        {t('propertyDetail.amenities')}
-                      </h2>
-                      <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        {(p.amenities ?? []).map((a) => (
-                          <li key={a} className="flex items-center gap-2 font-sans text-sm text-foreground">
-                            <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#C9A96E' }} />
-                            {formatLabel(a)}
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  )}
-                </>
+              {/* Features & Amenities — premium PropertyDetails component */}
+              {(highlights.length > 0 || shared.length > 0 || exclusive.length > 0) && (
+                <section>
+                  <PropertyDetails
+                    residenceHighlights={highlights}
+                    sharedAmenities={shared}
+                    exclusiveAmenities={exclusive}
+                    lang={lang}
+                  />
+                </section>
               )}
 
               {/* Plusvalía / Investment Perspective */}
