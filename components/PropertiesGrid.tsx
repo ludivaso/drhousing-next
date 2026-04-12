@@ -1,7 +1,31 @@
 'use client'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import PropertyCard from '@/components/PropertyCard'
+import SearchAutocomplete from '@/components/properties/SearchAutocomplete'
 import type { PropertyRow } from '@/lib/supabase/queries'
+import { sortProperties } from '@/lib/utils/sortProperties'
+import { normalizeText } from '@/lib/utils/normalize'
+
+function matchesSearch(property: PropertyRow, query: string): boolean {
+  if (!query || query.length < 2) return true
+  const q = normalizeText(query)
+  const words = q.split(/\s+/).filter(Boolean)
+  const haystack = normalizeText(
+    [
+      property.title,
+      property.title_en,
+      property.title_es,
+      property.location_name,
+      property.building_name,
+      property.description,
+      property.zone ?? '',
+    ]
+      .filter(Boolean)
+      .join(' ')
+  )
+  return words.every(word => haystack.includes(word))
+}
 
 interface Props {
   properties: PropertyRow[]
@@ -18,27 +42,38 @@ export default function PropertiesGrid({
   clearFiltersHref,
   clearFiltersText,
 }: Props) {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
 
-  const filtered = searchQuery.trim()
-    ? properties.filter((p) => {
-        const title =
-          lang === 'es'
-            ? (p.title_es || p.ai_generated_title_es || p.title_en || p.title || '')
-            : (p.title_en || p.ai_generated_title_en || p.title_es || p.title || '')
-        return title.toLowerCase().includes(searchQuery.toLowerCase())
-      })
-    : properties
+  // Sort first (featured → featured_order → newest), then apply client-side search
+  const sorted = sortProperties(properties)
+  const filtered = sorted.filter(p => matchesSearch(p, searchQuery))
+
+  const handleSelectZone = useCallback(
+    (zone: string) => {
+      setSearchQuery('')
+      router.push(`/${lang}/properties?zona=${encodeURIComponent(zone)}`, { scroll: false })
+    },
+    [router, lang]
+  )
+
+  const handleSelectProperty = useCallback(
+    (slug: string) => {
+      router.push(`/${lang}/properties/${slug}`)
+    },
+    [router, lang]
+  )
 
   return (
     <>
       <div className="mb-4">
-        <input
-          type="text"
-          placeholder={lang === 'es' ? 'Buscar propiedades...' : 'Search properties...'}
+        <SearchAutocomplete
+          properties={properties}
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 font-sans text-sm"
+          onChange={setSearchQuery}
+          onSelectZone={handleSelectZone}
+          onSelectProperty={handleSelectProperty}
+          lang={lang}
         />
       </div>
 
