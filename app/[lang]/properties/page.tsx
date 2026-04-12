@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import FilterBar from '@/components/FilterBar'
 import ActiveFilterTags from '@/components/ActiveFilterTags'
 import PropertiesGrid from '@/components/PropertiesGrid'
+import { PropertiesFilterProvider } from '@/components/properties/PropertiesFilterContext'
 import type { PropertyRow } from '@/lib/supabase/queries'
 import { sortProperties } from '@/lib/utils/sortProperties'
 import en from '@/messages/en.json'
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
   }
 }
 
-// Zone values match the `zone` TEXT column in Supabase (populated by migration SQL)
+// Zone label map for active filter chips
 const ZONA_LABELS: Record<string, string> = {
   'Escazú':                 'Escazú',
   'Santa Ana':              'Santa Ana',
@@ -62,7 +63,7 @@ interface PageProps {
     min?:       string
     max?:       string
     camas?:     string
-    zona?:      string
+    zona?:      string  // comma-separated zone values for multi-select
     comunidad?: string
   }
 }
@@ -71,7 +72,6 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
   const lang = params.lang === 'es' ? 'es' : 'en'
 
   // Total public count (unfiltered) for "X de N" display
-  // Use hidden=false only; visibility may be null for older records (treat null as public)
   const { count: totalCount } = await supabase
     .from('properties')
     .select('*', { count: 'exact', head: true })
@@ -93,9 +93,18 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
   if (searchParams.min)      query = query.gte('price_sale', Number(searchParams.min))
   if (searchParams.max)      query = query.lte('price_sale', Number(searchParams.max))
   if (searchParams.camas)    query = query.gte('bedrooms', Number(searchParams.camas))
-  if (searchParams.zona)     query = query.eq('zone', searchParams.zona)
 
-  // gated_community is stored in the features[] array (confirmed: 8 properties)
+  // Support multi-select zones: comma-separated DB zone values
+  if (searchParams.zona) {
+    const zones = searchParams.zona.split(',').filter(Boolean)
+    if (zones.length === 1) {
+      query = query.eq('zone', zones[0])
+    } else if (zones.length > 1) {
+      query = query.in('zone', zones)
+    }
+  }
+
+  // gated_community is stored in the features[] array
   if (searchParams.comunidad === 'gated') {
     query = query.contains('features', ['gated_community'])
   }
@@ -111,7 +120,7 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
     searchParams.max || searchParams.camas || searchParams.zona || searchParams.comunidad
   )
 
-  // Build active filter tags for the removable chips
+  // Build active filter tags
   const activeTags: { key: string; label: string }[] = []
   if (searchParams.status === 'for_sale')    activeTags.push({ key: 'status',    label: t(lang, 'propertyGrid.filters.forSale') })
   if (searchParams.status === 'for_rent')    activeTags.push({ key: 'status',    label: t(lang, 'propertyGrid.filters.forRent') })
@@ -120,19 +129,30 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
   if (searchParams.tipo === 'land')          activeTags.push({ key: 'tipo',      label: t(lang, 'propertyGrid.filters.lot') })
   if (searchParams.tipo === 'commercial')    activeTags.push({ key: 'tipo',      label: t(lang, 'propertyGrid.filters.commercial') })
   if (searchParams.camas)                    activeTags.push({ key: 'camas',     label: t(lang, 'propertyGrid.filters.bedTag', { count: searchParams.camas }) })
-  if (searchParams.zona)                     activeTags.push({ key: 'zona',      label: ZONA_LABELS[searchParams.zona] ?? searchParams.zona })
+  if (searchParams.zona) {
+    // Show all selected zones as one chip: "Escazú, Santa Ana"
+    const zoneLabels = searchParams.zona
+      .split(',')
+      .filter(Boolean)
+      .map(z => ZONA_LABELS[z] ?? z)
+      .join(', ')
+    activeTags.push({ key: 'zona', label: zoneLabels })
+  }
   if (searchParams.comunidad === 'gated')    activeTags.push({ key: 'comunidad', label: t(lang, 'propertyGrid.filters.gated') })
   if (searchParams.comunidad === 'independent') activeTags.push({ key: 'comunidad', label: t(lang, 'propertyGrid.filters.independent') })
   if (searchParams.min)                      activeTags.push({ key: 'min',       label: t(lang, 'propertyGrid.filters.minPrice', { amount: Number(searchParams.min).toLocaleString() }) })
   if (searchParams.max)                      activeTags.push({ key: 'max',       label: t(lang, 'propertyGrid.filters.maxPrice', { amount: Number(searchParams.max).toLocaleString() }) })
 
   return (
-    <>
+    <PropertiesFilterProvider>
       <Suspense>
-        <FilterBar />
+        <FilterBar properties={properties} />
       </Suspense>
 
-      <section id="filters" className="pt-24 md:pt-28 pb-16 bg-background" style={{ scrollMarginTop: '96px' }}>
+      {/* pt-6 gives a small comfortable gap below the filter bar.
+          The filter bar is now sticky (top-16 md:top-24), so this padding
+          also prevents the heading from being obscured on scroll. */}
+      <section id="filters" className="pt-6 pb-16 bg-background" style={{ scrollMarginTop: '96px' }}>
         <div className="container-wide">
 
           {/* Header + active tags */}
@@ -162,6 +182,6 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
 
         </div>
       </section>
-    </>
+    </PropertiesFilterProvider>
   )
 }

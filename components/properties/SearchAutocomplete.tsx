@@ -188,7 +188,7 @@ export default function SearchAutocomplete({
           }}
           onFocus={() => value.length >= 2 && setOpen(true)}
           onKeyDown={handleKeyDown}
-          className="w-full text-base border border-[#E8E3DC] rounded-lg px-4 py-3 pl-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#C9A96E] focus:border-[#C9A96E] bg-white font-poppins"
+          className="w-full pl-10 pr-4 py-3 text-base rounded-xl bg-[#F5F2EE] border border-[#E8E3DC] placeholder:text-[#9A9A8A] text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#C9A96E] focus:border-[#C9A96E] transition-all duration-150 font-[Poppins]"
         />
       </div>
 

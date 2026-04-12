@@ -1,11 +1,9 @@
 'use client'
-import { useState, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import PropertyCard from '@/components/PropertyCard'
-import SearchAutocomplete from '@/components/properties/SearchAutocomplete'
 import type { PropertyRow } from '@/lib/supabase/queries'
 import { sortProperties } from '@/lib/utils/sortProperties'
 import { normalizeText } from '@/lib/utils/normalize'
+import { usePropertiesFilter } from '@/components/properties/PropertiesFilterContext'
 
 function matchesSearch(property: PropertyRow, query: string): boolean {
   if (!query || query.length < 2) return true
@@ -42,41 +40,14 @@ export default function PropertiesGrid({
   clearFiltersHref,
   clearFiltersText,
 }: Props) {
-  const router = useRouter()
-  const [searchQuery, setSearchQuery] = useState('')
+  const { searchQuery } = usePropertiesFilter()
 
-  // Sort first (featured → featured_order → newest), then apply client-side search
-  const sorted = sortProperties(properties)
+  // Sort first (featured → featured_order → newest), then apply client-side text search
+  const sorted   = sortProperties(properties)
   const filtered = sorted.filter(p => matchesSearch(p, searchQuery))
-
-  const handleSelectZone = useCallback(
-    (zone: string) => {
-      setSearchQuery('')
-      router.push(`/${lang}/properties?zona=${encodeURIComponent(zone)}`, { scroll: false })
-    },
-    [router, lang]
-  )
-
-  const handleSelectProperty = useCallback(
-    (slug: string) => {
-      router.push(`/${lang}/properties/${slug}`)
-    },
-    [router, lang]
-  )
 
   return (
     <>
-      <div className="mb-4">
-        <SearchAutocomplete
-          properties={properties}
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onSelectZone={handleSelectZone}
-          onSelectProperty={handleSelectProperty}
-          lang={lang}
-        />
-      </div>
-
       {filtered.length === 0 ? (
         <div className="py-20 text-center">
           <p className="text-muted-foreground mb-4">{noMatchesText}</p>

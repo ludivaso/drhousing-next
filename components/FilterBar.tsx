@@ -2,28 +2,22 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useCallback } from 'react'
 import { useI18n } from '@/lib/i18n/context'
+import SearchAutocomplete from '@/components/properties/SearchAutocomplete'
+import { ZoneDropdown } from '@/components/properties/ZoneDropdown'
+import { usePropertiesFilter } from '@/components/properties/PropertiesFilterContext'
+import type { PropertyRow } from '@/lib/supabase/queries'
 
-// Zone values must exactly match the `zone` TEXT column in Supabase
-const ZONES = [
-  { value: 'Escazú',                 label: 'Escazú' },
-  { value: 'Santa Ana',              label: 'Santa Ana' },
-  { value: 'La Guácima',             label: 'La Guácima' },
-  { value: 'Ciudad Colón',           label: 'Ciudad Colón' },
-  { value: 'Rohrmoser',              label: 'Rohrmoser' },
-  { value: 'La Sabana',              label: 'La Sabana' },
-  { value: 'Pavas',                  label: 'Pavas' },
-  { value: 'San Rafael de Alajuela', label: 'San Rafael' },
-  { value: 'Guanacaste',             label: 'Guanacaste' },
-  { value: 'Pacífico Sur',           label: 'Pacífico Sur' },
-  { value: 'Otras zonas',            label: 'Otras zonas' },
-]
+interface FilterBarProps {
+  properties?: PropertyRow[]
+}
 
-export default function FilterBar() {
-  const router = useRouter()
+export default function FilterBar({ properties = [] }: FilterBarProps) {
+  const router       = useRouter()
   const searchParams = useSearchParams()
-  const pathname = usePathname()
-  const lang = pathname.startsWith('/es') ? 'es' : 'en'
-  const { t } = useI18n()
+  const pathname     = usePathname()
+  const lang         = pathname.startsWith('/es') ? 'es' : 'en'
+  const { t }        = useI18n()
+  const { searchQuery, setSearchQuery } = usePropertiesFilter()
 
   const STATUS_OPTIONS = [
     { value: '',         label: t('propertyGrid.filters.all') },
@@ -62,17 +56,35 @@ export default function FilterBar() {
     }
     const qs = params.toString()
     router.push(qs ? `/${lang}/properties?${qs}` : `/${lang}/properties`, { scroll: false })
-  }, [router, searchParams])
+  }, [router, searchParams, lang])
 
   const status    = searchParams.get('status')    ?? ''
   const tipo      = searchParams.get('tipo')      ?? ''
   const min       = searchParams.get('min')       ?? ''
   const max       = searchParams.get('max')       ?? ''
   const camas     = searchParams.get('camas')     ?? ''
-  const zona      = searchParams.get('zona')      ?? ''
+  const zonaParam = searchParams.get('zona')      ?? ''
   const comunidad = searchParams.get('comunidad') ?? ''
 
-  const hasFilters = !!(status || tipo || min || max || camas || zona || comunidad)
+  // Parse comma-separated zone values from URL param
+  const selectedZones = zonaParam ? zonaParam.split(',').filter(Boolean) : []
+
+  const hasFilters = !!(status || tipo || min || max || camas || zonaParam || comunidad)
+
+  const handleZonesChange = useCallback((zones: string[]) => {
+    setParam('zona', zones.length > 0 ? zones.join(',') : null)
+  }, [setParam])
+
+  // Called when user clicks a zone/location suggestion in the autocomplete
+  const handleSelectZone = useCallback((zone: string) => {
+    setSearchQuery('')
+    setParam('zona', zone)
+  }, [setSearchQuery, setParam])
+
+  // Called when user clicks a property suggestion in the autocomplete
+  const handleSelectProperty = useCallback((slug: string) => {
+    router.push(`/${lang}/properties/${slug}`)
+  }, [router, lang])
 
   const pill = (active: boolean) =>
     `px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
@@ -82,8 +94,18 @@ export default function FilterBar() {
     }`
 
   return (
-    <div className="bg-background border-b border-[#E8E3DC]">
+    <div className="sticky top-16 md:top-24 z-40 bg-background border-b border-[#E8E3DC]">
       <div className="container-wide py-4 space-y-3">
+
+        {/* Row 0: Search — always first */}
+        <SearchAutocomplete
+          properties={properties}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onSelectZone={handleSelectZone}
+          onSelectProperty={handleSelectProperty}
+          lang={lang}
+        />
 
         {/* Row 1: Status + Type + Beds + Price */}
         <div className="flex flex-wrap gap-4 items-end">
@@ -145,22 +167,16 @@ export default function FilterBar() {
           </div>
         </div>
 
-        {/* Row 2: Zona */}
+        {/* Row 2: Zone dropdown */}
         <div>
           <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
             {t('propertyGrid.filters.zone')}
           </p>
-          <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-0.5">
-            <button onClick={() => setParam('zona', null)} className={pill(zona === '')}>
-              {t('propertyGrid.filters.allF')}
-            </button>
-            {ZONES.map(z => (
-              <button key={z.value} onClick={() => setParam('zona', z.value)}
-                className={pill(zona === z.value)}>
-                {z.label}
-              </button>
-            ))}
-          </div>
+          <ZoneDropdown
+            selected={selectedZones}
+            onChange={handleZonesChange}
+            lang={lang}
+          />
         </div>
 
         {/* Row 3: Comunidad + Clear */}
@@ -181,7 +197,10 @@ export default function FilterBar() {
 
           {hasFilters && (
             <button
-              onClick={() => router.push(`/${lang}/properties`, { scroll: false })}
+              onClick={() => {
+                setSearchQuery('')
+                router.push(`/${lang}/properties`, { scroll: false })
+              }}
               className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors self-end pb-1.5">
               {t('propertyGrid.filters.clearFilters')}
             </button>
