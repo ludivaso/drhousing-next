@@ -26,11 +26,51 @@ function otherZones(currentSlug: string): ZoneConfig[] {
   return ZONE_SLUGS.filter(s => s !== currentSlug).map(s => ZONE_CONFIG[s])
 }
 
+/** Status sort priority per mode.
+ *  Rental pages: for_rent → both → everything else → rented → sold
+ *  Sale pages:   for_sale → presale → both → under_contract → everything else → rented → sold
+ */
+const RENT_ORDER: Record<string, number> = {
+  for_rent:       0,
+  both:           1,
+  presale:        2,
+  for_sale:       3,
+  under_contract: 4,
+  rented:         5,
+  sold:           6,
+}
+
+const SALE_ORDER: Record<string, number> = {
+  for_sale:       0,
+  presale:        1,
+  both:           2,
+  under_contract: 3,
+  for_rent:       4,
+  rented:         5,
+  sold:           6,
+}
+
+function sortProperties(props: PropertyRow[], mode: 'rent' | 'sale'): PropertyRow[] {
+  const order = mode === 'rent' ? RENT_ORDER : SALE_ORDER
+  return [...props].sort((a, b) => (order[a.status] ?? 99) - (order[b.status] ?? 99))
+}
+
+/** Active = not yet rented/sold — used for the count badge */
+function isActive(p: PropertyRow): boolean {
+  return p.status !== 'rented' && p.status !== 'sold'
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function ZoneLandingPage({ zone, properties, mode, lang }: Props) {
+export default function ZoneLandingPage({ zone, properties: rawProperties, mode, lang }: Props) {
   const isEs = lang === 'es'
   const isSale = mode === 'sale'
+
+  // Sort: active listings first (by mode priority), rented/sold at bottom
+  const properties = sortProperties(rawProperties, mode)
+
+  // Count only currently-available properties for the header badge
+  const activeCount = properties.filter(isActive).length
 
   const pageTitle = isEs
     ? `${isSale ? 'Propiedades en Venta' : 'Alquiler de Propiedades'} en ${zone.nameEs}`
@@ -42,8 +82,8 @@ export default function ZoneLandingPage({ zone, properties, mode, lang }: Props)
 
   const modeLabel  = isEs ? (isSale ? 'en venta' : 'en alquiler') : (isSale ? 'for sale' : 'for rent')
   const countLabel = isEs
-    ? `${properties.length} propiedad${properties.length !== 1 ? 'es' : ''} ${modeLabel}`
-    : `${properties.length} propert${properties.length !== 1 ? 'ies' : 'y'} ${modeLabel}`
+    ? `${activeCount} disponible${activeCount !== 1 ? 's' : ''} ${modeLabel}`
+    : `${activeCount} available ${activeCount !== 1 ? 'properties' : 'property'} ${modeLabel}`
 
   const whyTitle  = isEs ? `¿Por Qué Vivir en ${zone.nameEs}?` : `Why Live in ${zone.nameEn}?`
   const whyPoints = isEs ? zone.whyLiveEs : zone.whyLiveEn
