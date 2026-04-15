@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { supabase } from '@/lib/supabase/client'
+import { ZONE_SLUGS } from '@/config/zones'
 
 const BASE_URL = 'https://drhousing.net'
 
@@ -34,6 +35,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
 
+  // Zone landing pages — 4 modes × 4 zones = 16 URLs
+  const zoneModes = [
+    { esPath: 'alquiler', enPath: 'rentals' },
+    { esPath: 'venta',    enPath: 'for-sale' },
+  ]
+  const zoneRoutes: MetadataRoute.Sitemap = ZONE_SLUGS.flatMap(zone =>
+    zoneModes.flatMap(({ esPath, enPath }) => [
+      {
+        url: `${BASE_URL}/es/${esPath}/${zone}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.85,
+        alternates: {
+          languages: {
+            es: `${BASE_URL}/es/${esPath}/${zone}`,
+            en: `${BASE_URL}/en/${enPath}/${zone}`,
+            'x-default': `${BASE_URL}/en/${enPath}/${zone}`,
+          },
+        },
+      },
+      {
+        url: `${BASE_URL}/en/${enPath}/${zone}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.85,
+        alternates: {
+          languages: {
+            es: `${BASE_URL}/es/${esPath}/${zone}`,
+            en: `${BASE_URL}/en/${enPath}/${zone}`,
+            'x-default': `${BASE_URL}/en/${enPath}/${zone}`,
+          },
+        },
+      },
+    ])
+  )
+
   // hreflang alternates for bilingual support
   const withAlternates = [...STATIC_ROUTES, ...propertyRoutes].map((route) => ({
     ...route,
@@ -46,5 +83,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   }))
 
-  return withAlternates
+  return [...withAlternates, ...zoneRoutes]
 }
