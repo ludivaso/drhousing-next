@@ -69,20 +69,12 @@ export default async function ForSaleZonePage({
     .select('*')
     .eq('hidden', false)
     .or('visibility.eq.public,visibility.is.null')
-    .ilike('zone', `%${zone.dbZone}%`)
-    .or('status.eq.for_sale,status.eq.presale,status.eq.both,status.eq.under_contract')
+    .or(`zone.ilike.%${zone.dbZone}%,zone.ilike.%${zone.nameEs}%,location_name.ilike.%${zone.dbZone}%,location_name.ilike.%${zone.nameEs}%`)
+    .or('status.eq.for_sale,price_sale.gt.0')
     .order('featured_order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
 
-  const rows = (data ?? []) as PropertyRow[]
-  const properties = rows.filter(
-    p =>
-      p.status === 'for_sale' ||
-      p.status === 'presale' ||
-      p.status === 'both' ||
-      p.status === 'under_contract' ||
-      (p.price_sale ?? 0) > 0
-  )
+  const properties = (data ?? []) as PropertyRow[]
 
   const jsonLd = {
     '@context': 'https://schema.org',
