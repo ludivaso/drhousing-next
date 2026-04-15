@@ -83,27 +83,49 @@ function toFeatureItem(f: FeatureRow, lang: 'en' | 'es'): PropertyFeatureItem {
 
 function buildPropertyDetailsData(
   propertyFeatures: FeatureRow[],
+  // Raw canonical columns — null means not yet AI-assigned
+  featuresEnRaw: string[] | null | undefined,
+  featuresEsRaw: string[] | null | undefined,
+  amenitiesEnRaw: string[] | null | undefined,
+  amenitiesEsRaw: string[] | null | undefined,
+  // Legacy fields
   amenities: string[] | null,
   features: string[] | null,
-  featuresEn: string[] | undefined,
+  featuresEn: string[] | undefined,   // has fallback baked in from page.tsx
   featuresEs: string[] | undefined,
   lang: 'en' | 'es',
 ): { highlights: PropertyFeatureItem[]; shared: PropertyFeatureItem[]; exclusive: PropertyFeatureItem[] } {
-  if (propertyFeatures.length > 0) {
-    // All normalized features linked to this property → Residence Highlights.
-    // We use the category field for grouping within the section, NOT for deciding
-    // which section to put them in — that avoids misclassifying e.g. a private
-    // pool (Wellness category) as a community amenity.
-    const highlights = propertyFeatures.map(f => toFeatureItem(f, lang))
+  const hasItems = (arr: string[] | null | undefined): boolean =>
+    Array.isArray(arr) && arr.length > 0
 
-    // The legacy amenities[] column is explicitly a community/building amenities
-    // field, so it goes to the Shared section.
-    const shared = (amenities ?? []).map(a => ({ label: formatLabel(a), category: lang === 'es' ? 'Amenidades' : 'Amenities', icon: a }))
+  // ── Priority 1: Canonical columns (post-AI reassignment) ──────────────────
+  // Use the RAW property columns (not the fallback props) so we don't
+  // accidentally treat old legacy data as canonical.
+  if (hasItems(featuresEnRaw) || hasItems(amenitiesEnRaw)) {
+    const featureLabels = lang === 'es' && hasItems(featuresEsRaw)
+      ? featuresEsRaw!
+      : (featuresEnRaw ?? [])
+    const amenityLabels = lang === 'es' && hasItems(amenitiesEsRaw)
+      ? amenitiesEsRaw!
+      : (amenitiesEnRaw ?? [])
 
+    const highlights = featureLabels.map(label => ({ label, category: 'General', icon: label }))
+    const shared     = amenityLabels.map(label => ({ label, category: 'General', icon: label }))
     return { highlights, shared, exclusive: [] }
   }
 
-  // Legacy fallback — no normalized features in the join table
+  // ── Priority 2: property_features join table (manual / legacy normalized) ──
+  if (propertyFeatures.length > 0) {
+    const highlights = propertyFeatures.map(f => toFeatureItem(f, lang))
+    const shared = (amenities ?? []).map(a => ({
+      label: formatLabel(a),
+      category: lang === 'es' ? 'Amenidades' : 'Amenities',
+      icon: a,
+    }))
+    return { highlights, shared, exclusive: [] }
+  }
+
+  // ── Priority 3: Legacy string arrays ──────────────────────────────────────
   const rawFeatures = lang === 'es'
     ? (featuresEs?.length ? featuresEs : features ?? [])
     : (featuresEn?.length ? featuresEn : features ?? [])
@@ -280,7 +302,16 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
 
   // Build data for PropertyDetails component
   const { highlights, shared, exclusive } = buildPropertyDetailsData(
-    propertyFeatures, p.amenities, p.features, featuresEn, featuresEs, lang,
+    propertyFeatures,
+    p.features_en,   // raw canonical — null if not yet AI-assigned
+    p.features_es,
+    p.amenities_en,
+    p.amenities_es,
+    p.amenities,     // legacy
+    p.features,
+    featuresEn,      // has legacy fallback baked in
+    featuresEs,
+    lang,
   )
 
   return (

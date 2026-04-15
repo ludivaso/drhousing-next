@@ -13,6 +13,7 @@ import {
   Wind, Package,
   Building2, MapPin, Star, Sparkles,
   ChevronDown,
+  Sofa, PawPrint, Wine, Flag, Trophy, Mountain, Home,
 } from 'lucide-react'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -60,6 +61,14 @@ const ICON_MAP: [string[], LucideIcon][] = [
   [['building', 'office', 'commercial'], Building2],
   [['location', 'map', 'distance', 'school', 'shop', 'restaurant', 'near'], MapPin],
   [['kids', 'children', 'playground', 'daycare', 'nursery'], Star],
+  // Canonical amenity names (from AI reassignment)
+  [['furnished', 'sofa', 'furniture', 'amueblado'], Sofa],
+  [['pet', 'dog', 'cat', 'animal', 'paw', 'mascotas'], PawPrint],
+  [['wine', 'cellar', 'bodega_vino', 'vino'], Wine],
+  [['guest_house', 'casa_de_huespedes', 'huespedes'], Home],
+  [['golf', 'campo_de_golf'], Flag],
+  [['tennis', 'paddle', 'racket', 'cancha_de_tenis', 'cancha_de_padel', 'deporte'], Trophy],
+  [['mountain', 'montaña', 'vistas_a_la_montaña', 'valley', 'valle'], Mountain],
 ]
 
 function resolveIcon(iconStr: string, category: string): LucideIcon {
