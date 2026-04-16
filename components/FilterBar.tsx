@@ -154,6 +154,49 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
   const zonaParam = searchParams.get('zona')      ?? ''
   const comunidad = searchParams.get('comunidad') ?? ''
 
+  // When status changes (sale ↔ rent), clear any lingering price range so
+  // a $500k sale filter doesn't carry over into a rental search.
+  const handleStatusChange = useCallback((v: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (v === '') params.delete('status')
+    else          params.set('status', v)
+    if (v !== status) {
+      params.delete('min')
+      params.delete('max')
+    }
+    const qs = params.toString()
+    router.push(qs ? `/${lang}/properties?${qs}` : `/${lang}/properties`, { scroll: false })
+  }, [router, searchParams, status, lang])
+
+  // Price labels + placeholders adapt to the selected status (sale/rent/any)
+  const pricePresentation = (() => {
+    if (status === 'for_rent') {
+      return {
+        minLabel:       lang === 'en' ? 'Rent min'   : 'Renta mín',
+        maxLabel:       lang === 'en' ? 'Rent max'   : 'Renta máx',
+        minPlaceholder: '$1,500',
+        maxPlaceholder: '$5,000',
+        suffix:         lang === 'en' ? '/mo'        : '/mes',
+      }
+    }
+    if (status === 'for_sale') {
+      return {
+        minLabel:       lang === 'en' ? 'Sale min'   : 'Venta mín',
+        maxLabel:       lang === 'en' ? 'Sale max'   : 'Venta máx',
+        minPlaceholder: '$250,000',
+        maxPlaceholder: '$2,000,000',
+        suffix:         '',
+      }
+    }
+    return {
+      minLabel:       `$ ${t('propertyGrid.filters.min')}`,
+      maxLabel:       `$ ${t('propertyGrid.filters.max')}`,
+      minPlaceholder: `$ ${t('propertyGrid.filters.min')}`,
+      maxPlaceholder: `$ ${t('propertyGrid.filters.max')}`,
+      suffix:         '',
+    }
+  })()
+
   // Parse comma-separated zone values from URL param
   const selectedZones = zonaParam ? zonaParam.split(',').filter(Boolean) : []
 
@@ -181,18 +224,21 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
   }
 
   return (
-    <div className="sticky top-20 md:top-[124px] z-40 bg-background border-b border-[#E8E3DC]">
-      <div className="container-wide py-3 md:py-4 space-y-3">
+    // NOT sticky — filters scroll away with content. Only the navbar stays fixed.
+    <div className="bg-background border-b border-[#E8E3DC]">
+      <div className="container-wide py-4 md:py-6 space-y-4">
 
-        {/* Row 0: Search — always visible */}
-        <SearchAutocomplete
-          properties={properties}
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onSelectZone={handleSelectZone}
-          onSelectProperty={handleSelectProperty}
-          lang={lang}
-        />
+        {/* Row 0: Search — centered, constrained width on desktop (Airbnb-style) */}
+        <div className="max-w-2xl mx-auto">
+          <SearchAutocomplete
+            properties={properties}
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onSelectZone={handleSelectZone}
+            onSelectProperty={handleSelectProperty}
+            lang={lang}
+          />
+        </div>
 
         {/* Mobile-only toggle: "Filters" button + Clear */}
         <div className="flex items-center justify-between md:hidden">
@@ -221,16 +267,16 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
           )}
         </div>
 
-        {/* Filter dropdowns — single row on desktop, hidden on mobile until toggled */}
+        {/* Filter dropdowns — centered, max-width, single row on desktop */}
         <div className={`${filtersOpen ? 'block' : 'hidden'} md:block`}>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center gap-2">
 
-            {/* Status */}
+            {/* Status — drives which price labels/placeholders show */}
             <FilterDropdown
               label={t('propertyGrid.filters.statusLabel')}
               options={STATUS_OPTIONS}
               value={status}
-              onChange={(v) => setParam('status', v || null)}
+              onChange={handleStatusChange}
             />
 
             {/* Type */}
@@ -249,7 +295,7 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
               onChange={(v) => setParam('camas', v || null)}
             />
 
-            {/* Zone — multi-select, uses existing ZoneDropdown */}
+            {/* Zone — multi-select */}
             <ZoneDropdown
               selected={selectedZones}
               onChange={handleZonesChange}
@@ -265,27 +311,43 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
             />
 
             {/* Thin divider */}
-            <div className="hidden md:block w-px h-6 bg-[#E8E3DC]" />
+            <div className="hidden md:block w-px h-6 bg-[#E8E3DC] mx-1" />
 
-            {/* Price range */}
+            {/* Price range — labels change based on for_sale / for_rent / any */}
             <div className="flex items-center gap-1.5">
-              <input
-                type="number"
-                placeholder={`$ ${t('propertyGrid.filters.min')}`}
-                value={min}
-                onChange={(e) => setParam('min', e.target.value || null)}
-                className="w-[100px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
-                           focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  aria-label={pricePresentation.minLabel}
+                  placeholder={pricePresentation.minPlaceholder}
+                  value={min}
+                  onChange={(e) => setParam('min', e.target.value || null)}
+                  className="w-[120px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
+                             focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
+                />
+                {pricePresentation.suffix && min && (
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                    {pricePresentation.suffix}
+                  </span>
+                )}
+              </div>
               <span className="text-muted-foreground text-xs">–</span>
-              <input
-                type="number"
-                placeholder={`$ ${t('propertyGrid.filters.max')}`}
-                value={max}
-                onChange={(e) => setParam('max', e.target.value || null)}
-                className="w-[100px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
-                           focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  aria-label={pricePresentation.maxLabel}
+                  placeholder={pricePresentation.maxPlaceholder}
+                  value={max}
+                  onChange={(e) => setParam('max', e.target.value || null)}
+                  className="w-[120px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
+                             focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
+                />
+                {pricePresentation.suffix && max && (
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+                    {pricePresentation.suffix}
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Clear all */}
@@ -300,6 +362,22 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
               </button>
             )}
           </div>
+
+          {/* Helper hint — reinforces that price is contextual (rent vs sale) */}
+          {status === 'for_rent' && (
+            <p className="mt-2 text-center text-xs text-muted-foreground font-sans">
+              {lang === 'en'
+                ? 'Showing monthly rent price range'
+                : 'Mostrando rango de renta mensual'}
+            </p>
+          )}
+          {status === 'for_sale' && (
+            <p className="mt-2 text-center text-xs text-muted-foreground font-sans">
+              {lang === 'en'
+                ? 'Showing sale price range'
+                : 'Mostrando rango de precio de venta'}
+            </p>
+          )}
         </div>
 
       </div>
