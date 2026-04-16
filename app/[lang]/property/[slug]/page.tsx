@@ -132,17 +132,93 @@ export default async function PropertyDetailPage({ params }: { params: { lang: s
     listingAgent = agentData
   }
 
-  // Fetch related properties
-  const { data: relatedData } = await supabase
-    .from('properties')
-    .select('*')
-    .eq('hidden', false)
-    .or('visibility.eq.public,visibility.is.null')
-    .neq('id', property.id)
-    .or(`location_name.eq."${property.location_name}",tier.eq."${property.tier}"`)
-    .limit(4)
+  // ── Related properties — tiered relevance ─────────────────────────────────
+  // The old query (OR on location_name OR tier) was too loose: a single tier
+  // match could drag in completely unrelated listings from other cities.
+  //
+  // Tier 1 (strongest): same zone + same property_type + same transaction
+  //                     kind (sale/rent).
+  // Tier 2: same zone (any type), same transaction kind.
+  // Tier 3: same property_type + similar price band (±40%) — only if we
+  //         still don't have enough to populate the carousel.
+  //
+  // We target up to 8 cards so the carousel has enough swipeable content.
+  const TARGET = 8
 
-  const relatedProperties: PropertyRow[] = relatedData ?? []
+  // Transaction-kind filter: if this property has a sale price, match
+  // sale-able listings; if it has a rent price, match rent-able ones.
+  const txStatuses: string[] = []
+  if (property.price_sale)         txStatuses.push('for_sale', 'both', 'presale')
+  if (property.price_rent_monthly) txStatuses.push('for_rent', 'both')
+  const txFilter = txStatuses.length > 0
+    ? txStatuses
+    : ['for_sale', 'for_rent', 'both', 'presale']
+
+  const related: PropertyRow[] = []
+  const seenIds = new Set<string>([property.id])
+  const push = (rows: PropertyRow[] | null | undefined) => {
+    for (const r of rows ?? []) {
+      if (!seenIds.has(r.id)) {
+        related.push(r)
+        seenIds.add(r.id)
+      }
+      if (related.length >= TARGET) break
+    }
+  }
+
+  // Tier 1 — same zone + same type + same transaction kind
+  if (property.location_name && property.property_type) {
+    const { data } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('hidden', false)
+      .or('visibility.eq.public,visibility.is.null')
+      .neq('id', property.id)
+      .eq('location_name', property.location_name)
+      .eq('property_type', property.property_type)
+      .in('status', txFilter)
+      .limit(TARGET)
+    push(data)
+  }
+
+  // Tier 2 — same zone (any type), same transaction kind
+  if (related.length < TARGET && property.location_name) {
+    const { data } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('hidden', false)
+      .or('visibility.eq.public,visibility.is.null')
+      .neq('id', property.id)
+      .eq('location_name', property.location_name)
+      .in('status', txFilter)
+      .limit(TARGET)
+    push(data)
+  }
+
+  // Tier 3 — same property_type + similar price band
+  if (related.length < TARGET && property.property_type) {
+    const refPrice = property.price_sale ?? property.price_rent_monthly
+    let q = supabase
+      .from('properties')
+      .select('*')
+      .eq('hidden', false)
+      .or('visibility.eq.public,visibility.is.null')
+      .neq('id', property.id)
+      .eq('property_type', property.property_type)
+      .in('status', txFilter)
+      .limit(TARGET)
+    if (refPrice && property.price_sale) {
+      q = q.gte('price_sale', Math.round(refPrice * 0.6))
+           .lte('price_sale', Math.round(refPrice * 1.4))
+    } else if (refPrice && property.price_rent_monthly) {
+      q = q.gte('price_rent_monthly', Math.round(refPrice * 0.6))
+           .lte('price_rent_monthly', Math.round(refPrice * 1.4))
+    }
+    const { data } = await q
+    push(data)
+  }
+
+  const relatedProperties: PropertyRow[] = related
 
   const jsonLd = {
     '@context': 'https://schema.org',

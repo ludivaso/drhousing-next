@@ -526,23 +526,34 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   ))}
                 </div>
 
-                {/* Remaining images — scrollable grid below hero */}
+                {/* Remaining images — single-line swipeable thumbnail strip */}
                 {allImages.length > 5 && (
-                  <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                  <div
+                    className="mt-3 flex gap-2 overflow-x-auto snap-x snap-mandatory pb-1
+                               [scrollbar-width:thin]
+                               [&::-webkit-scrollbar]:h-1.5
+                               [&::-webkit-scrollbar-track]:bg-transparent
+                               [&::-webkit-scrollbar-thumb]:bg-border
+                               [&::-webkit-scrollbar-thumb]:rounded-full"
+                    aria-label={t('propertyDetail.galleryLabel')}
+                  >
                     {allImages.slice(5).map((img, i) => (
-                      <div
+                      <button
                         key={i}
-                        className="aspect-[4/3] relative rounded-lg overflow-hidden group cursor-pointer"
+                        type="button"
                         onClick={() => openLightbox(i + 5)}
+                        className="relative flex-shrink-0 w-28 h-20 sm:w-32 sm:h-24 rounded-md overflow-hidden
+                                   snap-start group border border-transparent hover:border-[#C9A96E]
+                                   transition-colors"
                       >
                         <Image
                           src={img}
                           alt={`Photo ${i + 6}`}
                           fill
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
-                          className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                          sizes="128px"
+                          className="object-cover group-hover:scale-[1.05] transition-transform duration-300"
                         />
-                      </div>
+                      </button>
                     ))}
                   </div>
                 )}
@@ -703,9 +714,24 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                   <h2 className="font-serif text-xl font-semibold text-foreground mb-6">
                     {t('propertyDetail.similarProperties')}
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {/* Horizontal swipe carousel — compact cards, ~half the size of a regular card.
+                      Negative margin + padding lets the first card align with the section edge
+                      while still allowing the last card to fully scroll into view. */}
+                  <div
+                    className="-mx-4 px-4 flex gap-4 overflow-x-auto snap-x snap-mandatory pb-3
+                               [scrollbar-width:thin]
+                               [&::-webkit-scrollbar]:h-1.5
+                               [&::-webkit-scrollbar-track]:bg-transparent
+                               [&::-webkit-scrollbar-thumb]:bg-border
+                               [&::-webkit-scrollbar-thumb]:rounded-full"
+                  >
                     {relatedProperties.map((rp) => (
-                      <PropertyCard key={rp.id} property={rp} lang={lang} />
+                      <div
+                        key={rp.id}
+                        className="flex-shrink-0 w-[220px] sm:w-[240px] snap-start"
+                      >
+                        <PropertyCard property={rp} lang={lang} compact />
+                      </div>
                     ))}
                   </div>
                 </section>
