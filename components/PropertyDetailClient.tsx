@@ -71,6 +71,44 @@ function formatLabel(s: string): string {
     .join(' ')
 }
 
+// ── YouTube embed URL helper ──────────────────────────────────────────────────
+
+/**
+ * Extracts the video ID from any common YouTube URL format and returns
+ * a proper embed URL. Returns null if parsing fails.
+ *
+ * Supported formats:
+ *   https://www.youtube.com/watch?v=VIDEO_ID
+ *   https://youtu.be/VIDEO_ID
+ *   https://youtube.com/shorts/VIDEO_ID
+ *   https://www.youtube.com/embed/VIDEO_ID
+ *   https://youtube.com/v/VIDEO_ID
+ */
+function getYouTubeEmbedUrl(raw: string): string | null {
+  try {
+    const url = new URL(raw)
+    let videoId: string | null = null
+
+    // youtube.com/watch?v=ID
+    if (url.searchParams.has('v')) {
+      videoId = url.searchParams.get('v')
+    }
+    // youtube.com/shorts/ID  or  youtube.com/embed/ID  or  youtube.com/v/ID
+    else if (/\/(shorts|embed|v)\//.test(url.pathname)) {
+      const match = url.pathname.match(/\/(shorts|embed|v)\/([^/?&]+)/)
+      videoId = match?.[2] ?? null
+    }
+    // youtu.be/ID
+    else if (url.hostname === 'youtu.be') {
+      videoId = url.pathname.slice(1).split('/')[0] || null
+    }
+
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null
+  } catch {
+    return null
+  }
+}
+
 // ── Feature data split for PropertyDetails ────────────────────────────────────
 
 function toFeatureItem(f: FeatureRow, lang: 'en' | 'es'): PropertyFeatureItem {
@@ -143,7 +181,7 @@ function buildPropertyDetailsData(
   return { highlights, shared, exclusive: [] }
 }
 
-// ── Lightbox ─────────────────────────────────────────────────────────────────
+// ── Fullscreen Lightbox ──────────────────────────────────────────────────────
 
 function Lightbox({
   images,
@@ -166,8 +204,12 @@ function Lightbox({
       else if (e.key === 'ArrowRight') next()
       else if (e.key === 'Escape') onClose()
     }
+    document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handleKey)
+    }
   }, [prev, next, onClose])
 
   return (
@@ -175,52 +217,80 @@ function Lightbox({
       role="dialog"
       aria-modal="true"
       aria-label={t('propertyDetail.galleryLabel')}
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-      onClick={onClose}
+      className="fixed inset-0 z-[100] bg-black flex flex-col"
     >
-      {/* Close */}
-      <button
-        className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
-        onClick={onClose}
-        aria-label={t('propertyDetail.close')}
-      >
-        <X className="w-6 h-6" />
-      </button>
-
-      {/* Prev */}
-      <button
-        className="absolute left-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
-        onClick={(e) => { e.stopPropagation(); prev() }}
-        aria-label={t('propertyDetail.previous')}
-      >
-        <ChevronLeft className="w-6 h-6" />
-      </button>
-
-      {/* Image */}
-      <div
-        className="relative w-full max-w-4xl mx-16 aspect-[4/3]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Image
-          src={images[current]}
-          alt={`Photo ${current + 1}`}
-          fill
-          className="object-contain"
-          sizes="100vw"
-        />
-        <p className="absolute bottom-2 right-2 text-white/70 text-sm font-sans bg-black/40 px-2 py-1 rounded">
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-4 py-3 bg-black/80 backdrop-blur-sm">
+        <span className="text-white/80 text-sm font-sans font-medium">
           {current + 1} / {images.length}
-        </p>
+        </span>
+        <button
+          className="text-white/80 hover:text-white bg-white/10 rounded-full p-2 hover:bg-white/20 transition-colors"
+          onClick={onClose}
+          aria-label={t('propertyDetail.close')}
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
-      {/* Next */}
-      <button
-        className="absolute right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
-        onClick={(e) => { e.stopPropagation(); next() }}
-        aria-label={t('propertyDetail.next')}
-      >
-        <ChevronRight className="w-6 h-6" />
-      </button>
+      {/* Main image area */}
+      <div className="flex-1 relative flex items-center justify-center min-h-0">
+        {/* Prev */}
+        <button
+          className="absolute left-3 z-10 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full p-3 transition-colors"
+          onClick={prev}
+          aria-label={t('propertyDetail.previous')}
+        >
+          <ChevronLeft className="w-7 h-7" />
+        </button>
+
+        {/* Image */}
+        <div className="relative w-full h-full max-w-6xl mx-16">
+          <Image
+            key={current}
+            src={images[current]}
+            alt={`Photo ${current + 1}`}
+            fill
+            className="object-contain"
+            sizes="100vw"
+            priority
+          />
+        </div>
+
+        {/* Next */}
+        <button
+          className="absolute right-3 z-10 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full p-3 transition-colors"
+          onClick={next}
+          aria-label={t('propertyDetail.next')}
+        >
+          <ChevronRight className="w-7 h-7" />
+        </button>
+      </div>
+
+      {/* Thumbnail strip */}
+      <div className="bg-black/80 backdrop-blur-sm px-4 py-3 overflow-x-auto">
+        <div className="flex gap-2 justify-center">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`relative w-16 h-12 rounded-md overflow-hidden flex-shrink-0 border-2 transition-all ${
+                i === current
+                  ? 'border-white opacity-100'
+                  : 'border-transparent opacity-50 hover:opacity-80'
+              }`}
+            >
+              <Image
+                src={img}
+                alt={`Thumbnail ${i + 1}`}
+                fill
+                className="object-cover"
+                sizes="64px"
+              />
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
@@ -416,16 +486,17 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
           </div>
         </section>
 
-        {/* ── PHOTO GALLERY ─────────────────────────────────────────────── */}
+        {/* ── PHOTO GALLERY — Airbnb-style ─────────────────────────────── */}
         <section className="bg-muted">
           <div className="container-wide py-6">
             {allImages.length > 0 ? (
               <div className="relative">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {/* Large image left — spans 2 rows */}
+                {/* Hero row: 1 large + up to 4 small (Airbnb layout) */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-xl overflow-hidden">
+                  {/* Large hero — spans 2 cols + 2 rows on desktop */}
                   <div
-                    className="md:row-span-2 aspect-[4/3] md:aspect-auto relative rounded-xl overflow-hidden group cursor-pointer"
-                    style={{ minHeight: '300px' }}
+                    className="md:col-span-2 md:row-span-2 aspect-[4/3] md:aspect-auto relative group cursor-pointer"
+                    style={{ minHeight: '320px' }}
                     onClick={() => openLightbox(0)}
                   >
                     <Image
@@ -434,38 +505,68 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                       fill
                       priority
                       sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
                     />
                   </div>
+                  {/* 4 smaller images filling the right half */}
+                  {allImages.slice(1, 5).map((img, i) => (
+                    <div
+                      key={i}
+                      className="hidden md:block aspect-[4/3] relative group cursor-pointer"
+                      onClick={() => openLightbox(i + 1)}
+                    >
+                      <Image
+                        src={img}
+                        alt={`Photo ${i + 2}`}
+                        fill
+                        sizes="25vw"
+                        className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
 
-                  {/* 4 smaller images in 2x2 grid */}
-                  <div className="grid grid-cols-2 gap-3">
-                    {allImages.slice(1, 5).map((img, i) => (
+                {/* Remaining images — scrollable grid below hero */}
+                {allImages.length > 5 && (
+                  <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                    {allImages.slice(5).map((img, i) => (
                       <div
                         key={i}
                         className="aspect-[4/3] relative rounded-lg overflow-hidden group cursor-pointer"
-                        onClick={() => openLightbox(i + 1)}
+                        onClick={() => openLightbox(i + 5)}
                       >
                         <Image
                           src={img}
-                          alt={`Foto ${i + 2}`}
+                          alt={`Photo ${i + 6}`}
                           fill
-                          sizes="(max-width: 768px) 50vw, 25vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                          className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
                         />
                       </div>
                     ))}
-                    {/* Empty placeholders */}
-                    {Array.from({ length: Math.max(0, 4 - (allImages.length - 1)) }).map((_, i) => (
-                      <div key={`empty-${i}`} className="aspect-[4/3] rounded-lg bg-border" />
-                    ))}
                   </div>
-                </div>
+                )}
 
-                {/* "Ver todas las fotos" button */}
+                {/* "View all photos" overlay button on hero */}
+                {allImages.length > 5 && (
+                  <button
+                    className="absolute bottom-4 right-4 bg-white/95 text-foreground text-sm font-sans font-medium
+                               px-4 py-2.5 rounded-lg shadow-md hover:bg-white hover:shadow-lg transition-all
+                               flex items-center gap-2 border border-border/50"
+                    onClick={() => openLightbox(0)}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    {t('propertyDetail.viewAllPhotosCount', { count: allImages.length })}
+                  </button>
+                )}
+
+                {/* Mobile: show count overlay when only hero is visible */}
                 {allImages.length > 1 && (
                   <button
-                    className="absolute bottom-4 right-4 bg-white/90 text-foreground text-sm font-sans font-medium px-4 py-2 rounded-lg shadow hover:bg-white transition-colors"
+                    className="md:hidden absolute bottom-4 right-4 bg-white/95 text-foreground text-sm font-sans font-medium
+                               px-4 py-2.5 rounded-lg shadow-md hover:bg-white transition-all border border-border/50"
                     onClick={() => openLightbox(0)}
                   >
                     {t('propertyDetail.viewAllPhotosCount', { count: allImages.length })}
@@ -479,19 +580,23 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
             )}
 
             {/* YouTube embed */}
-            {p.youtube_enabled === true && p.youtube_url && (
-              <div className="mt-6 aspect-video rounded-xl overflow-hidden">
-                <iframe
-                  src={p.youtube_url.replace('watch?v=', 'embed/')}
-                  title={t('propertyDetail.videoTitle')}
-                  width="100%"
-                  height="100%"
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            )}
+            {p.youtube_enabled === true && p.youtube_url && (() => {
+              const embedUrl = getYouTubeEmbedUrl(p.youtube_url)
+              if (!embedUrl) return null
+              return (
+                <div className="mt-6 aspect-video rounded-xl overflow-hidden">
+                  <iframe
+                    src={embedUrl}
+                    title={t('propertyDetail.videoTitle')}
+                    width="100%"
+                    height="100%"
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              )
+            })()}
           </div>
         </section>
 
