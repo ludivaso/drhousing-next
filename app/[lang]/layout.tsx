@@ -13,8 +13,8 @@ export default function LangLayout({ children }: Props) {
   return (
     <I18nProvider>
       <Navbar />
-      {/* pt-24 = top bar (32px) + main nav (64px) on desktop; pt-16 on mobile */}
-      <div className="pt-16 md:pt-24 min-h-screen flex flex-col">
+      {/* pt-20 mobile (no banner) · md:pt-[124px] desktop (36px banner + 88px nav) */}
+      <div className="pt-20 md:pt-[124px] min-h-screen flex flex-col">
         <div className="flex-1">{children}</div>
         <Footer />
       </div>

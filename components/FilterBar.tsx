@@ -1,12 +1,98 @@
 'use client'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { useCallback, useState } from 'react'
-import { SlidersHorizontal } from 'lucide-react'
+import { useCallback, useState, useRef, useEffect } from 'react'
+import { ChevronDown, X, SlidersHorizontal } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
 import SearchAutocomplete from '@/components/properties/SearchAutocomplete'
 import { ZoneDropdown } from '@/components/properties/ZoneDropdown'
 import { usePropertiesFilter } from '@/components/properties/PropertiesFilterContext'
 import type { PropertyRow } from '@/lib/supabase/queries'
+
+// ── Reusable single-select dropdown ──────────────────────────────────────────
+
+interface DropdownOption { value: string; label: string }
+
+function FilterDropdown({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string
+  options: DropdownOption[]
+  value: string
+  onChange: (value: string) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const handle = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [open])
+
+  const selected = options.find((o) => o.value === value)
+  const isActive = value !== ''
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className={`
+          inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium
+          border whitespace-nowrap transition-all duration-150 cursor-pointer
+          ${isActive
+            ? 'bg-[#1A3A2A] text-white border-[#1A3A2A]'
+            : 'bg-white text-[#1A1A1A] border-[#E8E3DC] hover:border-[#C9A96E]'
+          }
+        `}
+      >
+        {isActive ? (
+          <>
+            <span>{label}: {selected?.label}</span>
+            <X
+              className="h-3.5 w-3.5 shrink-0"
+              onClick={(e) => { e.stopPropagation(); onChange(''); setOpen(false) }}
+            />
+          </>
+        ) : (
+          <>
+            <span>{label}</span>
+            <ChevronDown className={`h-3.5 w-3.5 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+          </>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 mt-2 min-w-[180px] max-h-[280px] overflow-y-auto
+                        bg-white border border-[#E8E3DC] rounded-xl shadow-lg z-50 py-1">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => { onChange(opt.value); setOpen(false) }}
+              className={`
+                w-full text-left px-4 py-2.5 text-sm transition-colors
+                ${opt.value === value
+                  ? 'bg-[#F5F2EE] text-[#1A3A2A] font-medium'
+                  : 'text-[#1A1A1A] hover:bg-[#F5F2EE]'
+                }
+              `}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Main FilterBar ───────────────────────────────────────────────────────────
 
 interface FilterBarProps {
   properties?: PropertyRow[]
@@ -21,13 +107,13 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
   const { searchQuery, setSearchQuery } = usePropertiesFilter()
   const [filtersOpen, setFiltersOpen] = useState(false)
 
-  const STATUS_OPTIONS = [
+  const STATUS_OPTIONS: DropdownOption[] = [
     { value: '',         label: t('propertyGrid.filters.all') },
     { value: 'for_sale', label: t('propertyGrid.filters.forSale') },
     { value: 'for_rent', label: t('propertyGrid.filters.forRent') },
   ]
 
-  const TYPE_OPTIONS = [
+  const TYPE_OPTIONS: DropdownOption[] = [
     { value: '',           label: t('propertyGrid.filters.all') },
     { value: 'house',      label: t('propertyGrid.filters.house') },
     { value: 'condo',      label: t('propertyGrid.filters.apartment') },
@@ -35,15 +121,15 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
     { value: 'commercial', label: t('propertyGrid.filters.commercial') },
   ]
 
-  const BED_OPTIONS = [
-    { value: '', label: t('propertyGrid.filters.all') },
+  const BED_OPTIONS: DropdownOption[] = [
+    { value: '',  label: t('propertyGrid.filters.all') },
     { value: '1', label: '1+' },
     { value: '2', label: '2+' },
     { value: '3', label: '3+' },
     { value: '4', label: '4+' },
   ]
 
-  const COMUNIDAD_OPTIONS = [
+  const COMUNIDAD_OPTIONS: DropdownOption[] = [
     { value: '',            label: t('propertyGrid.filters.allF') },
     { value: 'gated',       label: t('propertyGrid.filters.gated') },
     { value: 'independent', label: t('propertyGrid.filters.independent') },
@@ -86,15 +172,8 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
 
   // Called when user clicks a property suggestion in the autocomplete
   const handleSelectProperty = useCallback((slug: string) => {
-    router.push(`/${lang}/properties/${slug}`)
+    router.push(`/${lang}/property/${slug}`)
   }, [router, lang])
-
-  const pill = (active: boolean) =>
-    `px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
-      active
-        ? 'bg-foreground text-background'
-        : 'bg-secondary text-foreground hover:bg-secondary/70'
-    }`
 
   const clearAll = () => {
     setSearchQuery('')
@@ -102,10 +181,10 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
   }
 
   return (
-    <div className="sticky top-16 md:top-24 z-40 bg-background border-b border-[#E8E3DC]">
+    <div className="sticky top-20 md:top-[124px] z-40 bg-background border-b border-[#E8E3DC]">
       <div className="container-wide py-3 md:py-4 space-y-3">
 
-        {/* Row 0: Search — always visible on all screens */}
+        {/* Row 0: Search — always visible */}
         <SearchAutocomplete
           properties={properties}
           value={searchQuery}
@@ -115,7 +194,7 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
           lang={lang}
         />
 
-        {/* Mobile-only toggle row: "Filters" button + optional Clear link */}
+        {/* Mobile-only toggle: "Filters" button + Clear */}
         <div className="flex items-center justify-between md:hidden">
           <button
             onClick={() => setFiltersOpen(v => !v)}
@@ -142,105 +221,85 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
           )}
         </div>
 
-        {/* Filter panel — hidden on mobile until toggled; always visible on md+ */}
-        <div className={`space-y-3 ${filtersOpen ? 'block' : 'hidden'} md:block`}>
+        {/* Filter dropdowns — single row on desktop, hidden on mobile until toggled */}
+        <div className={`${filtersOpen ? 'block' : 'hidden'} md:block`}>
+          <div className="flex flex-wrap items-center gap-2">
 
-          {/* Row 1: Status + Type + Beds + Price */}
-          <div className="flex flex-wrap gap-4 items-end">
-            <div>
-              <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
-                {t('propertyGrid.filters.statusLabel')}
-              </p>
-              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-                {STATUS_OPTIONS.map(opt => (
-                  <button key={opt.value} onClick={() => setParam('status', opt.value || null)}
-                    className={pill(status === opt.value)}>
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Status */}
+            <FilterDropdown
+              label={t('propertyGrid.filters.statusLabel')}
+              options={STATUS_OPTIONS}
+              value={status}
+              onChange={(v) => setParam('status', v || null)}
+            />
 
-            <div>
-              <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
-                {t('propertyGrid.filters.propertyType')}
-              </p>
-              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-                {TYPE_OPTIONS.map(opt => (
-                  <button key={opt.value} onClick={() => setParam('tipo', opt.value || null)}
-                    className={pill(tipo === opt.value)}>
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Type */}
+            <FilterDropdown
+              label={t('propertyGrid.filters.propertyType')}
+              options={TYPE_OPTIONS}
+              value={tipo}
+              onChange={(v) => setParam('tipo', v || null)}
+            />
 
-            <div>
-              <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
-                {t('propertyGrid.filters.bedrooms')}
-              </p>
-              <div className="flex gap-1">
-                {BED_OPTIONS.map(opt => (
-                  <button key={opt.value} onClick={() => setParam('camas', opt.value || null)}
-                    className={pill(camas === opt.value)}>
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Bedrooms */}
+            <FilterDropdown
+              label={t('propertyGrid.filters.bedrooms')}
+              options={BED_OPTIONS}
+              value={camas}
+              onChange={(v) => setParam('camas', v || null)}
+            />
 
-            <div>
-              <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
-                {t('propertyGrid.filters.priceUSD')}
-              </p>
-              <div className="flex items-center gap-2">
-                <input type="number" placeholder={t('propertyGrid.filters.min')} value={min}
-                  onChange={e => setParam('min', e.target.value || null)}
-                  className="w-24 px-2 py-1.5 border border-input rounded text-xs bg-background focus:outline-none" />
-                <span className="text-muted-foreground text-xs">–</span>
-                <input type="number" placeholder={t('propertyGrid.filters.max')} value={max}
-                  onChange={e => setParam('max', e.target.value || null)}
-                  className="w-24 px-2 py-1.5 border border-input rounded text-xs bg-background focus:outline-none" />
-              </div>
-            </div>
-          </div>
-
-          {/* Row 2: Zone dropdown */}
-          <div>
-            <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
-              {t('propertyGrid.filters.zone')}
-            </p>
+            {/* Zone — multi-select, uses existing ZoneDropdown */}
             <ZoneDropdown
               selected={selectedZones}
               onChange={handleZonesChange}
               lang={lang}
             />
-          </div>
 
-          {/* Row 3: Comunidad + Clear (desktop only for the Clear button) */}
-          <div className="flex flex-wrap gap-4 items-center justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground mb-1.5 font-medium uppercase tracking-wide">
-                {t('propertyGrid.filters.communityType')}
-              </p>
-              <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-                {COMUNIDAD_OPTIONS.map(opt => (
-                  <button key={opt.value} onClick={() => setParam('comunidad', opt.value || null)}
-                    className={pill(comunidad === opt.value)}>
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
+            {/* Community */}
+            <FilterDropdown
+              label={t('propertyGrid.filters.communityType')}
+              options={COMUNIDAD_OPTIONS}
+              value={comunidad}
+              onChange={(v) => setParam('comunidad', v || null)}
+            />
+
+            {/* Thin divider */}
+            <div className="hidden md:block w-px h-6 bg-[#E8E3DC]" />
+
+            {/* Price range */}
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                placeholder={`$ ${t('propertyGrid.filters.min')}`}
+                value={min}
+                onChange={(e) => setParam('min', e.target.value || null)}
+                className="w-[100px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
+                           focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
+              />
+              <span className="text-muted-foreground text-xs">–</span>
+              <input
+                type="number"
+                placeholder={`$ ${t('propertyGrid.filters.max')}`}
+                value={max}
+                onChange={(e) => setParam('max', e.target.value || null)}
+                className="w-[100px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
+                           focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
+              />
             </div>
 
+            {/* Clear all */}
             {hasFilters && (
-              <button onClick={clearAll}
-                className="hidden md:block text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors self-end pb-1.5">
+              <button
+                onClick={clearAll}
+                className="hidden md:flex items-center gap-1 px-3 py-2 rounded-full text-xs text-muted-foreground
+                           hover:text-foreground hover:bg-secondary transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
                 {t('propertyGrid.filters.clearFilters')}
               </button>
             )}
           </div>
-
         </div>
 
       </div>
