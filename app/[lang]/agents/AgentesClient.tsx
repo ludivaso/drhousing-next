@@ -1,10 +1,78 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import Image from 'next/image'
-import { Phone, Mail, MapPin, Languages } from 'lucide-react'
+import { Phone, Mail, Languages } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
 import type { AgentRow } from '@/lib/supabase/queries'
+
+// ── Sort: co-founders pinned to top ──────────────────────────────────────────
+// Rank 0: primary Founder (Diego), Rank 1: Co-Founder (Paola), Rank 99: rest.
+// Uses role text so it keeps working if new agents are added with the same
+// role titles — and falls back to full_name for belt-and-suspenders matching.
+function founderRank(agent: AgentRow): number {
+  const role = (agent.role ?? '').toLowerCase()
+  const name = (agent.full_name ?? '').toLowerCase()
+  // Primary founder: matches "founder" but not "co-founder"
+  if (/(^|[^-])\bfounder\b/.test(role) || name.includes('diego vargas')) return 0
+  // Co-founder
+  if (/co-?founder/.test(role) || name.includes('paola morales')) return 1
+  return 99
+}
+
+function sortByFounder(agents: AgentRow[]): AgentRow[] {
+  // Stable sort: preserve original DB order within the same rank bucket.
+  return agents
+    .map((a, i) => ({ a, i, r: founderRank(a) }))
+    .sort((x, y) => (x.r - y.r) || (x.i - y.i))
+    .map((e) => e.a)
+}
+
+// ── Spanish translations for DB-English fields ───────────────────────────────
+// The agents table is English-only (no role_es / bio_es). These maps translate
+// the short structural fields (role, languages, service areas). Bio prose is
+// left in English until a bio_es column is added to the schema.
+const ROLE_ES: Record<string, string> = {
+  'Founder, CEO & Broker of Record':       'Fundador, CEO y Corredor Autorizado',
+  'Co-Founder & Managing Director':        'Cofundadora y Directora General',
+  'Managing Director':                     'Directora General',
+  'Client Relations & Sales Manager':      'Gerente de Relaciones con Clientes y Ventas',
+  'Marketing & Brand Director':            'Directora de Marketing y Marca',
+  'Technical & Infrastructure Consultant': 'Consultor Técnico y de Infraestructura',
+  'Broker of Record':                      'Corredor Autorizado',
+  'Sales Agent':                           'Agente de Ventas',
+  'Real Estate Agent':                     'Agente Inmobiliario',
+}
+
+const LANGUAGE_ES: Record<string, string> = {
+  'English':    'Inglés',
+  'Spanish':    'Español',
+  'Portuguese': 'Portugués',
+  'French':     'Francés',
+  'Italian':    'Italiano',
+  'German':     'Alemán',
+}
+
+const SERVICE_AREA_ES: Record<string, string> = {
+  'All Costa Rica': 'Todo Costa Rica',
+  // Most place names (Escazú, Santa Ana, Heredia, etc.) are identical in ES.
+}
+
+function translateRole(role: string | null | undefined, lang: 'es' | 'en'): string {
+  if (!role) return ''
+  if (lang === 'en') return role
+  return ROLE_ES[role.trim()] ?? role
+}
+
+function translateLanguage(l: string, lang: 'es' | 'en'): string {
+  if (lang === 'en') return l
+  return LANGUAGE_ES[l] ?? l
+}
+
+function translateServiceArea(a: string, lang: 'es' | 'en'): string {
+  if (lang === 'en') return a
+  return SERVICE_AREA_ES[a] ?? a
+}
 
 export default function AgentesClient({ agents, lang }: { agents: AgentRow[]; lang: 'es' | 'en' }) {
   const { t, setLang } = useI18n()
@@ -12,6 +80,8 @@ export default function AgentesClient({ agents, lang }: { agents: AgentRow[]; la
   useEffect(() => {
     setLang(lang)
   }, [lang, setLang])
+
+  const sortedAgents = useMemo(() => sortByFounder(agents), [agents])
 
   return (
     <>
@@ -31,7 +101,7 @@ export default function AgentesClient({ agents, lang }: { agents: AgentRow[]; la
       <section className="section-padding bg-background">
         <div className="container-wide">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {agents.map((agent) => (
+            {sortedAgents.map((agent) => (
               <div key={agent.id} className="card-elevated p-8">
                 <div className="flex items-start gap-5 mb-6">
                   <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -52,10 +122,10 @@ export default function AgentesClient({ agents, lang }: { agents: AgentRow[]; la
                   </div>
                   <div>
                     <h2 className="font-serif text-xl font-semibold text-foreground">
-                      {agent.full_name}
+                      {agent.full_name.trim()}
                     </h2>
                     <p className="text-muted-foreground text-sm mt-1">
-                      {agent.role}
+                      {translateRole(agent.role, lang)}
                     </p>
                   </div>
                 </div>
@@ -74,7 +144,7 @@ export default function AgentesClient({ agents, lang }: { agents: AgentRow[]; la
                         key={area}
                         className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium"
                       >
-                        {area}
+                        {translateServiceArea(area, lang)}
                       </span>
                     ))}
                   </div>
@@ -85,7 +155,9 @@ export default function AgentesClient({ agents, lang }: { agents: AgentRow[]; la
                   {agent.languages && agent.languages.length > 0 && (
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Languages className="w-4 h-4 flex-shrink-0" />
-                      <span>{agent.languages.join(' · ')}</span>
+                      <span>
+                        {agent.languages.map((l) => translateLanguage(l, lang)).join(' · ')}
+                      </span>
                     </div>
                   )}
 

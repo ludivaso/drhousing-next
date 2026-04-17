@@ -91,10 +91,10 @@
     }
   },
   "agents": {
-    "title": "Nuestro Equipo",
-    "description": "Conozca a los profesionales dedicados que hacen su experiencia inmobiliaria en Costa Rica fluida y exitosa.",
+    "title": "Nuestros Asesores",
+    "description": "Conozca al equipo de asesores inmobiliarios que acompaña a familias e inversionistas en su experiencia en Costa Rica.",
     "joinTeam": "Únase a Nuestro Equipo",
-    "joinTeamDesc": "Siempre buscamos profesionales inmobiliarios talentosos que compartan nuestro compromiso con la excelencia."
+    "joinTeamDesc": "Siempre buscamos profesionales talentosos que compartan nuestro compromiso con la excelencia."
   },
   "services": {
     "title": "Nuestros Servicios",
