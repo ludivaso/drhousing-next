@@ -4,6 +4,7 @@ import { useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import { Phone, Mail, Languages } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
+import { translateBio } from '@/lib/i18n/agent-bios-es'
 import type { AgentRow } from '@/lib/supabase/queries'
 
 // ── Sort: co-founders pinned to top ──────────────────────────────────────────
@@ -131,8 +132,8 @@ export default function AgentesClient({ agents, lang }: { agents: AgentRow[]; la
                 </div>
 
                 {agent.bio && (
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-6 line-clamp-5">
-                    {agent.bio}
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-6 line-clamp-5 whitespace-pre-line">
+                    {translateBio(agent.id, agent.bio, lang)}
                   </p>
                 )}
 
