@@ -1,10 +1,15 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Bed, Bath, Maximize } from 'lucide-react'
+import { Bed, Bath, Maximize, TreePine } from 'lucide-react'
 import { type PropertyRow, getHeroImage, formatPrice } from '@/lib/supabase/queries'
 import FavoriteButton from '@/components/FavoriteButton'
 import en from '@/messages/en.json'
 import es from '@/messages/es.json'
+
+// Square-meters → square-feet conversion for international buyers.
+// 1 m² = 10.764 ft². Returned formatted with thousands separators.
+const sqmToFt2 = (sqm: number): string =>
+  Math.round(sqm * 10.764).toLocaleString('en-US')
 
 const STATUS_CLASSES: Record<string, string> = {
   for_sale:       'badge-sale',
@@ -137,7 +142,25 @@ export default function PropertyCard({ property, lang = 'es', compact = false }:
           {property.construction_size_sqm && (
             <span className="flex items-center gap-1.5">
               <Maximize className={statIcon} />
-              {property.construction_size_sqm} m²
+              {/* Compact card: m² only (space-constrained carousel).
+                  Regular card: show both m² + ft² for international buyers. */}
+              {compact ? (
+                <span>{property.construction_size_sqm.toLocaleString('en-US')} m²</span>
+              ) : (
+                <span>
+                  {property.construction_size_sqm.toLocaleString('en-US')} m²{' '}
+                  <span className="opacity-60">({sqmToFt2(property.construction_size_sqm)} ft²)</span>
+                </span>
+              )}
+            </span>
+          )}
+          {!compact && property.land_size_sqm && property.land_size_sqm > 0 && (
+            <span className="flex items-center gap-1.5">
+              <TreePine className={statIcon} />
+              <span>
+                {property.land_size_sqm.toLocaleString('en-US')} m²{' '}
+                <span className="opacity-60">({sqmToFt2(property.land_size_sqm)} ft²)</span>
+              </span>
             </span>
           )}
         </div>

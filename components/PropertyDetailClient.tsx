@@ -889,12 +889,12 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     })
   }
   if (p.construction_size_sqm) {
-    const ft2 = Math.round(p.construction_size_sqm * 10.764)
+    const ft2 = Math.round(p.construction_size_sqm * 10.764).toLocaleString('en-US')
     specs.push({
       icon: <Building2 className="w-5 h-5" />,
       value: (
         <span>
-          {p.construction_size_sqm} m²{' '}
+          {p.construction_size_sqm.toLocaleString('en-US')} m²{' '}
           <span className="text-xs text-muted-foreground font-normal">({ft2} ft²)</span>
         </span>
       ),
@@ -902,9 +902,15 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     })
   }
   if (p.land_size_sqm && p.land_size_sqm > 0) {
+    const ft2 = Math.round(p.land_size_sqm * 10.764).toLocaleString('en-US')
     specs.push({
       icon: <TreePine className="w-5 h-5" />,
-      value: `${p.land_size_sqm} m²`,
+      value: (
+        <span>
+          {p.land_size_sqm.toLocaleString('en-US')} m²{' '}
+          <span className="text-xs text-muted-foreground font-normal">({ft2} ft²)</span>
+        </span>
+      ),
       label: lang === 'en' ? 'Land' : 'Terreno',
     })
   }
