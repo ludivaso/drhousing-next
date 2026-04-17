@@ -295,6 +295,10 @@ export default function EditListingPage() {
         setIsDirty(false)
         setAutoSaveMsg(true)
         setTimeout(() => setAutoSaveMsg(false), 3000)
+        // Bust Next.js Router Cache so /properties & detail pages
+        // pick up the saved fields on the next navigation instead of
+        // serving a 30-second-stale RSC payload.
+        router.refresh()
       }
     }, 60000)
     return () => clearInterval(interval)
@@ -463,6 +467,11 @@ export default function EditListingPage() {
     }
     setSuccessToast(true)
     setTimeout(() => setSuccessToast(false), 3000)
+    // Bust Next.js Router Cache so /properties, /property/[slug], and
+    // any cached RSC payloads pick up the fresh title / price / etc.
+    // on the next navigation. Without this, the 30s staleTimes.dynamic
+    // default makes the public site show old titles right after save.
+    router.refresh()
   }
 
   // ── AI generate ────────────────────────────────────────────────────────────

@@ -9,7 +9,12 @@ interface Props {
   properties: PropertyRow[]
   value: string
   onChange: (value: string) => void
+  /** Called when user picks a whitelisted zone (maps to `?zona=`). */
   onSelectZone: (zone: string) => void
+  /** Called for location/building picks — writes the label into the
+   *  search query so the grid narrows via matchesSearch rather than
+   *  writing a never-matching `?zona=location_name` param. */
+  onSelectSearchTerm: (term: string) => void
   onSelectProperty: (slug: string) => void
   lang: string
 }
@@ -67,14 +72,18 @@ function buildSuggestions(properties: PropertyRow[], query: string, lang: string
   })
 
   // --- Individual properties (max 5) ---
+  // Title resolution must match PropertyCard so the dropdown and the card
+  // always display the same text for a given listing (prevents the
+  // "autocomplete is showing the old title" confusion when `title_es` is
+  // null but `ai_generated_title_es` is populated).
   let propCount = 0
   const words = q.split(/\s+/).filter(Boolean)
   for (const p of properties) {
     if (propCount >= 5) break
     const title =
       lang === 'es'
-        ? (p.title_es ?? p.title_en ?? p.title)
-        : (p.title_en ?? p.title_es ?? p.title)
+        ? (p.title_es || p.ai_generated_title_es || p.title_en || p.title || '')
+        : (p.title_en || p.ai_generated_title_en || p.title_es || p.title || '')
     const haystack = normalizeText(title)
     if (words.every(w => haystack.includes(w)) && p.slug) {
       suggestions.push({ kind: 'property', label: title, value: p.slug })
@@ -106,6 +115,7 @@ export default function SearchAutocomplete({
   value,
   onChange,
   onSelectZone,
+  onSelectSearchTerm,
   onSelectProperty,
   lang,
 }: Props) {
@@ -140,11 +150,19 @@ export default function SearchAutocomplete({
       if (s.kind === 'property') {
         onSelectProperty(s.value)
         router.push(`/${lang}/properties/${s.value}`)
-      } else {
+      } else if (s.kind === 'zone') {
+        // Known DB zone — maps cleanly to ?zona= filter.
         onSelectZone(s.value)
+      } else {
+        // Location or building — these strings are NOT valid `zone` values,
+        // so we write them into the search query and let the grid's
+        // matchesSearch narrow by location_name / building_name / title.
+        // Previously this routed to ?zona=<label> which never matched
+        // anything and caused the "1 property" → "0 results" bug.
+        onSelectSearchTerm(s.label)
       }
     },
-    [onSelectZone, onSelectProperty, router, lang]
+    [onSelectZone, onSelectSearchTerm, onSelectProperty, router, lang]
   )
 
   const handleKeyDown = useCallback(

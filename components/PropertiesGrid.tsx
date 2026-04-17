@@ -9,11 +9,16 @@ function matchesSearch(property: PropertyRow, query: string): boolean {
   if (!query || query.length < 2) return true
   const q = normalizeText(query)
   const words = q.split(/\s+/).filter(Boolean)
+  // Include ai_generated_title_* so a user searching for the exact text
+  // shown on the card (which may fall back to the AI title when
+  // title_es/title_en is null) still finds the listing.
   const haystack = normalizeText(
     [
       property.title,
       property.title_en,
       property.title_es,
+      property.ai_generated_title_en,
+      property.ai_generated_title_es,
       property.location_name,
       property.building_name,
       property.description,

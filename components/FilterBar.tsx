@@ -207,11 +207,19 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
     setParam('zona', zones.length > 0 ? zones.join(',') : null)
   }, [setParam])
 
-  // Called when user clicks a zone/location suggestion in the autocomplete
+  // Autocomplete: user picked a whitelisted DB zone (maps to ?zona=).
   const handleSelectZone = useCallback((zone: string) => {
     setSearchQuery('')
     setParam('zona', zone)
   }, [setSearchQuery, setParam])
+
+  // Autocomplete: user picked a location or building (not a DB zone).
+  // Write the label into the search query — the grid's matchesSearch
+  // already searches location_name / building_name / title / description,
+  // so this yields the same 1+ results the autocomplete previewed.
+  const handleSelectSearchTerm = useCallback((term: string) => {
+    setSearchQuery(term)
+  }, [setSearchQuery])
 
   // Called when user clicks a property suggestion in the autocomplete
   const handleSelectProperty = useCallback((slug: string) => {
@@ -235,6 +243,7 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
             value={searchQuery}
             onChange={setSearchQuery}
             onSelectZone={handleSelectZone}
+            onSelectSearchTerm={handleSelectSearchTerm}
             onSelectProperty={handleSelectProperty}
             lang={lang}
           />
