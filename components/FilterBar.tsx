@@ -232,8 +232,10 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
   }
 
   return (
-    // NOT sticky — filters scroll away with content. Only the navbar stays fixed.
-    <div className="bg-background border-b border-[#E8E3DC]">
+    // Sticky + translucent — matches the Desarrollos filter bar. Sits under
+    // the global navbar (top-20 mobile / top-[124px] desktop to account for
+    // the secondary row). Backdrop-blur keeps content underneath legible.
+    <div className="sticky top-20 md:top-[124px] z-30 border-b border-[#E8E3DC] bg-[#F5F2EE]/85 backdrop-blur-md supports-[backdrop-filter]:bg-[#F5F2EE]/75">
       <div className="container-wide py-4 md:py-6 space-y-4">
 
         {/* Row 0: Search — centered, constrained width on desktop (Airbnb-style) */}
