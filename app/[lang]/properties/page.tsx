@@ -22,13 +22,13 @@ const HERO_IMAGE =
 const HERO_COPY = {
   es: {
     eyebrow:  'Portafolio',
-    title:    'Un portafolio curado de hogares costarricenses.',
-    subtitle: 'Residencias, terrenos y oportunidades de inversión en el Valle Central y el Pacífico. Cada propiedad, elegida con los criterios más exigentes.',
+    title:    'Propiedades',
+    subtitle: 'Casas, terrenos e inversiones seleccionadas en Costa Rica.',
   },
   en: {
     eyebrow:  'Portfolio',
-    title:    'A curated portfolio of Costa Rican homes.',
-    subtitle: 'Residences, land, and investment opportunities across the Central Valley and the Pacific coast. Every property, chosen against the highest standards.',
+    title:    'Properties',
+    subtitle: 'Curated homes, land and investments across Costa Rica.',
   },
 } as const
 
