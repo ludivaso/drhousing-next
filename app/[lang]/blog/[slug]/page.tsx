@@ -14,15 +14,20 @@ export async function generateStaticParams() {
   return allSlugs.map((slug) => ({ slug }))
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { lang: string; slug: string } }): Promise<Metadata> {
+  const lang = params.lang === 'es' ? 'es' : 'en'
   const dbPost = await getPublishedPostBySlug(params.slug)
-  if (dbPost) return { title: dbPost.title, description: dbPost.excerpt ?? dbPost.title, openGraph: { title: dbPost.title, images: dbPost.image ? [{ url: dbPost.image }] : [] } }
+  if (dbPost) {
+    const title = lang === 'en' ? (dbPost.title_en ?? dbPost.title) : dbPost.title
+    const description = lang === 'en' ? (dbPost.excerpt_en ?? dbPost.excerpt ?? title) : (dbPost.excerpt ?? title)
+    return { title, description, openGraph: { title, images: dbPost.image ? [{ url: dbPost.image }] : [] } }
+  }
   const staticPost = POSTS_BY_SLUG[params.slug]
   if (staticPost) return { title: staticPost.title, description: staticPost.title, openGraph: { title: staticPost.title, images: [{ url: staticPost.image }] } }
   return {}
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage({ params }: { params: { lang: string; slug: string } }) {
   // 1. Try Supabase
   const dbPost = await getPublishedPostBySlug(params.slug)
   if (dbPost) {

@@ -82,6 +82,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(oldToNew[pathname], request.url))
   }
 
+  // Legacy /blog/[slug] → /es/blog/[slug]
+  if (pathname.startsWith('/blog/')) {
+    return NextResponse.redirect(new URL(`/es${pathname}`, request.url))
+  }
+
   // Legacy /property/[slug] → /en/property/[slug]
   if (pathname.startsWith('/property/')) {
     return NextResponse.redirect(new URL(`/en${pathname}`, request.url))
