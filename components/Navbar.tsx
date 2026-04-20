@@ -53,8 +53,6 @@ export default function Navbar() {
     services:     currentLang === 'es' ? 'Servicios'         : 'Solutions',
     contact:      currentLang === 'es' ? 'Contacto'          : 'Contact',
     toolsInsights:currentLang === 'es' ? 'Recursos'          : 'Resources',
-    familyAffairs:currentLang === 'es' ? 'Asesoría Privada'  : 'Private Advisory',
-    talkToUs:     currentLang === 'es' ? 'Solicitar Consulta': 'Request Consultation',
     tagline:      currentLang === 'es'
       ? 'Bienes Raíces de Lujo · Escazú · Santa Ana · Costa Rica'
       : 'Luxury Real Estate · Escazú · Santa Ana · Costa Rica',
@@ -222,18 +220,6 @@ export default function Navbar() {
             >
               {currentLang === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
             </button>
-            <Link
-              href={`/${currentLang}/family-affairs`}
-              className={`text-sm transition-colors ${solid ? 'text-muted-foreground hover:text-foreground' : 'text-white/80 hover:text-white'}`}
-            >
-              {labels.familyAffairs}
-            </Link>
-            <Link
-              href={`/${currentLang}/contact`}
-              className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-            >
-              {labels.talkToUs}
-            </Link>
           </div>
 
           <div className="lg:hidden flex items-center gap-2">
@@ -291,13 +277,6 @@ export default function Navbar() {
                   ))}
                 </div>
               </div>
-              <Link
-                href={`/${currentLang}/family-affairs`}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-base font-medium py-2 text-muted-foreground hover:text-foreground"
-              >
-                {labels.familyAffairs}
-              </Link>
               <div className="pt-4 border-t border-border flex flex-col gap-3">
                 <button
                   onClick={() => { toggleLang(); setMobileMenuOpen(false) }}
@@ -309,13 +288,6 @@ export default function Navbar() {
                   <Phone className="w-4 h-4" />
                   +506 8654-0888
                 </a>
-                <Link
-                  href={`/${currentLang}/contact`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center px-4 py-3 rounded bg-primary text-primary-foreground text-sm font-medium"
-                >
-                  {labels.talkToUs}
-                </Link>
               </div>
             </div>
           </div>

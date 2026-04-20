@@ -145,7 +145,7 @@ export default function HomeClient({
 
         <div className="container-wide relative z-10 py-24">
           <div className="max-w-2xl">
-            <span className="inline-block px-4 py-1.5 border border-gold/40 text-gold text-xs tracking-widest uppercase mb-8 animate-fade-in">
+            <span className="inline-block text-gold text-xs tracking-widest uppercase mb-8 animate-fade-in">
               Escazú · Santa Ana · Costa Rica
             </span>
 
@@ -155,20 +155,11 @@ export default function HomeClient({
             </h1>
 
             <p
-              className="text-lg text-primary-foreground/70 leading-relaxed mb-12 max-w-xl animate-slide-up"
+              className="text-lg text-primary-foreground/70 leading-relaxed mb-10 max-w-xl animate-slide-up"
               style={{ animationDelay: '0.1s' }}
             >
               {t('home.hero.description')}
             </p>
-
-            <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <Link
-                href={`/${lang}/contact`}
-                className="inline-flex items-center px-6 py-4 rounded bg-transparent border border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground/60 transition-all text-base font-medium"
-              >
-                {t('home.hero.advisoryCta')}
-              </Link>
-            </div>
 
             <div
               className="flex flex-wrap gap-8 mt-16 pt-8 border-t border-primary-foreground/10 animate-fade-in"
