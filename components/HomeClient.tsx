@@ -106,8 +106,9 @@ export default function HomeClient({
   return (
     <>
       {/* ── 1. Hero ── */}
+      {/* Negative margin slides the hero under the fixed transparent navbar */}
       <section
-        className="relative flex items-center"
+        className="relative flex items-center -mt-20 md:-mt-[124px]"
         style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
       >
         {/* Background — video if available, static image as fallback */}

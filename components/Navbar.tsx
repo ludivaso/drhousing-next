@@ -9,15 +9,36 @@ import {
   BookOpen, Calculator, MapPin, Building2,
 } from 'lucide-react'
 
+// Pages where the navbar starts transparent and flips to solid on scroll.
+// These must have a full-bleed hero so the header doesn't float over white.
+const TRANSPARENT_PATHS = new Set(['/en', '/es'])
+
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [resourcesOpen, setResourcesOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(true)
   const pathname = usePathname()
   const router = useRouter()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Derive lang from URL — the ONLY source of truth
   const currentLang = pathname.startsWith('/es') ? 'es' : 'en'
+  const isTransparentPage = TRANSPARENT_PATHS.has(pathname)
+
+  // Scroll listener — only active on transparent pages.
+  // Re-runs whenever the page changes so navigation between pages resets state.
+  useEffect(() => {
+    if (!isTransparentPage) {
+      setIsScrolled(true)
+      return
+    }
+    const check = () => setIsScrolled(window.scrollY > 80)
+    check()
+    window.addEventListener('scroll', check, { passive: true })
+    return () => window.removeEventListener('scroll', check)
+  }, [isTransparentPage])
+
+  // true = render solid header; false = render transparent header
+  const solid = !isTransparentPage || isScrolled || mobileMenuOpen
 
   const toggleLang = () => {
     const nextLang = currentLang === 'en' ? 'es' : 'en'
@@ -80,9 +101,7 @@ export default function Navbar() {
     return pathname.startsWith(href)
   }
 
-  const isResourcesActive = resourcesItems.some((item) =>
-    pathname.startsWith(item.href)
-  )
+  const isResourcesActive = resourcesItems.some((item) => pathname.startsWith(item.href))
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -95,8 +114,16 @@ export default function Navbar() {
   }, [])
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
-      <div className="hidden md:block bg-primary text-primary-foreground">
+    <header
+      className={[
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        solid
+          ? 'bg-card/95 backdrop-blur-md border-b border-border'
+          : 'bg-transparent',
+      ].join(' ')}
+    >
+      {/* Top contact bar — hidden when transparent */}
+      <div className={`hidden md:block bg-primary text-primary-foreground transition-all duration-300 ${solid ? '' : 'opacity-0 pointer-events-none h-0 overflow-hidden'}`}>
         <div className="container-wide py-2 flex items-center justify-between text-sm">
           <span className="font-medium">{labels.tagline}</span>
           <div className="flex items-center gap-6">
@@ -115,10 +142,21 @@ export default function Navbar() {
       <nav className="container-wide py-4">
         <div className="flex items-center justify-between">
           <Link href={`/${currentLang}`} className="flex items-center gap-3">
-            <Image src="/logo.png" alt="DR Housing" width={56} height={56} className="h-14 w-auto" />
+            <Image
+              src="/logo.png"
+              alt="DR Housing"
+              width={56}
+              height={56}
+              className="h-14 w-auto transition-all duration-300"
+              style={!solid ? { filter: 'brightness(0) invert(1)' } : undefined}
+            />
             <div>
-              <span className="font-serif text-xl font-semibold text-foreground tracking-tight">DR Housing</span>
-              <span className="hidden sm:block text-xs text-muted-foreground tracking-wide">Costa Rica Real Estate</span>
+              <span className={`font-serif text-xl font-semibold tracking-tight transition-colors duration-300 ${solid ? 'text-foreground' : 'text-white'}`}>
+                DR Housing
+              </span>
+              <span className={`hidden sm:block text-xs tracking-wide transition-colors duration-300 ${solid ? 'text-muted-foreground' : 'text-white/70'}`}>
+                Costa Rica Real Estate
+              </span>
             </div>
           </Link>
 
@@ -127,7 +165,12 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-medium transition-colors link-underline ${isActive(item.href) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                className={[
+                  'text-sm font-medium transition-colors link-underline',
+                  isActive(item.href)
+                    ? solid ? 'text-primary' : 'text-gold'
+                    : solid ? 'text-muted-foreground hover:text-foreground' : 'text-white/80 hover:text-white',
+                ].join(' ')}
               >
                 {item.name}
               </Link>
@@ -135,7 +178,12 @@ export default function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setResourcesOpen((v) => !v)}
-                className={`text-sm font-medium transition-colors link-underline flex items-center gap-1 ${isResourcesActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                className={[
+                  'text-sm font-medium transition-colors link-underline flex items-center gap-1',
+                  isResourcesActive
+                    ? solid ? 'text-primary' : 'text-gold'
+                    : solid ? 'text-muted-foreground hover:text-foreground' : 'text-white/80 hover:text-white',
+                ].join(' ')}
               >
                 <BookOpen className="w-4 h-4" />
                 {labels.toolsInsights}
@@ -165,14 +213,25 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-4">
             <button
               onClick={toggleLang}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded px-2 py-1"
+              className={[
+                'flex items-center gap-1.5 text-sm transition-colors border rounded px-2 py-1',
+                solid
+                  ? 'text-muted-foreground hover:text-foreground border-border'
+                  : 'text-white/80 hover:text-white border-white/30',
+              ].join(' ')}
             >
               {currentLang === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
             </button>
-            <Link href={`/${currentLang}/family-affairs`} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              href={`/${currentLang}/family-affairs`}
+              className={`text-sm transition-colors ${solid ? 'text-muted-foreground hover:text-foreground' : 'text-white/80 hover:text-white'}`}
+            >
               {labels.familyAffairs}
             </Link>
-            <Link href={`/${currentLang}/contact`} className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+            <Link
+              href={`/${currentLang}/contact`}
+              className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
               {labels.talkToUs}
             </Link>
           </div>
@@ -180,13 +239,18 @@ export default function Navbar() {
           <div className="lg:hidden flex items-center gap-2">
             <button
               onClick={toggleLang}
-              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded px-2 py-1"
+              className={[
+                'flex items-center gap-1 text-sm transition-colors border rounded px-2 py-1',
+                solid
+                  ? 'text-muted-foreground hover:text-foreground border-border'
+                  : 'text-white/80 hover:text-white border-white/30',
+              ].join(' ')}
             >
               {currentLang === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
             </button>
             <button
               type="button"
-              className="p-2 text-muted-foreground hover:text-foreground"
+              className={`p-2 transition-colors ${solid ? 'text-muted-foreground hover:text-foreground' : 'text-white hover:text-white/80'}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -194,6 +258,7 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* Mobile menu — always solid bg for legibility */}
         {mobileMenuOpen && (
           <div className="lg:hidden mt-4 pb-4 border-t border-border pt-4 animate-fade-in">
             <div className="flex flex-col gap-4">
@@ -235,10 +300,7 @@ export default function Navbar() {
               </Link>
               <div className="pt-4 border-t border-border flex flex-col gap-3">
                 <button
-                  onClick={() => {
-                    toggleLang()
-                    setMobileMenuOpen(false)
-                  }}
+                  onClick={() => { toggleLang(); setMobileMenuOpen(false) }}
                   className="flex items-center gap-2 text-muted-foreground text-sm"
                 >
                   {labels.switchLang}
