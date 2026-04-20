@@ -7,12 +7,29 @@ import type { BlogPostRow } from '@/lib/supabase/blog'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
-  title: 'Blog & Market Insights | DR Housing',
-  description: 'Market analysis, relocation guides, and investment insights for luxury real estate in Costa Rica.',
-}
+const COPY = {
+  es: {
+    metaTitle: 'Blog & Análisis de Mercado | DR Housing',
+    metaDesc: 'Análisis de mercado, guías de reubicación e información sobre inversión inmobiliaria en Costa Rica.',
+    heroTitle: 'Blog & Análisis de Mercado',
+    heroSubtitle: 'Análisis de mercado, guías de reubicación e inversión en Costa Rica.',
+    featured: 'Destacado',
+    ctaTitle: 'Inteligencia de Mercado',
+    ctaBody: 'Análisis mensual del mercado inmobiliario de lujo en Costa Rica, entregado de forma privada.',
+    ctaBtn: 'Suscribirse al Reporte',
+  },
+  en: {
+    metaTitle: 'Blog & Market Insights | DR Housing',
+    metaDesc: 'Market analysis, relocation guides, and investment insights for luxury real estate in Costa Rica.',
+    heroTitle: 'Blog & Market Insights',
+    heroSubtitle: 'Market analysis, relocation guides, and investment insights for Costa Rica.',
+    featured: 'Featured',
+    ctaTitle: 'Market Intelligence',
+    ctaBody: 'Monthly analysis of the luxury real estate market in Costa Rica, delivered privately.',
+    ctaBtn: 'Subscribe to Market Report',
+  },
+} as const
 
-// Static fallback posts (shown when Supabase table doesn't exist yet)
 const STATIC_POSTS = [
   {
     slug: 'guia-comprar-propiedad-costa-rica-2025',
@@ -39,7 +56,16 @@ function toCard(p: BlogPostRow): PostCard {
   return { slug: p.slug, title: p.title, excerpt: p.excerpt, category: p.category, published_at: p.published_at, read_time: p.read_time, image: p.image }
 }
 
-export default async function BlogPage() {
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+  const lang = params.lang === 'es' ? 'es' : 'en'
+  return { title: COPY[lang].metaTitle, description: COPY[lang].metaDesc }
+}
+
+export default async function BlogPage({ params }: { params: { lang: string } }) {
+  const lang = params.lang === 'es' ? 'es' : 'en'
+  const c = COPY[lang]
+  const locale = lang === 'es' ? 'es-CR' : 'en-US'
+
   const dbPosts = await getPublishedPosts()
   const posts: PostCard[] = dbPosts.length > 0 ? dbPosts.map(toCard) : STATIC_POSTS
 
@@ -51,10 +77,10 @@ export default async function BlogPage() {
       <section className="bg-forest-dark text-primary-foreground py-16">
         <div className="container-wide">
           <h1 className="font-serif text-4xl sm:text-5xl font-semibold mb-4">
-            Blog & Market Insights
+            {c.heroTitle}
           </h1>
           <p className="text-primary-foreground/70 text-lg max-w-2xl">
-            Market analysis, relocation guides, and investment insights for Costa Rica.
+            {c.heroSubtitle}
           </p>
         </div>
       </section>
@@ -64,7 +90,7 @@ export default async function BlogPage() {
 
           {/* Featured post */}
           <Link
-            href={`/blog/${featured.slug}`}
+            href={`/${lang}/blog/${featured.slug}`}
             className="group block mb-12 card-elevated overflow-hidden hover:shadow-xl transition-shadow"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -82,7 +108,7 @@ export default async function BlogPage() {
                     {featured.category}
                   </span>
                   <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">
-                    Featured
+                    {c.featured}
                   </span>
                 </div>
                 <h2 className="font-serif text-2xl lg:text-3xl font-semibold text-foreground mb-4 group-hover:text-primary transition-colors">
@@ -95,7 +121,7 @@ export default async function BlogPage() {
                   {featured.published_at && (
                     <span className="flex items-center gap-1.5">
                       <Calendar className="w-4 h-4" />
-                      {new Date(featured.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                      {new Date(featured.published_at).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })}
                     </span>
                   )}
                   {featured.read_time && (
@@ -115,7 +141,7 @@ export default async function BlogPage() {
               {rest.map((post) => (
                 <Link
                   key={post.slug}
-                  href={`/blog/${post.slug}`}
+                  href={`/${lang}/blog/${post.slug}`}
                   className="group card-elevated overflow-hidden hover:shadow-lg transition-shadow"
                 >
                   <div className="relative h-48 overflow-hidden">
@@ -140,7 +166,7 @@ export default async function BlogPage() {
                       {post.published_at && (
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5" />
-                          {new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {new Date(post.published_at).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' })}
                         </span>
                       )}
                       {post.read_time && (
@@ -161,15 +187,15 @@ export default async function BlogPage() {
       {/* CTA */}
       <section className="bg-forest-dark text-primary-foreground py-16">
         <div className="container-wide text-center">
-          <h2 className="font-serif text-3xl font-semibold mb-4">Market Intelligence</h2>
+          <h2 className="font-serif text-3xl font-semibold mb-4">{c.ctaTitle}</h2>
           <p className="text-primary-foreground/70 max-w-lg mx-auto mb-8">
-            Monthly analysis of the luxury real estate market in Costa Rica, delivered privately.
+            {c.ctaBody}
           </p>
           <Link
-            href="/contacto"
+            href={`/${lang}/contact`}
             className="inline-flex items-center gap-2 px-6 py-3 border border-primary-foreground/30 text-primary-foreground text-sm font-medium hover:bg-primary-foreground/10 transition-colors"
           >
-            Subscribe to Market Report <ArrowRight className="w-4 h-4" />
+            {c.ctaBtn} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
