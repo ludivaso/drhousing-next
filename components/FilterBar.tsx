@@ -6,6 +6,7 @@ import { useI18n } from '@/lib/i18n/context'
 import SearchAutocomplete from '@/components/properties/SearchAutocomplete'
 import { ZoneDropdown } from '@/components/properties/ZoneDropdown'
 import { usePropertiesFilter } from '@/components/properties/PropertiesFilterContext'
+import CatalogFilterBar from '@/components/catalog/CatalogFilterBar'
 import type { PropertyRow } from '@/lib/supabase/queries'
 
 // ── Reusable single-select dropdown ──────────────────────────────────────────
@@ -232,11 +233,11 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
   }
 
   return (
-    // Sticky + translucent — matches the Desarrollos filter bar. Sits under
-    // the global navbar (top-20 mobile / top-[124px] desktop to account for
-    // the secondary row). Backdrop-blur keeps content underneath legible.
-    <div className="sticky top-20 md:top-[124px] z-30 border-b border-[#E8E3DC] bg-[#F5F2EE]/85 backdrop-blur-md supports-[backdrop-filter]:bg-[#F5F2EE]/75">
-      <div className="container-wide py-4 md:py-6 space-y-4">
+    // Visual shell comes from <CatalogFilterBar> so /properties and
+    // /desarrollos render identical chrome. This component owns the Properties
+    // filter *semantics* (status, type, beds, multi-zone, community, price
+    // pair) plus the search input.
+    <CatalogFilterBar>
 
         {/* Row 0: Search — centered, constrained width on desktop (Airbnb-style) */}
         <div className="max-w-2xl mx-auto">
@@ -391,7 +392,6 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
           )}
         </div>
 
-      </div>
-    </div>
+    </CatalogFilterBar>
   )
 }

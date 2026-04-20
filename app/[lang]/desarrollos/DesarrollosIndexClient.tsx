@@ -1,11 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Crown, Lock, Palette, X } from 'lucide-react'
 import WhatsAppCTA from '@/components/WhatsAppCTA'
 import DevelopmentCard from '@/components/developments/DevelopmentCard'
+import CatalogHero from '@/components/catalog/CatalogHero'
+import CatalogFilterBar from '@/components/catalog/CatalogFilterBar'
 import {
   developments,
   STATUS_LABEL,
@@ -219,38 +220,17 @@ export default function DesarrollosIndexClient({ lang }: Props) {
 
   return (
     <>
-      {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="relative min-h-[70vh] flex items-end overflow-hidden bg-[#1A1A1A]">
-        {heroImage && (
-          <Image
-            src={heroImage}
-            alt={t.hero.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-            unoptimized
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20" />
+      <CatalogHero
+        imageUrl={heroImage ?? ''}
+        eyebrow={t.hero.eyebrow}
+        title={t.hero.title}
+        subtitle={t.hero.subtitle}
+        lang={lang}
+      />
 
-        <div className="relative z-10 container-wide text-white py-20 md:py-24">
-          <p className="font-sans text-xs tracking-[0.3em] uppercase text-[#C9A96E] mb-6">
-            {t.hero.eyebrow}
-          </p>
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light leading-[1.05] max-w-3xl">
-            {t.hero.title}
-          </h1>
-          <p className="mt-6 max-w-xl font-sans text-base md:text-lg text-white/85 leading-relaxed">
-            {t.hero.subtitle}
-          </p>
-        </div>
-      </section>
-
-      {/* ── STICKY FILTER BAR ─────────────────────────────────────────────── */}
-      <div className="sticky top-20 md:top-[124px] z-30 border-b border-[#E8E3DC] bg-[#F5F2EE]/85 backdrop-blur">
-        <div className="container-wide py-4">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      {/* ── FLOATING FILTER SHELF — shared with /properties ───────────────── */}
+      <CatalogFilterBar>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Status chips */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-sans text-[11px] tracking-widest uppercase text-[#6B6158] mr-1">
@@ -377,12 +357,11 @@ export default function DesarrollosIndexClient({ lang }: Props) {
                 </button>
               )}
             </div>
-          </div>
         </div>
-      </div>
+      </CatalogFilterBar>
 
-      {/* ── RESULTS GRID ──────────────────────────────────────────────────── */}
-      <section className="py-16 md:py-20 bg-[#F5F2EE]">
+      {/* ── RESULTS GRID — pt-8 md:pt-12 sits below the floating filter shelf */}
+      <section className="pt-8 md:pt-12 pb-16 md:pb-20 bg-[#F5F2EE]">
         <div className="container-wide">
           {filtered.length === 0 ? (
             <p className="text-center italic font-serif text-lg text-[#6B6158] py-24">

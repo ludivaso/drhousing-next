@@ -1,10 +1,10 @@
 import { Suspense } from 'react'
-import Image from 'next/image'
 import { supabase } from '@/lib/supabase/client'
 import type { Metadata } from 'next'
 import FilterBar from '@/components/FilterBar'
 import ActiveFilterTags from '@/components/ActiveFilterTags'
 import PropertiesGrid from '@/components/PropertiesGrid'
+import CatalogHero from '@/components/catalog/CatalogHero'
 import { PropertiesFilterProvider } from '@/components/properties/PropertiesFilterContext'
 import type { PropertyRow } from '@/lib/supabase/queries'
 import { sortProperties } from '@/lib/utils/sortProperties'
@@ -12,22 +12,22 @@ import en from '@/messages/en.json'
 import es from '@/messages/es.json'
 
 // ── Hero copy + image ────────────────────────────────────────────────────────
-// Mirrors the Desarrollos hero treatment: full-bleed architectural photo, dark
-// gradient overlay, left-aligned gold eyebrow + serif headline + subtitle. If
-// we want this editable later, move to site_settings (same pattern as the
-// homepage hero_video_url key).
+// Rendered through the shared <CatalogHero> so this page and /desarrollos
+// share the same editorial chrome. The search + filters render below via
+// <FilterBar>, which sits inside a floating white shelf (CatalogFilterBar)
+// that overlaps the hero from below.
 const HERO_IMAGE =
   'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1920&q=80'
 
 const HERO_COPY = {
   es: {
     eyebrow:  'Portafolio',
-    title:    'Propiedades seleccionadas\nen Costa Rica.',
-    subtitle: 'Residencias, terrenos y oportunidades de inversión en el Valle Central y el Pacífico. Cada propiedad, curada para los criterios más exigentes.',
+    title:    'Un portafolio curado de hogares costarricenses.',
+    subtitle: 'Residencias, terrenos y oportunidades de inversión en el Valle Central y el Pacífico. Cada propiedad, elegida con los criterios más exigentes.',
   },
   en: {
     eyebrow:  'Portfolio',
-    title:    'A curated portfolio\nof Costa Rican homes.',
+    title:    'A curated portfolio of Costa Rican homes.',
     subtitle: 'Residences, land, and investment opportunities across the Central Valley and the Pacific coast. Every property, chosen against the highest standards.',
   },
 } as const
@@ -169,43 +169,22 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
 
   return (
     <PropertiesFilterProvider>
-      {/* ── HERO ────────────────────────────────────────────────────────────
-          Full-bleed architectural image, left-aligned gold eyebrow + serif
-          headline + subtitle. Matches the Desarrollos hero so the two main
-          shopping surfaces feel like one product. */}
-      <section className="relative min-h-[70vh] flex items-end overflow-hidden bg-[#1A1A1A]">
-        <Image
-          src={HERO_IMAGE}
-          alt={hero.title}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-          unoptimized
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20" />
-
-        <div className="relative z-10 container-wide text-white py-20 md:py-24">
-          <p className="font-sans text-xs tracking-[0.3em] uppercase text-[#C9A96E] mb-6">
-            {hero.eyebrow}
-          </p>
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light leading-[1.05] max-w-3xl whitespace-pre-line">
-            {hero.title}
-          </h1>
-          <p className="mt-6 max-w-xl font-sans text-base md:text-lg text-white/85 leading-relaxed">
-            {hero.subtitle}
-          </p>
-        </div>
-      </section>
+      <CatalogHero
+        imageUrl={HERO_IMAGE}
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        subtitle={hero.subtitle}
+        lang={lang}
+      />
 
       <Suspense>
         <FilterBar properties={properties} />
       </Suspense>
 
-      {/* pt-6 gives a small comfortable gap below the filter bar.
-          The filter bar is now sticky (top-16 md:top-24), so this padding
-          also prevents the heading from being obscured on scroll. */}
-      <section id="filters" className="pt-6 pb-16 bg-background" style={{ scrollMarginTop: '96px' }}>
+      {/* pt-8 md:pt-12 sits below the floating filter shelf. The shelf is
+          sticky, so this padding also prevents the heading from being
+          obscured on scroll. */}
+      <section id="filters" className="pt-8 md:pt-12 pb-16 bg-background" style={{ scrollMarginTop: '96px' }}>
         <div className="container-wide">
 
           {/* Result count + active tags — the hero above carries the page
