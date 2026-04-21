@@ -20,44 +20,27 @@ export default function Navbar() {
 
   const currentLang = pathname.startsWith('/es') ? 'es' : 'en'
 
-  // Auto-detect hero via IntersectionObserver on [data-hero="true"].
-  // Re-runs on every pathname change so navigation between pages rebinds
-  // the observer to the new page's hero (or resets to solid if none).
+  // Scroll-based hero detection — much more responsive than IntersectionObserver.
+  // Flips transparent→solid after just 15% of the hero height is scrolled away.
+  // MutationObserver covers Suspense-deferred heroes that appear after paint.
   useEffect(() => {
-    setIsOverHero(false) // reset immediately on navigation
+    setIsOverHero(false)
 
-    let intersectionObs: IntersectionObserver | null = null
-    let mutationObs: MutationObserver | null = null
-
-    const attachIntersection = (el: Element) => {
-      intersectionObs?.disconnect()
-      intersectionObs = new IntersectionObserver(
-        ([entry]) => setIsOverHero(entry.isIntersecting),
-        // rootMargin shrinks the observed viewport by the navbar height from the
-        // top — Navbar flips to solid the moment the hero slides under the bar.
-        { threshold: 0, rootMargin: '-72px 0px 0px 0px' }
-      )
-      intersectionObs.observe(el)
+    const check = () => {
+      const hero = document.querySelector('[data-hero="true"]') as HTMLElement | null
+      if (!hero) { setIsOverHero(false); return }
+      setIsOverHero(window.scrollY < hero.offsetHeight * 0.15)
     }
 
-    const tryFind = (): boolean => {
-      const el = document.querySelector('[data-hero="true"]')
-      if (!el) return false
-      mutationObs?.disconnect()
-      mutationObs = null
-      attachIntersection(el)
-      return true
-    }
+    check()
+    window.addEventListener('scroll', check, { passive: true })
 
-    if (!tryFind()) {
-      // Hero not yet in DOM (e.g. Suspense). Watch for it.
-      mutationObs = new MutationObserver(() => { if (tryFind()) mutationObs?.disconnect() })
-      mutationObs.observe(document.body, { childList: true, subtree: true })
-    }
+    const mutObs = new MutationObserver(check)
+    mutObs.observe(document.body, { childList: true, subtree: true })
 
     return () => {
-      intersectionObs?.disconnect()
-      mutationObs?.disconnect()
+      window.removeEventListener('scroll', check)
+      mutObs.disconnect()
     }
   }, [pathname])
 
@@ -128,21 +111,21 @@ export default function Navbar() {
       {/* ── Single slim nav bar ── */}
       <nav className="container-wide h-16 lg:h-[72px] flex items-center justify-between">
 
-        {/* Logo */}
+        {/* Logo — large over hero, compact when solid */}
         <Link href={`/${currentLang}`} className="flex items-center gap-3 shrink-0">
           <Image
             src="/logo.png"
             alt="DR Housing"
-            width={40}
-            height={40}
-            className="h-10 w-auto transition-all duration-300"
+            width={64}
+            height={64}
+            className={`w-auto transition-all duration-300 ${solid ? 'h-9' : 'h-14'}`}
             style={!solid ? { filter: 'brightness(0) invert(1)' } : undefined}
           />
           <div>
-            <span className={`font-serif text-lg font-semibold tracking-tight transition-colors duration-300 ${solid ? 'text-foreground' : 'text-white'}`}>
+            <span className={`font-serif font-semibold tracking-tight transition-all duration-300 ${solid ? 'text-base text-foreground' : 'text-2xl text-white'}`}>
               DR Housing
             </span>
-            <span className={`hidden sm:block text-[11px] tracking-wide transition-colors duration-300 ${solid ? 'text-muted-foreground' : 'text-white/60'}`}>
+            <span className={`hidden sm:block tracking-wide transition-all duration-300 ${solid ? 'text-[11px] text-muted-foreground' : 'text-[13px] text-white/70'}`}>
               Costa Rica Real Estate
             </span>
           </div>
