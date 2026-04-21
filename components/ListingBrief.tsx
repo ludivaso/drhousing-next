@@ -69,7 +69,7 @@ export default function ListingBrief({ property: p }: ListingBriefProps) {
               )}
             </div>
 
-            <h3 className="font-serif text-base sm:text-lg font-medium text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+            <h3 className="font-serif text-base sm:text-lg font-medium text-foreground line-clamp-1 group-hover:text-[#C9A96E] transition-colors">
               {title}
             </h3>
 

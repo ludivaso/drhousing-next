@@ -276,20 +276,20 @@ export default function HomeClient({
       </section>
 
       {/* ── 5. Contact Strip ── */}
-      <section className="bg-forest-dark text-primary-foreground py-16">
+      <section className="bg-[#2C2C2C] text-white py-16">
         <div className="container-wide">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left">
               <h3 className="font-serif text-xl font-medium mb-2">
                 {t('home.cta.title')}
               </h3>
-              <p className="text-primary-foreground/60 text-sm">
+              <p className="text-white/60 text-sm">
                 {t('home.cta.noCommitment')}
               </p>
             </div>
             <Link
               href={`/${lang}/contact`}
-              className="inline-flex items-center gap-2 px-6 py-4 rounded bg-transparent border border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10 transition-all text-sm font-medium"
+              className="inline-flex items-center gap-2 px-6 py-4 rounded bg-[#C9A96E] text-[#1A1A1A] hover:bg-[#b89656] transition-colors text-sm font-medium"
             >
               {t('home.hero.advisoryCta')}
               <ArrowRight className="w-4 h-4" />

@@ -74,7 +74,7 @@ export default async function BlogPage({ params }: { params: { lang: string } })
   return (
     <>
       {/* Header */}
-      <section className="bg-forest-dark text-primary-foreground py-16">
+      <section className="bg-[#2C2C2C] text-white py-16">
         <div className="container-wide">
           <h1 className="font-serif text-4xl sm:text-5xl font-semibold mb-4">
             {c.heroTitle}
@@ -104,14 +104,14 @@ export default async function BlogPage({ params }: { params: { lang: string } })
               </div>
               <div className="p-8 lg:p-10 flex flex-col justify-center">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary">
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#C9A96E]/15 text-[#8B6F3A]">
                     {featured.category}
                   </span>
                   <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">
                     {c.featured}
                   </span>
                 </div>
-                <h2 className="font-serif text-2xl lg:text-3xl font-semibold text-foreground mb-4 group-hover:text-primary transition-colors">
+                <h2 className="font-serif text-2xl lg:text-3xl font-semibold text-foreground mb-4 group-hover:text-[#C9A96E] transition-colors">
                   {featured.title}
                 </h2>
                 {featured.excerpt && (
@@ -153,10 +153,10 @@ export default async function BlogPage({ params }: { params: { lang: string } })
                     />
                   </div>
                   <div className="p-6">
-                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary">
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#C9A96E]/15 text-[#8B6F3A]">
                       {post.category}
                     </span>
-                    <h3 className="font-serif text-lg font-semibold text-foreground mt-3 mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                    <h3 className="font-serif text-lg font-semibold text-foreground mt-3 mb-2 group-hover:text-[#C9A96E] transition-colors line-clamp-2">
                       {post.title}
                     </h3>
                     {post.excerpt && (
@@ -185,15 +185,15 @@ export default async function BlogPage({ params }: { params: { lang: string } })
       </section>
 
       {/* CTA */}
-      <section className="bg-forest-dark text-primary-foreground py-16">
+      <section className="bg-[#2C2C2C] text-white py-16">
         <div className="container-wide text-center">
           <h2 className="font-serif text-3xl font-semibold mb-4">{c.ctaTitle}</h2>
-          <p className="text-primary-foreground/70 max-w-lg mx-auto mb-8">
+          <p className="text-white/70 max-w-lg mx-auto mb-8">
             {c.ctaBody}
           </p>
           <Link
             href={`/${lang}/contact`}
-            className="inline-flex items-center gap-2 px-6 py-3 border border-primary-foreground/30 text-primary-foreground text-sm font-medium hover:bg-primary-foreground/10 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A96E] text-[#1A1A1A] text-sm font-medium hover:bg-[#b89656] transition-colors"
           >
             {c.ctaBtn} <ArrowRight className="w-4 h-4" />
           </Link>

@@ -27,7 +27,7 @@ export default function ServiciosPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-forest-dark text-primary-foreground py-16">
+      <section className="bg-[#2C2C2C] text-white py-16">
         <div className="container-wide">
           <h1 className="font-serif text-4xl sm:text-5xl font-semibold mb-4">
             {t('services.title')}
@@ -142,7 +142,7 @@ export default function ServiciosPage() {
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/contacto"
-                className="inline-flex items-center px-6 py-3 rounded bg-gold text-forest-dark font-medium text-sm hover:bg-gold/90 transition-colors"
+                className="inline-flex items-center px-6 py-3 rounded bg-gold text-[#1A1A1A] font-medium text-sm hover:bg-gold/90 transition-colors"
               >
                 {t('common.scheduleConsultation')}
               </Link>

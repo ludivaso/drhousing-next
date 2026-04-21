@@ -60,8 +60,8 @@ export default function PropertyCard({ property, lang = 'es', compact = false }:
   // Compact variant class tokens
   const contentPad       = compact ? 'p-3 space-y-2' : 'p-5 space-y-3'
   const titleClass       = compact
-    ? 'font-serif text-sm font-medium text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300'
-    : 'font-serif text-lg font-medium text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-300'
+    ? 'font-serif text-sm font-medium text-foreground leading-snug line-clamp-2 group-hover:text-[#C9A96E] transition-colors duration-300'
+    : 'font-serif text-lg font-medium text-foreground leading-snug line-clamp-2 group-hover:text-[#C9A96E] transition-colors duration-300'
   const locationClass    = compact
     ? 'text-[10px] uppercase tracking-widest text-muted-foreground font-sans truncate'
     : 'text-xs uppercase tracking-widest text-muted-foreground font-sans truncate'

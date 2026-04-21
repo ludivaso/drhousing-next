@@ -104,7 +104,7 @@ export default function Navbar() {
   const linkCls = (active: boolean) => [
     'text-sm font-medium transition-colors link-underline',
     active
-      ? solid ? 'text-primary' : 'text-gold'
+      ? solid ? 'text-[#C9A96E]' : 'text-gold'
       : solid ? 'text-muted-foreground hover:text-foreground' : 'text-white/80 hover:text-white',
   ].join(' ')
 

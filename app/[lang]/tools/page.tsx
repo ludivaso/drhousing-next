@@ -23,7 +23,7 @@ export default function HerramientasPage() {
   return (
     <>
       {/* Header */}
-      <section className="bg-forest-dark text-primary-foreground py-16">
+      <section className="bg-[#2C2C2C] text-white py-16">
         <div className="container-wide">
           <h1 className="font-serif text-4xl sm:text-5xl font-semibold mb-4">
             {lang === 'en' ? 'Tools & Calculators' : 'Herramientas y Calculadoras'}

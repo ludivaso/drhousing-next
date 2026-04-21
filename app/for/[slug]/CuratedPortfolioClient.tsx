@@ -62,7 +62,7 @@ function PropertyCard({ property, lang }: { property: PropertyRow; lang: string 
       {/* Content */}
       <div className="p-5">
         <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{property.location_name}</p>
-        <h3 className="font-serif text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-3">
+        <h3 className="font-serif text-lg font-semibold text-foreground group-hover:text-[#C9A96E] transition-colors line-clamp-2 mb-3">
           {title}
         </h3>
 

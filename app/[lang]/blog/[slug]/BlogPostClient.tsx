@@ -17,7 +17,7 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
   return (
     <>
       {/* Hero */}
-      <section className="relative h-72 sm:h-96 overflow-hidden bg-forest-dark">
+      <section className="relative h-72 sm:h-96 overflow-hidden bg-[#1A1A1A]">
         <Image
           src={post.image}
           alt={title}
@@ -25,7 +25,7 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
           className="object-cover opacity-60"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-forest-dark/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/80 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="container-wide">
             <span className="inline-block text-xs font-medium px-2.5 py-1 rounded-full bg-gold/30 text-gold border border-gold/40 mb-3">
@@ -59,14 +59,14 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
             {/* Back link */}
             <Link
               href={`/${lang}/blog`}
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-[#C9A96E] transition-colors mb-8"
             >
               <ArrowLeft className="w-4 h-4" />
               {lang === 'en' ? 'Back to Blog' : 'Volver al Blog'}
             </Link>
 
             {/* Markdown article */}
-            <article className="prose prose-stone max-w-none prose-headings:font-serif prose-headings:font-semibold prose-h2:text-2xl prose-h3:text-xl prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg">
+            <article className="prose prose-stone max-w-none prose-headings:font-serif prose-headings:font-semibold prose-h2:text-2xl prose-h3:text-xl prose-a:text-[#C9A96E] prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg">
               <ReactMarkdown>{content}</ReactMarkdown>
             </article>
 

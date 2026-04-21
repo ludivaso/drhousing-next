@@ -39,7 +39,7 @@ export default function FamilyAffairsPage() {
   return (
     <>
       {/* Header */}
-      <section className="bg-forest-dark text-primary-foreground py-20">
+      <section className="bg-[#2C2C2C] text-white py-20">
         <div className="container-narrow text-center">
           <span className="inline-block text-sm text-gold font-medium tracking-wider uppercase mb-4">
             Servicio Exclusivo
@@ -117,7 +117,7 @@ export default function FamilyAffairsPage() {
       </section>
 
       {/* Discretion notice */}
-      <section className="bg-forest-dark text-primary-foreground py-12">
+      <section className="bg-[#2C2C2C] text-white py-12">
         <div className="container-narrow text-center">
           <Lock className="w-8 h-8 text-gold mx-auto mb-4" />
           <p className="text-primary-foreground/70 text-sm max-w-md mx-auto">

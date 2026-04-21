@@ -4,99 +4,85 @@
 @tailwind components;
 @tailwind utilities;
 
-/* DR Housing Design System - Costa Rica Real Estate
-   Tropical luxury: forest greens, warm sand, ocean accents
+/* DR Housing Design System — 7-color luxury palette
+   Background #F5F2EE · Card #FFFFFF · Border #E8E3DC
+   Foreground #1A1A1A · Charcoal #2C2C2C · Muted #6B6B6B · Gold #C9A96E
 */
 
 @layer base {
   :root {
-    --background: 40 20% 98%;
-    --foreground: 160 25% 15%;
+    --background: 30 18% 95%;           /* #F5F2EE */
+    --foreground: 0 0% 10%;             /* #1A1A1A */
 
-    --card: 0 0% 100%;
-    --card-foreground: 160 25% 15%;
+    --card: 0 0% 100%;                  /* #FFFFFF */
+    --card-foreground: 0 0% 10%;        /* #1A1A1A */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 160 25% 15%;
+    --popover: 0 0% 100%;               /* #FFFFFF */
+    --popover-foreground: 0 0% 10%;     /* #1A1A1A */
 
-    --primary: 158 35% 25%;
-    --primary-foreground: 40 30% 97%;
+    --primary: 0 0% 10%;                /* #1A1A1A */
+    --primary-foreground: 0 0% 100%;    /* #FFFFFF */
 
-    --secondary: 38 30% 92%;
-    --secondary-foreground: 160 25% 20%;
+    --secondary: 30 16% 88%;            /* #E8E3DC — light muted surface */
+    --secondary-foreground: 0 0% 10%;   /* #1A1A1A */
 
-    --muted: 140 15% 94%;
-    --muted-foreground: 160 10% 45%;
+    --muted: 30 16% 88%;                /* #E8E3DC */
+    --muted-foreground: 0 0% 42%;       /* #6B6B6B */
 
-    --accent: 180 35% 40%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 38 45% 60%;               /* #C9A96E — gold */
+    --accent-foreground: 0 0% 10%;      /* #1A1A1A */
 
-    --destructive: 0 65% 50%;
+    --destructive: 0 0% 10%;            /* #1A1A1A — no separate red */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 140 15% 88%;
-    --input: 140 15% 88%;
-    --ring: 158 35% 25%;
+    --border: 30 16% 88%;               /* #E8E3DC */
+    --input: 30 16% 88%;                /* #E8E3DC */
+    --ring: 38 45% 60%;                 /* #C9A96E */
 
     --radius: 0.5rem;
 
-    --sidebar-background: 160 25% 15%;
-    --sidebar-foreground: 40 30% 95%;
-    --sidebar-primary: 45 60% 55%;
-    --sidebar-primary-foreground: 160 25% 10%;
-    --sidebar-accent: 160 25% 20%;
-    --sidebar-accent-foreground: 40 30% 95%;
-    --sidebar-border: 160 20% 25%;
-    --sidebar-ring: 45 60% 55%;
+    /* Sidebar — admin panel */
+    --sidebar-background: 0 0% 10%;           /* #1A1A1A */
+    --sidebar-foreground: 0 0% 100%;          /* #FFFFFF */
+    --sidebar-primary: 38 45% 60%;            /* #C9A96E */
+    --sidebar-primary-foreground: 0 0% 10%;   /* #1A1A1A */
+    --sidebar-accent: 0 0% 17%;               /* #2C2C2C */
+    --sidebar-accent-foreground: 0 0% 100%;   /* #FFFFFF */
+    --sidebar-border: 0 0% 17%;               /* #2C2C2C */
+    --sidebar-ring: 38 45% 60%;               /* #C9A96E */
 
-    --gold: 45 60% 55%;
-    --gold-foreground: 160 25% 10%;
-    --ocean: 195 45% 50%;
-    --ocean-foreground: 0 0% 100%;
-    --sand: 38 35% 85%;
-    --sand-foreground: 160 25% 20%;
-    --forest-light: 158 25% 45%;
-    --forest-dark: 160 30% 12%;
+    /* Named tokens still referenced directly in components */
+    --gold: 38 45% 60%;                 /* #C9A96E */
+    --gold-foreground: 0 0% 10%;        /* #1A1A1A */
 
-    --sale: 158 35% 30%;
-    --rent: 195 45% 45%;
-    --both: 45 55% 50%;
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.05);
+    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.06);
+    --shadow-hover: 0 4px 16px hsl(0 0% 0% / 0.10);
 
-    --tier-mid: 160 20% 50%;
-    --tier-high: 45 50% 50%;
-    --tier-ultra: 280 30% 35%;
-
-    --gradient-hero: linear-gradient(135deg, hsl(160 25% 15% / 0.9), hsl(158 35% 25% / 0.8));
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(40 20% 98%));
-    --gradient-gold: linear-gradient(135deg, hsl(45 60% 55%), hsl(38 50% 45%));
-
-    --shadow-sm: 0 1px 2px hsl(160 25% 15% / 0.05);
-    --shadow-md: 0 4px 12px hsl(160 25% 15% / 0.08);
-    --shadow-lg: 0 8px 30px hsl(160 25% 15% / 0.12);
-    --shadow-card: 0 2px 8px hsl(160 25% 15% / 0.06);
-    --shadow-hover: 0 8px 25px hsl(160 25% 15% / 0.15);
+    /* Hero gradient — used by HomeClient on static-image fallback */
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 10% / 0.90), hsl(0 0% 17% / 0.80));
   }
 
   .dark {
-    --background: 160 25% 8%;
-    --foreground: 40 20% 95%;
-    --card: 160 20% 12%;
-    --card-foreground: 40 20% 95%;
-    --popover: 160 20% 12%;
-    --popover-foreground: 40 20% 95%;
-    --primary: 158 30% 50%;
-    --primary-foreground: 160 25% 8%;
-    --secondary: 160 15% 18%;
-    --secondary-foreground: 40 20% 90%;
-    --muted: 160 15% 18%;
-    --muted-foreground: 140 10% 60%;
-    --accent: 180 30% 45%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 55% 45%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 160 15% 20%;
-    --input: 160 15% 20%;
-    --ring: 158 30% 50%;
+    --background: 0 0% 8%;
+    --foreground: 30 18% 95%;
+    --card: 0 0% 12%;
+    --card-foreground: 30 18% 95%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 30 18% 95%;
+    --primary: 30 18% 95%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 17%;
+    --secondary-foreground: 30 18% 95%;
+    --muted: 0 0% 17%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 38 45% 60%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 0% 85%;
+    --destructive-foreground: 0 0% 10%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 38 45% 60%;
   }
 }
 
@@ -144,16 +130,24 @@
     transform: translateY(-2px);
   }
 
+  /* Property status badges */
   .badge-sale {
-    @apply bg-sale text-white text-xs font-medium tracking-wide px-2.5 py-1 rounded;
+    background-color: #2C2C2C;
+    color: #FFFFFF;
+    @apply text-xs font-medium tracking-wide px-2.5 py-1 rounded;
   }
 
   .badge-rent {
-    @apply bg-ocean text-white text-xs font-medium tracking-wide px-2.5 py-1 rounded;
+    background-color: #FFFFFF;
+    color: #1A1A1A;
+    border: 1px solid #1A1A1A;
+    @apply text-xs font-medium tracking-wide px-2.5 py-1 rounded;
   }
 
   .badge-both {
-    @apply bg-gold text-forest-dark text-xs font-medium tracking-wide px-2.5 py-1 rounded;
+    background-color: #C9A96E;
+    color: #1A1A1A;
+    @apply text-xs font-medium tracking-wide px-2.5 py-1 rounded;
   }
 
   .link-underline {
@@ -162,18 +156,12 @@
 
   .link-underline::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+    @apply absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300;
+    background-color: #C9A96E;
   }
 
   .link-underline:hover::after {
     @apply w-full;
-  }
-
-  .text-gradient-gold {
-    background: var(--gradient-gold);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   .glass-effect {

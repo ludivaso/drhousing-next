@@ -107,25 +107,27 @@ const handler = async (req: Request): Promise<Response> => {
       <head>
         <meta charset="utf-8">
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1A1A1A; background: #F5F2EE; }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #1a365d 0%, #2d5282 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .header h1 { margin: 0; font-size: 24px; }
-          .content { background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; }
-          .lead-card { background: white; border-radius: 8px; padding: 20px; margin: 15px 0; border: 1px solid #e2e8f0; }
-          .lead-name { font-size: 20px; font-weight: 600; color: #1a365d; margin-bottom: 10px; }
-          .info-row { display: flex; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
-          .info-label { color: #64748b; width: 140px; flex-shrink: 0; }
-          .info-value { color: #334155; font-weight: 500; }
-          .message-box { background: #f1f5f9; border-radius: 6px; padding: 15px; margin-top: 15px; }
-          .cta-button { display: inline-block; background: #1a365d; color: white !important; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; margin-top: 20px; }
-          .footer { text-align: center; padding: 20px; color: #64748b; font-size: 14px; }
+          .header { background: #1A1A1A; color: #FFFFFF; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+          .header h1 { margin: 0; font-size: 22px; font-weight: 500; letter-spacing: 0.02em; }
+          .header-accent { display: block; width: 32px; height: 2px; background: #C9A96E; margin: 12px auto 0; }
+          .content { background: #F5F2EE; padding: 30px; border: 1px solid #E8E3DC; border-top: none; }
+          .lead-card { background: #FFFFFF; border-radius: 6px; padding: 20px; margin: 15px 0; border: 1px solid #E8E3DC; }
+          .lead-name { font-size: 18px; font-weight: 600; color: #1A1A1A; margin-bottom: 10px; }
+          .info-row { display: flex; padding: 8px 0; border-bottom: 1px solid #F5F2EE; }
+          .info-label { color: #6B6B6B; width: 140px; flex-shrink: 0; }
+          .info-value { color: #1A1A1A; font-weight: 500; }
+          .message-box { background: #F5F2EE; border-radius: 4px; padding: 15px; margin-top: 15px; border-left: 3px solid #C9A96E; }
+          .cta-button { display: inline-block; background: #C9A96E; color: #1A1A1A !important; padding: 14px 28px; text-decoration: none; border-radius: 4px; font-weight: 600; margin-top: 20px; }
+          .footer { text-align: center; padding: 20px; color: #6B6B6B; font-size: 13px; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <h1>🏠 New Lead Assigned</h1>
+            <h1>New Lead Assigned</h1>
+            <span class="header-accent"></span>
           </div>
           <div class="content">
             <p>Hello <strong>${agent.full_name}</strong>,</p>

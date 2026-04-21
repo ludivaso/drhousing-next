@@ -59,7 +59,7 @@ export default function GuiaWestGAMPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-forest-dark text-primary-foreground py-20">
+      <section className="bg-[#2C2C2C] text-white py-20">
         <div className="container-wide">
           <span className="inline-block text-sm text-gold font-medium tracking-wider uppercase mb-4">
             Guía Completa

@@ -61,29 +61,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Extended palette
+        // Named palette tokens
         gold: {
           DEFAULT: "hsl(var(--gold))",
           foreground: "hsl(var(--gold-foreground))",
         },
-        ocean: {
-          DEFAULT: "hsl(var(--ocean))",
-          foreground: "hsl(var(--ocean-foreground))",
-        },
-        sand: {
-          DEFAULT: "hsl(var(--sand))",
-          foreground: "hsl(var(--sand-foreground))",
-        },
-        "forest-light": "hsl(var(--forest-light))",
-        "forest-dark": "hsl(var(--forest-dark))",
-        // Status colors
-        sale: "hsl(var(--sale))",
-        rent: "hsl(var(--rent))",
-        both: "hsl(var(--both))",
-        // Tier colors
-        "tier-mid": "hsl(var(--tier-mid))",
-        "tier-high": "hsl(var(--tier-high))",
-        "tier-ultra": "hsl(var(--tier-ultra))",
       },
       borderRadius: {
         lg: "var(--radius)",

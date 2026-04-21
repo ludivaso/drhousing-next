@@ -418,7 +418,7 @@ function TicketCard({ ticket, onClick }: { ticket: TicketRow; onClick: () => voi
         <TypeIcon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${TYPE_CONFIG[ticket.type].cls}`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+            <h3 className="font-medium text-sm text-foreground group-hover:text-[#C9A96E] transition-colors line-clamp-2 leading-snug">
               {ticket.title}
             </h3>
             <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full ${status.cls}`}>
