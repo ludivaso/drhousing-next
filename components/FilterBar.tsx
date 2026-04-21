@@ -22,12 +22,35 @@ function FilterDropdown({
   onChange: (value: string) => void
 }) {
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const panelRef  = useRef<HTMLDivElement>(null)
+
+  const updatePos = useCallback(() => {
+    if (!buttonRef.current) return
+    const r = buttonRef.current.getBoundingClientRect()
+    setPos({ top: r.bottom + 8, left: r.left })
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    updatePos()
+    window.addEventListener('scroll', updatePos, true)
+    window.addEventListener('resize', updatePos)
+    return () => {
+      window.removeEventListener('scroll', updatePos, true)
+      window.removeEventListener('resize', updatePos)
+    }
+  }, [open, updatePos])
 
   useEffect(() => {
     if (!open) return
     const handle = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      if (
+        buttonRef.current?.contains(e.target as Node) ||
+        panelRef.current?.contains(e.target as Node)
+      ) return
+      setOpen(false)
     }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
@@ -37,8 +60,9 @@ function FilterDropdown({
   const isActive = value !== ''
 
   return (
-    <div ref={ref} className="relative shrink-0">
+    <div className="relative shrink-0">
       <button
+        ref={buttonRef}
         onClick={() => setOpen(!open)}
         className={`
           inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium
@@ -65,9 +89,13 @@ function FilterDropdown({
         )}
       </button>
 
-      {open && (
-        <div className="absolute top-full left-0 mt-2 min-w-[180px] max-h-[280px] overflow-y-auto
-                        bg-white border border-[#E8E3DC] rounded-xl shadow-lg z-50 py-1">
+      {open && pos && (
+        <div
+          ref={panelRef}
+          style={{ top: pos.top, left: pos.left }}
+          className="fixed min-w-[180px] max-h-[280px] overflow-y-auto
+                     bg-white border border-[#E8E3DC] rounded-xl shadow-lg z-[9999] py-1"
+        >
           {options.map((opt) => (
             <button
               key={opt.value}

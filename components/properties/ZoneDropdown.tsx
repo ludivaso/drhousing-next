@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { ChevronDown, Check, X } from 'lucide-react'
 
 // Values must exactly match the `zone` TEXT column in Supabase.
@@ -27,22 +27,44 @@ interface ZoneDropdownProps {
 
 export function ZoneDropdown({ selected, onChange, lang }: ZoneDropdownProps) {
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const panelRef  = useRef<HTMLDivElement>(null)
 
   const dropdownLabel = lang === 'es' ? 'Zona' : 'Zone'
   const allLabel      = lang === 'es' ? 'Todas las zonas' : 'All zones'
   const hasSelection  = selected.length > 0
 
+  const updatePos = useCallback(() => {
+    if (!buttonRef.current) return
+    const r = buttonRef.current.getBoundingClientRect()
+    setPos({ top: r.bottom + 8, left: r.left })
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    updatePos()
+    window.addEventListener('scroll', updatePos, true)
+    window.addEventListener('resize', updatePos)
+    return () => {
+      window.removeEventListener('scroll', updatePos, true)
+      window.removeEventListener('resize', updatePos)
+    }
+  }, [open, updatePos])
+
   // Close on outside click
   useEffect(() => {
+    if (!open) return
     function handleMouseDown(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
+      if (
+        buttonRef.current?.contains(e.target as Node) ||
+        panelRef.current?.contains(e.target as Node)
+      ) return
+      setOpen(false)
     }
     document.addEventListener('mousedown', handleMouseDown)
     return () => document.removeEventListener('mousedown', handleMouseDown)
-  }, [])
+  }, [open])
 
   const toggle = (value: string) => {
     onChange(
@@ -66,9 +88,10 @@ export function ZoneDropdown({ selected, onChange, lang }: ZoneDropdownProps) {
     : dropdownLabel
 
   return (
-    <div ref={ref} className="relative inline-block">
+    <div className="relative inline-block shrink-0">
       {/* Trigger */}
       <button
+        ref={buttonRef}
         onClick={() => setOpen(v => !v)}
         className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-150 whitespace-nowrap ${
           hasSelection
@@ -83,9 +106,13 @@ export function ZoneDropdown({ selected, onChange, lang }: ZoneDropdownProps) {
         }
       </button>
 
-      {/* Dropdown panel */}
-      {open && (
-        <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-[#E8E3DC] rounded-xl shadow-lg min-w-[200px] py-1 max-h-72 overflow-y-auto">
+      {/* Dropdown panel — fixed so it escapes overflow-x-auto clipping */}
+      {open && pos && (
+        <div
+          ref={panelRef}
+          style={{ top: pos.top, left: pos.left }}
+          className="fixed z-[9999] bg-white border border-[#E8E3DC] rounded-xl shadow-lg min-w-[200px] py-1 max-h-72 overflow-y-auto"
+        >
           {hasSelection && (
             <button
               onMouseDown={e => e.preventDefault()}
