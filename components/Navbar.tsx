@@ -111,21 +111,21 @@ export default function Navbar() {
       {/* ── Single slim nav bar ── */}
       <nav className="container-wide h-16 lg:h-[72px] flex items-center justify-between">
 
-        {/* Logo — large over hero, compact when solid */}
+        {/* Logo — fixed size, only color/filter changes on scroll */}
         <Link href={`/${currentLang}`} className="flex items-center gap-3 shrink-0">
           <Image
             src="/logo.png"
             alt="DR Housing"
             width={64}
             height={64}
-            className={`w-auto transition-all duration-300 ${solid ? 'h-9' : 'h-14'}`}
+            className="h-14 w-auto transition-all duration-300"
             style={!solid ? { filter: 'brightness(0) invert(1)' } : undefined}
           />
           <div>
-            <span className={`font-serif font-semibold tracking-tight transition-all duration-300 ${solid ? 'text-base text-foreground' : 'text-2xl text-white'}`}>
+            <span className={`font-serif text-2xl font-semibold tracking-tight transition-colors duration-300 ${solid ? 'text-foreground' : 'text-white'}`}>
               DR Housing
             </span>
-            <span className={`hidden sm:block tracking-wide transition-all duration-300 ${solid ? 'text-[11px] text-muted-foreground' : 'text-[13px] text-white/70'}`}>
+            <span className={`hidden sm:block text-[13px] tracking-wide transition-colors duration-300 ${solid ? 'text-muted-foreground' : 'text-white/70'}`}>
               Costa Rica Real Estate
             </span>
           </div>
