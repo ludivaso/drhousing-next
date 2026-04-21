@@ -36,21 +36,29 @@ const DEFAULT_CARDS: ServiceCardConfig[] = [
   },
 ]
 
-// ── Single panel card — uses useState so hover overlay can animate dynamically ─
+// ── Single panel card ─────────────────────────────────────────────────────────
+//
+// Three visual states:
+//   default  → grayscale, overlay rgba(26,26,26,0.25)
+//   hover    → full color + scale(1.02), overlay rgba(26,26,26,0.15)   [desktop]
+//   active   → full color, overlay rgba(26,26,26,0.05), gold accent line
+//
+// Mobile two-step: first tap → active; second tap (card already active) → navigate.
+// Desktop: hover drives color; first click → active; second click → navigate.
+
 function PanelCard({
   card,
   lang,
-  overlayOpacity,
+  isActive,
+  onActivate,
 }: {
   card: ServiceCardConfig
   lang: 'en' | 'es'
-  overlayOpacity: number   // 0-100
+  isActive: boolean
+  onActivate: () => void
 }) {
   const [hovered, setHovered] = useState(false)
-  // On hover the overlay lifts to ~half the resting opacity (same feel as before)
-  const hoverOpacity = overlayOpacity * 0.5
 
-  // Strip leading slash then replace any legacy Spanish segment — runs unconditionally
   const slug = card.href
     .replace(/^\//, '')
     .replace('propiedades', 'properties')
@@ -61,55 +69,67 @@ function PanelCard({
 
   const href = `/${lang}/${slug}`
 
+  // Derived visual state
+  const showColor  = isActive || hovered
+  const overlayAlpha = isActive ? 0.05 : hovered ? 0.15 : 0.25
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (!isActive) {
+      e.preventDefault()
+      onActivate()
+    }
+    // isActive → Link navigates naturally
+  }
+
   return (
     <Link
       href={href}
-      className="group relative overflow-hidden h-72 md:h-full cursor-pointer block"
+      onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className="relative overflow-hidden h-72 md:h-full cursor-pointer block"
+      aria-current={isActive ? 'true' : undefined}
     >
-      {/* Background image — grayscale → colour on hover */}
+      {/* Image — grayscale ↔ color, subtle zoom on hover */}
       <Image
         src={card.image}
         alt={lang === 'en' ? card.titleEn : card.titleEs}
         fill
         sizes="(max-width: 768px) 100vw, 33vw"
-        className="object-cover transition-all duration-500 grayscale group-hover:grayscale-0"
+        className="object-cover"
+        style={{
+          filter: showColor ? 'grayscale(0%)' : 'grayscale(100%)',
+          transform: hovered ? 'scale(1.02)' : 'scale(1)',
+          transition: 'filter 400ms ease-out, transform 400ms ease-out',
+        }}
         unoptimized
       />
 
-      {/* Dynamic dark overlay — lighter on hover */}
+      {/* Dark overlay */}
       <div
-        className="absolute inset-0 transition-colors duration-500"
+        className="absolute inset-0"
         style={{
-          backgroundColor: `rgba(0,0,0,${(hovered ? hoverOpacity : overlayOpacity) / 100})`,
+          backgroundColor: `rgba(26,26,26,${overlayAlpha})`,
+          transition: 'background-color 400ms ease-out',
         }}
       />
 
-      {/* Centered text */}
+      {/* Text — centered, no extra elements */}
       <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
-        <h3
-          className="font-serif text-[28px] font-semibold text-white leading-tight
-                     transition-transform duration-500 group-hover:scale-105"
-        >
+        <h3 className="font-serif text-[28px] font-light text-white leading-tight tracking-wide">
           {lang === 'en' ? card.titleEn : card.titleEs}
         </h3>
 
-        <p
-          className="mt-3 text-sm font-sans text-white/80
-                     opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        >
-          {lang === 'en' ? card.subtitleEn : card.subtitleEs}
-        </p>
-
-        <span
-          className="mt-5 text-xs font-sans font-medium tracking-widest uppercase text-white/90
-                     opacity-0 group-hover:opacity-100
-                     translate-y-4 group-hover:translate-y-0
-                     transition-all duration-500"
-        >
-          {lang === 'en' ? 'Explore' : 'Explorar'} →
-        </span>
+        {/* Gold accent line — only on active, animates width */}
+        <div
+          style={{
+            height: '2px',
+            width: isActive ? '48px' : '0px',
+            backgroundColor: '#C9A96E',
+            marginTop: '12px',
+            transition: 'width 400ms ease-out',
+          }}
+        />
       </div>
     </Link>
   )
@@ -119,15 +139,15 @@ function PanelCard({
 
 interface ServicesPanelsProps {
   cards?: ServiceCardConfig[]
-  /** Black overlay opacity 0-100. Default 55 */
-  panelOverlay?: number
+  panelOverlay?: number  // kept for API compatibility, no longer used
 }
 
-export default function ServicesPanels({ cards, panelOverlay }: ServicesPanelsProps) {
+export default function ServicesPanels({ cards }: ServicesPanelsProps) {
   const pathname = usePathname()
   const lang: 'en' | 'es' = pathname.startsWith('/es') ? 'es' : 'en'
-  const activeCards   = cards ?? DEFAULT_CARDS
-  const overlayOpacity = panelOverlay ?? 55
+  const activeCards = cards ?? DEFAULT_CARDS
+
+  const [activeHref, setActiveHref] = useState<string | null>(null)
 
   return (
     <div className="flex flex-col md:grid md:grid-cols-3 w-full md:h-[520px]">
@@ -136,7 +156,8 @@ export default function ServicesPanels({ cards, panelOverlay }: ServicesPanelsPr
           key={card.href}
           card={card}
           lang={lang}
-          overlayOpacity={overlayOpacity}
+          isActive={activeHref === card.href}
+          onActivate={() => setActiveHref(card.href)}
         />
       ))}
     </div>
