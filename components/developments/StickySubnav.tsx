@@ -34,7 +34,7 @@ export default function StickySubnav({ lang }: Props) {
     <nav
       aria-label={lang === 'es' ? 'Navegación de sección' : 'Section navigation'}
       className={`
-        sticky top-20 md:top-[124px] z-30
+        sticky top-16 lg:top-[72px] z-30
         border-b border-[#E8E3DC] bg-[#F5F2EE]/85 backdrop-blur
         transition-all duration-300
         ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}

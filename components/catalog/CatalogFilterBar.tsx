@@ -14,9 +14,8 @@ import type { ReactNode } from 'react'
 // filter *semantics* per-page (properties and developments have different
 // filter models) while guaranteeing the *chrome* stays identical.
 //
-// Sticky offset note: `top-20 md:top-[124px]` is calibrated to the existing
-// Navbar (fixed, two-row on desktop with the contact strip). Update in tandem
-// if the navbar height changes.
+// Sticky offset note: `top-16 lg:top-[72px]` is calibrated to the single-bar
+// Navbar (64px mobile / 72px desktop). Update in tandem if navbar height changes.
 
 interface CatalogFilterBarProps {
   children: ReactNode
@@ -30,7 +29,7 @@ export default function CatalogFilterBar({
 }: CatalogFilterBarProps) {
   return (
     <div
-      className={`sticky top-20 md:top-[124px] z-40 -mt-12 md:-mt-14 mx-auto ${maxWidthClass} px-4`}
+      className={`sticky top-16 lg:top-[72px] z-40 -mt-12 md:-mt-14 mx-auto ${maxWidthClass} px-4`}
     >
       <div className="bg-white rounded-xl shadow-xl border border-[#E8E3DC] p-4 md:p-5 space-y-3">
         {children}
