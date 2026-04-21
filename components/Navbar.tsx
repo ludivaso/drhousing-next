@@ -9,36 +9,60 @@ import {
   BookOpen, Calculator, MapPin, Building2,
 } from 'lucide-react'
 
-const TRANSPARENT_PATHS = new Set(['/en', '/es'])
-
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [resourcesOpen, setResourcesOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(true)
+  // false = solid (safe default); true = transparent (hero visible)
+  const [isOverHero, setIsOverHero] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const currentLang = pathname.startsWith('/es') ? 'es' : 'en'
-  const isTransparentPage = TRANSPARENT_PATHS.has(pathname)
-  const solid = !isTransparentPage || isScrolled || mobileMenuOpen
 
+  // Auto-detect hero via IntersectionObserver on [data-hero="true"].
+  // Re-runs on every pathname change so navigation between pages rebinds
+  // the observer to the new page's hero (or resets to solid if none).
   useEffect(() => {
-    if (!isTransparentPage) { setIsScrolled(true); return }
-    const check = () => setIsScrolled(window.scrollY > 80)
-    check()
-    window.addEventListener('scroll', check, { passive: true })
-    return () => window.removeEventListener('scroll', check)
-  }, [isTransparentPage])
+    setIsOverHero(false) // reset immediately on navigation
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
-        setResourcesOpen(false)
+    let intersectionObs: IntersectionObserver | null = null
+    let mutationObs: MutationObserver | null = null
+
+    const attachIntersection = (el: Element) => {
+      intersectionObs?.disconnect()
+      intersectionObs = new IntersectionObserver(
+        ([entry]) => setIsOverHero(entry.isIntersecting),
+        // rootMargin shrinks the observed viewport by the navbar height from the
+        // top — Navbar flips to solid the moment the hero slides under the bar.
+        { threshold: 0, rootMargin: '-72px 0px 0px 0px' }
+      )
+      intersectionObs.observe(el)
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+
+    const tryFind = (): boolean => {
+      const el = document.querySelector('[data-hero="true"]')
+      if (!el) return false
+      mutationObs?.disconnect()
+      mutationObs = null
+      attachIntersection(el)
+      return true
+    }
+
+    if (!tryFind()) {
+      // Hero not yet in DOM (e.g. Suspense). Watch for it.
+      mutationObs = new MutationObserver(() => { if (tryFind()) mutationObs?.disconnect() })
+      mutationObs.observe(document.body, { childList: true, subtree: true })
+    }
+
+    return () => {
+      intersectionObs?.disconnect()
+      mutationObs?.disconnect()
+    }
+  }, [pathname])
+
+  // Mobile menu open → force solid so menu items are always legible
+  const solid = !isOverHero || mobileMenuOpen
 
   const toggleLang = () => {
     const next = currentLang === 'en' ? 'es' : 'en'
@@ -64,10 +88,10 @@ export default function Navbar() {
   ]
 
   const resourcesItems = [
-    { name: currentLang === 'es' ? 'Blog & Market Insights'        : 'Blog & Insights',       href: `/${currentLang}/blog`,          description: currentLang === 'es' ? 'Análisis de mercado y guías'   : 'Market analysis and guides',       icon: BookOpen  },
-    { name: currentLang === 'es' ? 'Desarrollos & Preventa'        : 'Developments',           href: `/${currentLang}/desarrollos`,   description: currentLang === 'es' ? 'Nueva construcción y preventa' : 'New construction & pre-sales',     icon: Building2 },
-    { name: currentLang === 'es' ? 'Guía West GAM'                 : 'West GAM Guide',         href: `/${currentLang}/guia-west-gam`, description: currentLang === 'es' ? 'Guía completa de vida de lujo' : 'Complete luxury living guide',      icon: MapPin    },
-    { name: currentLang === 'es' ? 'Herramientas y Calculadoras'   : 'Tools & Calculators',    href: `/${currentLang}/tools`,         description: currentLang === 'es' ? 'Calculadora de hipotecas y más': 'Mortgage calculator and more',     icon: Calculator},
+    { name: currentLang === 'es' ? 'Blog & Market Insights'      : 'Blog & Insights',      href: `/${currentLang}/blog`,          description: currentLang === 'es' ? 'Análisis de mercado y guías'   : 'Market analysis and guides',   icon: BookOpen  },
+    { name: currentLang === 'es' ? 'Desarrollos & Preventa'      : 'Developments',          href: `/${currentLang}/desarrollos`,   description: currentLang === 'es' ? 'Nueva construcción y preventa' : 'New construction & pre-sales', icon: Building2 },
+    { name: currentLang === 'es' ? 'Guía West GAM'               : 'West GAM Guide',        href: `/${currentLang}/guia-west-gam`, description: currentLang === 'es' ? 'Guía completa de vida de lujo' : 'Complete luxury living guide',  icon: MapPin    },
+    { name: currentLang === 'es' ? 'Herramientas y Calculadoras' : 'Tools & Calculators',   href: `/${currentLang}/tools`,         description: currentLang === 'es' ? 'Calculadora de hipotecas y más': 'Mortgage calculator and more', icon: Calculator},
   ]
 
   const isActive = (href: string) =>
@@ -85,6 +109,15 @@ export default function Navbar() {
   ].join(' ')
 
   const iconCls = solid ? 'text-muted-foreground hover:text-foreground' : 'text-white/80 hover:text-white'
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
+        setResourcesOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <header className={[
@@ -115,7 +148,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-7">
           {navigation.map((item) => (
             <Link key={item.href} href={item.href} className={linkCls(isActive(item.href))}>
@@ -123,7 +156,10 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="relative" ref={dropdownRef}>
-            <button onClick={() => setResourcesOpen((v) => !v)} className={linkCls(isResourcesActive) + ' flex items-center gap-1'}>
+            <button
+              onClick={() => setResourcesOpen((v) => !v)}
+              className={linkCls(isResourcesActive) + ' flex items-center gap-1'}
+            >
               <BookOpen className="w-4 h-4" />
               {labels.toolsInsights}
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${resourcesOpen ? 'rotate-180' : ''}`} />
@@ -149,38 +185,25 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Desktop right: phone · email · lang */}
+        {/* Desktop right: phone · email · divider · lang */}
         <div className="hidden lg:flex items-center gap-3">
-          {/* Phone icon with hover tooltip */}
           <div className="relative group">
-            <a
-              href="tel:+50686540888"
-              aria-label="Call DR Housing at +506 8654-0888"
-              className={`p-1.5 transition-colors ${iconCls}`}
-            >
+            <a href="tel:+50686540888" aria-label="Call DR Housing at +506 8654-0888" className={`p-1.5 transition-colors ${iconCls}`}>
               <Phone className="w-5 h-5" />
             </a>
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1.5 bg-foreground text-background text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
               +506 8654-0888
             </div>
           </div>
-
-          {/* Email icon with hover tooltip */}
           <div className="relative group">
-            <a
-              href="mailto:info@drhousing.net"
-              aria-label="Email DR Housing at info@drhousing.net"
-              className={`p-1.5 transition-colors ${iconCls}`}
-            >
+            <a href="mailto:info@drhousing.net" aria-label="Email DR Housing at info@drhousing.net" className={`p-1.5 transition-colors ${iconCls}`}>
               <Mail className="w-5 h-5" />
             </a>
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1.5 bg-foreground text-background text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
               info@drhousing.net
             </div>
           </div>
-
           <div className="w-px h-4 bg-current opacity-20 mx-1" />
-
           <button
             onClick={toggleLang}
             className={[
@@ -192,7 +215,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile right: lang toggle + hamburger */}
+        {/* Mobile right: lang + hamburger */}
         <div className="lg:hidden flex items-center gap-2">
           <button
             onClick={toggleLang}
@@ -213,7 +236,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — always solid bg for legibility */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-border bg-card/98 backdrop-blur-md">
           <div className="container-wide py-4 flex flex-col gap-4">
@@ -227,7 +250,6 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
-
             <div>
               <div className="flex items-center gap-2 text-base font-medium text-foreground mb-2">
                 <BookOpen className="w-4 h-4" />
@@ -247,7 +269,6 @@ export default function Navbar() {
                 ))}
               </div>
             </div>
-
             <div className="pt-4 border-t border-border flex flex-col gap-3">
               <a href="tel:+50686540888" className="flex items-center gap-3 text-muted-foreground text-sm hover:text-foreground transition-colors">
                 <Phone className="w-4 h-4 shrink-0" />

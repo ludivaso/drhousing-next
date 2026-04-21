@@ -106,8 +106,9 @@ export default function HomeClient({
   return (
     <>
       {/* ── 1. Hero ── */}
-      {/* Negative margin slides the hero under the fixed transparent navbar */}
+      {/* Negative margin slides the hero under the fixed navbar */}
       <section
+        data-hero="true"
         className="relative flex items-center -mt-16 lg:-mt-[72px]"
         style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
       >

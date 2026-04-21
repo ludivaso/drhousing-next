@@ -26,7 +26,7 @@ export default function CatalogHero({
   priority = true,
 }: CatalogHeroProps) {
   return (
-    <div className="relative w-full">
+    <div data-hero="true" className="relative w-full -mt-16 lg:-mt-[72px]">
       <div className="relative h-[45vh] min-h-[360px] max-h-[520px] w-full overflow-hidden bg-[#1A1A1A]">
         <Image
           src={imageUrl}

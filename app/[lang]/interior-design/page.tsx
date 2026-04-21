@@ -487,7 +487,7 @@ export default function InteriorDesignPage({ params }: { params: { lang: string 
       />
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
-      <section className="relative min-h-[88vh] md:min-h-[92vh] flex items-center justify-center overflow-hidden">
+      <section data-hero="true" className="relative min-h-[88vh] md:min-h-[92vh] flex items-center justify-center overflow-hidden -mt-16 lg:-mt-[72px]">
         <Image
           src={IMG.hero}
           alt={c.hero.title}
