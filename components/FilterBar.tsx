@@ -14,10 +14,7 @@ import type { PropertyRow } from '@/lib/supabase/queries'
 interface DropdownOption { value: string; label: string }
 
 function FilterDropdown({
-  label,
-  options,
-  value,
-  onChange,
+  label, options, value, onChange,
 }: {
   label: string
   options: DropdownOption[]
@@ -40,7 +37,7 @@ function FilterDropdown({
   const isActive = value !== ''
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative shrink-0">
       <button
         onClick={() => setOpen(!open)}
         className={`
@@ -93,7 +90,13 @@ function FilterDropdown({
   )
 }
 
-// ── Main FilterBar ───────────────────────────────────────────────────────────
+// ── Thin vertical divider ─────────────────────────────────────────────────────
+
+function Divider() {
+  return <div className="shrink-0 w-px h-5 bg-[#E8E3DC] mx-1" />
+}
+
+// ── Main FilterBar ────────────────────────────────────────────────────────────
 
 interface FilterBarProps {
   properties?: PropertyRow[]
@@ -106,14 +109,13 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
   const lang         = pathname.startsWith('/es') ? 'es' : 'en'
   const { t }        = useI18n()
   const { searchQuery, setSearchQuery } = usePropertiesFilter()
-  const [filtersOpen, setFiltersOpen] = useState(false)
+  const [filtersOpen, setFiltersOpen]   = useState(false)
 
   const STATUS_OPTIONS: DropdownOption[] = [
     { value: '',         label: t('propertyGrid.filters.all') },
     { value: 'for_sale', label: t('propertyGrid.filters.forSale') },
     { value: 'for_rent', label: t('propertyGrid.filters.forRent') },
   ]
-
   const TYPE_OPTIONS: DropdownOption[] = [
     { value: '',           label: t('propertyGrid.filters.all') },
     { value: 'house',      label: t('propertyGrid.filters.house') },
@@ -121,7 +123,6 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
     { value: 'land',       label: t('propertyGrid.filters.lot') },
     { value: 'commercial', label: t('propertyGrid.filters.commercial') },
   ]
-
   const BED_OPTIONS: DropdownOption[] = [
     { value: '',  label: t('propertyGrid.filters.all') },
     { value: '1', label: '1+' },
@@ -129,7 +130,6 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
     { value: '3', label: '3+' },
     { value: '4', label: '4+' },
   ]
-
   const COMUNIDAD_OPTIONS: DropdownOption[] = [
     { value: '',            label: t('propertyGrid.filters.allF') },
     { value: 'gated',       label: t('propertyGrid.filters.gated') },
@@ -138,11 +138,8 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
 
   const setParam = useCallback((key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
-    if (value === null || value === '') {
-      params.delete(key)
-    } else {
-      params.set(key, value)
-    }
+    if (value === null || value === '') params.delete(key)
+    else params.set(key, value)
     const qs = params.toString()
     router.push(qs ? `/${lang}/properties?${qs}` : `/${lang}/properties`, { scroll: false })
   }, [router, searchParams, lang])
@@ -155,92 +152,104 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
   const zonaParam = searchParams.get('zona')      ?? ''
   const comunidad = searchParams.get('comunidad') ?? ''
 
-  // When status changes (sale ↔ rent), clear any lingering price range so
-  // a $500k sale filter doesn't carry over into a rental search.
   const handleStatusChange = useCallback((v: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (v === '') params.delete('status')
-    else          params.set('status', v)
-    if (v !== status) {
-      params.delete('min')
-      params.delete('max')
-    }
+    else params.set('status', v)
+    if (v !== status) { params.delete('min'); params.delete('max') }
     const qs = params.toString()
     router.push(qs ? `/${lang}/properties?${qs}` : `/${lang}/properties`, { scroll: false })
   }, [router, searchParams, status, lang])
 
-  // Price labels + placeholders adapt to the selected status (sale/rent/any)
   const pricePresentation = (() => {
-    if (status === 'for_rent') {
-      return {
-        minLabel:       lang === 'en' ? 'Rent min'   : 'Renta mín',
-        maxLabel:       lang === 'en' ? 'Rent max'   : 'Renta máx',
-        minPlaceholder: '$1,500',
-        maxPlaceholder: '$5,000',
-        suffix:         lang === 'en' ? '/mo'        : '/mes',
-      }
+    if (status === 'for_rent') return {
+      minPlaceholder: '$1,500', maxPlaceholder: '$5,000',
+      minLabel: lang === 'en' ? 'Rent min' : 'Renta mín',
+      maxLabel: lang === 'en' ? 'Rent max' : 'Renta máx',
+      suffix: lang === 'en' ? '/mo' : '/mes',
     }
-    if (status === 'for_sale') {
-      return {
-        minLabel:       lang === 'en' ? 'Sale min'   : 'Venta mín',
-        maxLabel:       lang === 'en' ? 'Sale max'   : 'Venta máx',
-        minPlaceholder: '$250,000',
-        maxPlaceholder: '$2,000,000',
-        suffix:         '',
-      }
+    if (status === 'for_sale') return {
+      minPlaceholder: '$250k', maxPlaceholder: '$2M',
+      minLabel: lang === 'en' ? 'Sale min' : 'Venta mín',
+      maxLabel: lang === 'en' ? 'Sale max' : 'Venta máx',
+      suffix: '',
     }
     return {
-      minLabel:       `$ ${t('propertyGrid.filters.min')}`,
-      maxLabel:       `$ ${t('propertyGrid.filters.max')}`,
       minPlaceholder: `$ ${t('propertyGrid.filters.min')}`,
       maxPlaceholder: `$ ${t('propertyGrid.filters.max')}`,
-      suffix:         '',
+      minLabel: `$ ${t('propertyGrid.filters.min')}`,
+      maxLabel: `$ ${t('propertyGrid.filters.max')}`,
+      suffix: '',
     }
   })()
 
-  // Parse comma-separated zone values from URL param
-  const selectedZones = zonaParam ? zonaParam.split(',').filter(Boolean) : []
+  const selectedZones  = zonaParam ? zonaParam.split(',').filter(Boolean) : []
+  const hasFilters     = !!(status || tipo || min || max || camas || zonaParam || comunidad)
+  const activeCount    = [status, tipo, min, max, camas, zonaParam, comunidad].filter(Boolean).length
 
-  const hasFilters = !!(status || tipo || min || max || camas || zonaParam || comunidad)
-  const activeFilterCount = [status, tipo, min, max, camas, zonaParam, comunidad].filter(Boolean).length
+  const handleZonesChange      = useCallback((z: string[]) => setParam('zona', z.length > 0 ? z.join(',') : null), [setParam])
+  const handleSelectZone       = useCallback((z: string) => { setSearchQuery(''); setParam('zona', z) }, [setSearchQuery, setParam])
+  const handleSelectSearchTerm = useCallback((t: string) => setSearchQuery(t), [setSearchQuery])
+  const handleSelectProperty   = useCallback((slug: string) => router.push(`/${lang}/property/${slug}`), [router, lang])
+  const clearAll               = () => { setSearchQuery(''); router.push(`/${lang}/properties`, { scroll: false }) }
 
-  const handleZonesChange = useCallback((zones: string[]) => {
-    setParam('zona', zones.length > 0 ? zones.join(',') : null)
-  }, [setParam])
+  // Shared filter pills (rendered in both desktop row and mobile panel)
+  const filterPills = (
+    <>
+      <FilterDropdown label={t('propertyGrid.filters.statusLabel')}  options={STATUS_OPTIONS}    value={status}    onChange={handleStatusChange} />
+      <FilterDropdown label={t('propertyGrid.filters.propertyType')} options={TYPE_OPTIONS}       value={tipo}      onChange={(v) => setParam('tipo', v || null)} />
+      <FilterDropdown label={t('propertyGrid.filters.bedrooms')}     options={BED_OPTIONS}        value={camas}     onChange={(v) => setParam('camas', v || null)} />
+      <ZoneDropdown   selected={selectedZones} onChange={handleZonesChange} lang={lang} />
+      <FilterDropdown label={t('propertyGrid.filters.communityType')} options={COMUNIDAD_OPTIONS} value={comunidad} onChange={(v) => setParam('comunidad', v || null)} />
+    </>
+  )
 
-  // Autocomplete: user picked a whitelisted DB zone (maps to ?zona=).
-  const handleSelectZone = useCallback((zone: string) => {
-    setSearchQuery('')
-    setParam('zona', zone)
-  }, [setSearchQuery, setParam])
-
-  // Autocomplete: user picked a location or building (not a DB zone).
-  // Write the label into the search query — the grid's matchesSearch
-  // already searches location_name / building_name / title / description,
-  // so this yields the same 1+ results the autocomplete previewed.
-  const handleSelectSearchTerm = useCallback((term: string) => {
-    setSearchQuery(term)
-  }, [setSearchQuery])
-
-  // Called when user clicks a property suggestion in the autocomplete
-  const handleSelectProperty = useCallback((slug: string) => {
-    router.push(`/${lang}/property/${slug}`)
-  }, [router, lang])
-
-  const clearAll = () => {
-    setSearchQuery('')
-    router.push(`/${lang}/properties`, { scroll: false })
-  }
+  const priceInputs = (
+    <div className="flex items-center gap-1.5 shrink-0">
+      <div className="relative">
+        <input
+          type="number"
+          aria-label={pricePresentation.minLabel}
+          placeholder={pricePresentation.minPlaceholder}
+          value={min}
+          onChange={(e) => setParam('min', e.target.value || null)}
+          className="w-[90px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
+                     focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
+        />
+        {pricePresentation.suffix && min && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+            {pricePresentation.suffix}
+          </span>
+        )}
+      </div>
+      <span className="text-muted-foreground text-xs shrink-0">–</span>
+      <div className="relative">
+        <input
+          type="number"
+          aria-label={pricePresentation.maxLabel}
+          placeholder={pricePresentation.maxPlaceholder}
+          value={max}
+          onChange={(e) => setParam('max', e.target.value || null)}
+          className="w-[90px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
+                     focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
+        />
+        {pricePresentation.suffix && max && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
+            {pricePresentation.suffix}
+          </span>
+        )}
+      </div>
+    </div>
+  )
 
   return (
-    // Visual shell comes from <CatalogFilterBar> so /properties and
-    // /desarrollos render identical chrome. This component owns the Properties
-    // filter *semantics* (status, type, beds, multi-zone, community, price
-    // pair) plus the search input.
     <CatalogFilterBar>
 
-        {/* Row 0: Search — centered, constrained width on desktop (Airbnb-style) */}
-        <div className="max-w-2xl mx-auto">
+      {/* ── Desktop: single scrollable row ── */}
+      <div className="hidden md:flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+        {/* Search — grows to fill available space */}
+        <div className="flex-1 min-w-[160px]">
           <SearchAutocomplete
             properties={properties}
             value={searchQuery}
@@ -252,145 +261,76 @@ export default function FilterBar({ properties = [] }: FilterBarProps) {
           />
         </div>
 
-        {/* Mobile-only toggle: "Filters" button + Clear */}
-        <div className="flex items-center justify-between md:hidden">
+        <Divider />
+
+        {filterPills}
+
+        <Divider />
+
+        {priceInputs}
+
+        {hasFilters && (
+          <button
+            onClick={clearAll}
+            className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-full text-xs text-muted-foreground
+                       hover:text-foreground hover:bg-secondary transition-colors"
+          >
+            <X className="w-3.5 h-3.5" />
+            {t('propertyGrid.filters.clearFilters')}
+          </button>
+        )}
+
+        {status === 'for_rent' && (
+          <span className="shrink-0 text-xs text-muted-foreground">
+            {lang === 'en' ? 'monthly rent' : 'renta mensual'}
+          </span>
+        )}
+      </div>
+
+      {/* ── Mobile: toggle button → expandable panel ── */}
+      <div className="md:hidden space-y-3">
+        <div className="flex items-center justify-between">
           <button
             onClick={() => setFiltersOpen(v => !v)}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-              filtersOpen || activeFilterCount > 0
+              filtersOpen || activeCount > 0
                 ? 'bg-foreground text-background border-foreground'
                 : 'bg-secondary text-foreground border-transparent hover:bg-secondary/70'
             }`}
           >
             <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
             {lang === 'es' ? 'Filtros' : 'Filters'}
-            {activeFilterCount > 0 && (
+            {activeCount > 0 && (
               <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#C9A96E] text-white text-[10px] font-bold">
-                {activeFilterCount}
+                {activeCount}
               </span>
             )}
           </button>
-
           {hasFilters && (
-            <button onClick={clearAll}
-              className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors">
+            <button onClick={clearAll} className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors">
               {t('propertyGrid.filters.clearFilters')}
             </button>
           )}
         </div>
 
-        {/* Filter dropdowns — centered, max-width, single row on desktop */}
-        <div className={`${filtersOpen ? 'block' : 'hidden'} md:block`}>
-          <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center gap-2">
-
-            {/* Status — drives which price labels/placeholders show */}
-            <FilterDropdown
-              label={t('propertyGrid.filters.statusLabel')}
-              options={STATUS_OPTIONS}
-              value={status}
-              onChange={handleStatusChange}
-            />
-
-            {/* Type */}
-            <FilterDropdown
-              label={t('propertyGrid.filters.propertyType')}
-              options={TYPE_OPTIONS}
-              value={tipo}
-              onChange={(v) => setParam('tipo', v || null)}
-            />
-
-            {/* Bedrooms */}
-            <FilterDropdown
-              label={t('propertyGrid.filters.bedrooms')}
-              options={BED_OPTIONS}
-              value={camas}
-              onChange={(v) => setParam('camas', v || null)}
-            />
-
-            {/* Zone — multi-select */}
-            <ZoneDropdown
-              selected={selectedZones}
-              onChange={handleZonesChange}
+        {filtersOpen && (
+          <div className="space-y-3 pt-1">
+            <SearchAutocomplete
+              properties={properties}
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSelectZone={handleSelectZone}
+              onSelectSearchTerm={handleSelectSearchTerm}
+              onSelectProperty={handleSelectProperty}
               lang={lang}
             />
-
-            {/* Community */}
-            <FilterDropdown
-              label={t('propertyGrid.filters.communityType')}
-              options={COMUNIDAD_OPTIONS}
-              value={comunidad}
-              onChange={(v) => setParam('comunidad', v || null)}
-            />
-
-            {/* Thin divider */}
-            <div className="hidden md:block w-px h-6 bg-[#E8E3DC] mx-1" />
-
-            {/* Price range — labels change based on for_sale / for_rent / any */}
-            <div className="flex items-center gap-1.5">
-              <div className="relative">
-                <input
-                  type="number"
-                  aria-label={pricePresentation.minLabel}
-                  placeholder={pricePresentation.minPlaceholder}
-                  value={min}
-                  onChange={(e) => setParam('min', e.target.value || null)}
-                  className="w-[120px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
-                             focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
-                />
-                {pricePresentation.suffix && min && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
-                    {pricePresentation.suffix}
-                  </span>
-                )}
-              </div>
-              <span className="text-muted-foreground text-xs">–</span>
-              <div className="relative">
-                <input
-                  type="number"
-                  aria-label={pricePresentation.maxLabel}
-                  placeholder={pricePresentation.maxPlaceholder}
-                  value={max}
-                  onChange={(e) => setParam('max', e.target.value || null)}
-                  className="w-[120px] px-3 py-2 border border-[#E8E3DC] rounded-full text-sm bg-white
-                             focus:outline-none focus:border-[#C9A96E] placeholder:text-[#999]"
-                />
-                {pricePresentation.suffix && max && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
-                    {pricePresentation.suffix}
-                  </span>
-                )}
-              </div>
+            <div className="flex flex-wrap gap-2">
+              {filterPills}
             </div>
-
-            {/* Clear all */}
-            {hasFilters && (
-              <button
-                onClick={clearAll}
-                className="hidden md:flex items-center gap-1 px-3 py-2 rounded-full text-xs text-muted-foreground
-                           hover:text-foreground hover:bg-secondary transition-colors"
-              >
-                <X className="w-3.5 h-3.5" />
-                {t('propertyGrid.filters.clearFilters')}
-              </button>
-            )}
+            {priceInputs}
           </div>
-
-          {/* Helper hint — reinforces that price is contextual (rent vs sale) */}
-          {status === 'for_rent' && (
-            <p className="mt-2 text-center text-xs text-muted-foreground font-sans">
-              {lang === 'en'
-                ? 'Showing monthly rent price range'
-                : 'Mostrando rango de renta mensual'}
-            </p>
-          )}
-          {status === 'for_sale' && (
-            <p className="mt-2 text-center text-xs text-muted-foreground font-sans">
-              {lang === 'en'
-                ? 'Showing sale price range'
-                : 'Mostrando rango de precio de venta'}
-            </p>
-          )}
-        </div>
+        )}
+      </div>
 
     </CatalogFilterBar>
   )
