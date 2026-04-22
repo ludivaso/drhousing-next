@@ -3,11 +3,8 @@ import { matchesRoute } from './routes'
 
 export type VisibilityMap = Map<string, 'public' | 'private'>
 
-interface SupabaseLike {
-  from: (table: string) => {
-    select: (cols: string) => Promise<{ data: unknown; error: unknown }>
-  }
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SupabaseLike = { from: (table: string) => any }
 
 // In-memory cache. Works within a warm Edge/Node function instance; cold starts
 // re-fetch. 30s TTL is fine for an admin tool — changes propagate fast enough.
