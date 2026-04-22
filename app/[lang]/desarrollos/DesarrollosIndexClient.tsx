@@ -8,7 +8,7 @@ import DevelopmentCard from '@/components/developments/DevelopmentCard'
 import CatalogHero from '@/components/catalog/CatalogHero'
 import CatalogFilterBar from '@/components/catalog/CatalogFilterBar'
 import {
-  developments,
+  developments as staticDevelopments,
   STATUS_LABEL,
   type DevStatus,
   type Development,
@@ -16,6 +16,7 @@ import {
 
 interface Props {
   lang: 'en' | 'es'
+  developments?: Development[]
 }
 
 type SortKey = 'newest' | 'price-asc' | 'price-desc' | 'delivery'
@@ -30,7 +31,7 @@ const FAV_KEY = 'dev_favorites'
 // Filter / sort / favorite experience for the Developments index. State is
 // mirrored to the URL so deep-links (e.g. /en/desarrollos?status=pre-sale)
 // resolve to the correct filter view and users can share filtered sets.
-export default function DesarrollosIndexClient({ lang }: Props) {
+export default function DesarrollosIndexClient({ lang, developments = staticDevelopments }: Props) {
   const router       = useRouter()
   const searchParams = useSearchParams()
 

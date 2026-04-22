@@ -758,6 +758,174 @@ export type Database = {
         }
         Relationships: []
       }
+      developments: {
+        Row: {
+          id: string
+          slug: string
+          name_en: string
+          name_es: string | null
+          subtitle_en: string | null
+          subtitle_es: string | null
+          description_en: string | null
+          description_es: string | null
+          location: string | null
+          zone: string | null
+          status: string
+          delivery_date: string | null
+          price_from: number | null
+          price_to: number | null
+          unit_count: number | null
+          unit_types: unknown
+          amenities: string[]
+          hero_image: string | null
+          gallery: string[]
+          developer_name: string | null
+          brochure_url: string | null
+          video_url: string | null
+          coordinates: unknown
+          featured: boolean
+          display_order: number | null
+          published: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          name_en: string
+          name_es?: string | null
+          subtitle_en?: string | null
+          subtitle_es?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          location?: string | null
+          zone?: string | null
+          status?: string
+          delivery_date?: string | null
+          price_from?: number | null
+          price_to?: number | null
+          unit_count?: number | null
+          unit_types?: unknown
+          amenities?: string[]
+          hero_image?: string | null
+          gallery?: string[]
+          developer_name?: string | null
+          brochure_url?: string | null
+          video_url?: string | null
+          coordinates?: unknown
+          featured?: boolean
+          display_order?: number | null
+          published?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          slug?: string
+          name_en?: string
+          name_es?: string | null
+          subtitle_en?: string | null
+          subtitle_es?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          location?: string | null
+          zone?: string | null
+          status?: string
+          delivery_date?: string | null
+          price_from?: number | null
+          price_to?: number | null
+          unit_count?: number | null
+          unit_types?: unknown
+          amenities?: string[]
+          hero_image?: string | null
+          gallery?: string[]
+          developer_name?: string | null
+          brochure_url?: string | null
+          video_url?: string | null
+          coordinates?: unknown
+          featured?: boolean
+          display_order?: number | null
+          published?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      interior_projects: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          cover: string | null
+          before_after_pairs: unknown
+          gallery: string[]
+          category: string | null
+          display_order: number | null
+          published: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          cover?: string | null
+          before_after_pairs?: unknown
+          gallery?: string[]
+          category?: string | null
+          display_order?: number | null
+          published?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          title?: string
+          description?: string | null
+          cover?: string | null
+          before_after_pairs?: unknown
+          gallery?: string[]
+          category?: string | null
+          display_order?: number | null
+          published?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      catalog_items: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          image: string | null
+          category: string | null
+          price: number | null
+          published: boolean
+          display_order: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          image?: string | null
+          category?: string | null
+          price?: number | null
+          published?: boolean
+          display_order?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          name?: string
+          description?: string | null
+          image?: string | null
+          category?: string | null
+          price?: number | null
+          published?: boolean
+          display_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

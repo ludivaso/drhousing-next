@@ -18,6 +18,8 @@ import {
   Settings2,
   BookOpen,
   Lock,
+  Building2,
+  Sofa,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -30,9 +32,11 @@ const adminNav = [
   { name: 'Curated',      href: '/admin/curated',        icon: Bookmark },
   { name: 'Tickets',      href: '/admin/tickets',        icon: Ticket },
   { name: 'Agentes',      href: '/admin/agents',            icon: UserCircle },
-  { name: 'Blog',         href: '/admin/blog',              icon: BookOpen },
-  { name: 'Visibility',   href: '/admin/visibility',        icon: Lock },
-  { name: 'Homepage',     href: '/admin/settings/homepage', icon: Settings2 },
+  { name: 'Blog',           href: '/admin/blog',               icon: BookOpen },
+  { name: 'Desarrollos',   href: '/admin/developments',       icon: Building2 },
+  { name: 'Interiorismo',  href: '/admin/interior-design',    icon: Sofa },
+  { name: 'Visibility',    href: '/admin/visibility',         icon: Lock },
+  { name: 'Homepage',      href: '/admin/settings/homepage',  icon: Settings2 },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
