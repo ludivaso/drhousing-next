@@ -17,6 +17,7 @@ import {
   Ticket,
   Settings2,
   BookOpen,
+  Lock,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -30,6 +31,7 @@ const adminNav = [
   { name: 'Tickets',      href: '/admin/tickets',        icon: Ticket },
   { name: 'Agentes',      href: '/admin/agents',            icon: UserCircle },
   { name: 'Blog',         href: '/admin/blog',              icon: BookOpen },
+  { name: 'Visibility',   href: '/admin/visibility',        icon: Lock },
   { name: 'Homepage',     href: '/admin/settings/homepage', icon: Settings2 },
 ]
 

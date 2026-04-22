@@ -722,6 +722,42 @@ export type Database = {
           }
         ]
       }
+      page_visibility: {
+        Row: {
+          path: string
+          status: 'public' | 'private'
+          updated_at: string
+        }
+        Insert: {
+          path: string
+          status: 'public' | 'private'
+          updated_at?: string
+        }
+        Update: {
+          path?: string
+          status?: 'public' | 'private'
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      preview_pin: {
+        Row: {
+          id: number
+          pin_hash: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          pin_hash?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          pin_hash?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
