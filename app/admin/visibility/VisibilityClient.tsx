@@ -19,7 +19,6 @@ export default function VisibilityClient({ routes, statusByPath, pinConfigured }
   const [pinMsg, setPinMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const [savingPin, setSavingPin] = useState(false)
 
-  // Group routes by group
   const grouped = routes.reduce<Record<string, ManagedRoute[]>>((acc, r) => {
     (acc[r.group] ||= []).push(r)
     return acc
@@ -33,14 +32,12 @@ export default function VisibilityClient({ routes, statusByPath, pinConfigured }
     setPendingPath(path)
     setOptimistic(prev => ({ ...prev, [path]: next }))
     startTransition(async () => {
-      try {
-        await setRouteStatus(path, next)
-      } catch (e) {
+      const result = await setRouteStatus(path, next)
+      if (!result.ok) {
         setOptimistic(prev => ({ ...prev, [path]: next === 'private' ? 'public' : 'private' }))
-        setPinMsg({ kind: 'err', text: e instanceof Error ? e.message : 'Failed to update.' })
-      } finally {
-        setPendingPath(null)
+        setPinMsg({ kind: 'err', text: result.error })
       }
+      setPendingPath(null)
     })
   }
 
@@ -48,27 +45,25 @@ export default function VisibilityClient({ routes, statusByPath, pinConfigured }
     e.preventDefault()
     setSavingPin(true)
     setPinMsg(null)
-    try {
-      await setPreviewPin(pinInput)
+    const result = await setPreviewPin(pinInput)
+    setSavingPin(false)
+    if (result.ok) {
       setPinInput('')
       setPinMsg({ kind: 'ok', text: 'PIN saved. Existing preview sessions were signed out.' })
-    } catch (e) {
-      setPinMsg({ kind: 'err', text: e instanceof Error ? e.message : 'Failed to save PIN.' })
-    } finally {
-      setSavingPin(false)
+    } else {
+      setPinMsg({ kind: 'err', text: result.error })
     }
   }
 
   const removePin = async () => {
     if (!confirm('Remove the preview PIN? Any pages marked private will become inaccessible.')) return
     setSavingPin(true)
-    try {
-      await clearPreviewPin()
+    const result = await clearPreviewPin()
+    setSavingPin(false)
+    if (result.ok) {
       setPinMsg({ kind: 'ok', text: 'PIN removed.' })
-    } catch (e) {
-      setPinMsg({ kind: 'err', text: e instanceof Error ? e.message : 'Failed to remove PIN.' })
-    } finally {
-      setSavingPin(false)
+    } else {
+      setPinMsg({ kind: 'err', text: result.error })
     }
   }
 
