@@ -12,7 +12,7 @@ export async function setRouteStatus(path: string, status: 'public' | 'private')
   }
   const supabase = createAdminClient()
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('page_visibility')
     .upsert({ path, status }, { onConflict: 'path' })
 
@@ -29,10 +29,9 @@ export async function setPreviewPin(pin: string) {
   const hash = await hashPin(clean)
   const supabase = createAdminClient()
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('preview_pin')
-    .update({ pin_hash: hash })
-    .eq('id', 1)
+    .upsert({ id: 1, pin_hash: hash }, { onConflict: 'id' })
 
   if (error) throw new Error(error.message)
 
@@ -43,7 +42,7 @@ export async function setPreviewPin(pin: string) {
 export async function clearPreviewPin() {
   const supabase = createAdminClient()
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('preview_pin')
     .update({ pin_hash: null })
     .eq('id', 1)
