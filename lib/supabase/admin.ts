@@ -2,11 +2,6 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/src/integrations/supabase/types'
 
-/**
- * Server-side Supabase client for admin Server Components.
- * Uses the anon key + session cookie — RLS grants the logged-in
- * admin user full read/write access to all tables.
- */
 export function createAdminClient() {
   const cookieStore = cookies()
   return createServerClient<Database>(
@@ -14,8 +9,15 @@ export function createAdminClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {}
         },
       },
     }

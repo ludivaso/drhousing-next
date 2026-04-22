@@ -10,19 +10,26 @@ export const metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function VisibilityAdminPage() {
-  const supabase = createAdminClient()
+  let statusByPath: Record<string, 'public' | 'private'> = {}
+  let pinConfigured = false
 
-  const [{ data: rows }, { data: pinRow }] = await Promise.all([
-    supabase.from('page_visibility').select('path, status'),
-    supabase.from('preview_pin').select('pin_hash').eq('id', 1).single(),
-  ])
+  try {
+    const supabase = createAdminClient()
 
-  const statusByPath = Object.fromEntries(
-    ((rows as { path: string; status: 'public' | 'private' }[] | null) ?? [])
-      .map(r => [r.path, r.status])
-  ) as Record<string, 'public' | 'private'>
+    const [{ data: rows }, { data: pinRow }] = await Promise.all([
+      supabase.from('page_visibility').select('path, status'),
+      supabase.from('preview_pin').select('pin_hash').eq('id', 1).single(),
+    ])
 
-  const pinConfigured = Boolean((pinRow as { pin_hash: string | null } | null)?.pin_hash)
+    statusByPath = Object.fromEntries(
+      ((rows as { path: string; status: 'public' | 'private' }[] | null) ?? [])
+        .map(r => [r.path, r.status])
+    ) as Record<string, 'public' | 'private'>
+
+    pinConfigured = Boolean((pinRow as { pin_hash: string | null } | null)?.pin_hash)
+  } catch {
+    // DB unavailable or tables not yet migrated — render with defaults
+  }
 
   return (
     <div>
