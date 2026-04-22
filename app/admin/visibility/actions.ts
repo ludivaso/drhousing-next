@@ -31,7 +31,8 @@ export async function setPreviewPin(pin: string) {
 
   const { error } = await (supabase as any)
     .from('preview_pin')
-    .upsert({ id: 1, pin_hash: hash }, { onConflict: 'id' })
+    .update({ pin_hash: hash })
+    .eq('id', 1)
 
   if (error) throw new Error(error.message)
 
