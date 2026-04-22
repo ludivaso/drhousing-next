@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import type { DevFormData, DevRow, DevStatus } from './actions'
 import { createDevelopment, updateDevelopment } from './actions'
+import AIImportPanel from './AIImportPanel'
+import ImageUploader from './ImageUploader'
 
 const STATUS_OPTIONS: { value: DevStatus; label: string }[] = [
   { value: 'pre_sale',        label: 'Pre-Sale' },
@@ -54,6 +56,10 @@ export default function DevForm({ row }: { row?: DevRow }) {
 
   const set = (k: keyof DevFormData, v: string | boolean) =>
     setForm(f => ({ ...f, [k]: v }))
+
+  const applyExtracted = (partial: Partial<DevFormData>) => {
+    setForm(f => ({ ...f, ...partial }))
+  }
 
   const handleNameEn = (v: string) => {
     set('name_en', v)
@@ -107,6 +113,9 @@ export default function DevForm({ row }: { row?: DevRow }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl">
+
+      {/* ── AI Import ──────────────────────────────────────────────── */}
+      <AIImportPanel onApply={applyExtracted} />
 
       {/* ── Identity ───────────────────────────────────────────────── */}
       <section className="bg-card border border-border rounded-lg p-6 space-y-4">
@@ -203,19 +212,19 @@ export default function DevForm({ row }: { row?: DevRow }) {
       </section>
 
       {/* ── Media ───────────────────────────────────────────────────── */}
-      <section className="bg-card border border-border rounded-lg p-6 space-y-4">
+      <section className="bg-card border border-border rounded-lg p-6 space-y-5">
         <h2 className="font-serif text-base text-foreground">Media</h2>
-        {field('Hero Image URL', 'hero_image', { placeholder: 'https://…' })}
-        <div>
-          <label className="block text-xs font-medium text-muted-foreground mb-1">Gallery URLs (one per line)</label>
-          <textarea
-            value={form.gallery}
-            onChange={e => set('gallery', e.target.value)}
-            rows={6}
-            placeholder={"https://…\nhttps://…"}
-            className="w-full px-3 py-2 rounded border border-border bg-background text-sm focus:outline-none focus:border-[#C9A96E] font-mono resize-y"
-          />
-        </div>
+        <ImageUploader
+          label="Hero Image"
+          single
+          value={form.hero_image}
+          onChange={v => set('hero_image', v)}
+        />
+        <ImageUploader
+          label="Gallery"
+          value={form.gallery}
+          onChange={v => set('gallery', v)}
+        />
         {field('Brochure URL', 'brochure_url', { placeholder: 'https://…' })}
         {field('Video URL (YouTube embed)', 'video_url', { placeholder: 'https://youtube.com/embed/…' })}
       </section>
