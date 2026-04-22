@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { matchesRoute } from './routes'
 
-export type VisibilityMap = Map<string, 'public' | 'private'>
+export type VisibilityMap = Record<string, 'public' | 'private'>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseLike = { from: (table: string) => any }
@@ -23,7 +23,7 @@ export async function getVisibilityMap(supabase: SupabaseLike): Promise<Visibili
 
   const { data } = await supabase.from('page_visibility').select('path, status')
   const rows = (data as { path: string; status: 'public' | 'private' }[] | null) ?? []
-  const map: VisibilityMap = new Map(rows.map(r => [r.path, r.status]))
+  const map: VisibilityMap = Object.fromEntries(rows.map(r => [r.path, r.status]))
 
   visibilityCache = { map, exp: Date.now() + TTL_MS }
   return map
@@ -45,10 +45,9 @@ export async function getPinHash(supabase: SupabaseLike): Promise<string | null>
  * `private` entry in the visibility map.
  */
 export function isPathPrivate(basePath: string, map: VisibilityMap): boolean {
-  for (const [path, status] of map) {
-    if (status === 'private' && matchesRoute(basePath, path)) return true
-  }
-  return false
+  return Object.entries(map).some(
+    ([path, status]) => status === 'private' && matchesRoute(basePath, path)
+  )
 }
 
 /**
