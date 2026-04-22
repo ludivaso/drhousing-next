@@ -28,7 +28,7 @@ export default function ImageUploader({ label, single = false, value, onChange }
     if (single) {
       onChange(newUrls[0] ?? '')
     } else {
-      const merged = [...new Set([...urls, ...newUrls])]
+      const merged = urls.concat(newUrls.filter(u => !urls.includes(u)))
       onChange(merged.join('\n'))
     }
   }
