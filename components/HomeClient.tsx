@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Shield, MapPin, Users } from 'lucide-react'
@@ -40,6 +41,19 @@ export default function HomeClient({
   const { t, lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
 
+  // Hero video: ensure playback on mount AND when page is restored from bfcache
+  // (fixes Cmd+R / browser back showing a paused poster instead of playing video)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    const tryPlay = () => { video.play().catch(() => {}) }
+    tryPlay()
+    const onPageShow = (e: PageTransitionEvent) => { if (e.persisted) tryPlay() }
+    window.addEventListener('pageshow', onPageShow)
+    return () => window.removeEventListener('pageshow', onPageShow)
+  }, [])
+
   // Normalise any legacy Spanish href values from the DB before passing to ServicesPanels
   const normalizedCards = (serviceCards ?? []).map((card) => ({
     ...card,
@@ -69,6 +83,7 @@ export default function HomeClient({
       >
         {/* Hero video — /public/hero-video.mp4, no conditions, no error state */}
         <video
+          ref={videoRef}
           autoPlay
           muted
           loop
