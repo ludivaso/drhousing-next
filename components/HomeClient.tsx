@@ -79,7 +79,7 @@ export default function HomeClient({
           poster="/hero-costa-rica.jpg"
           className="absolute inset-0 w-full h-full object-cover"
           ref={(el) => {
-            if (el && el.paused) {
+            if (el) {
               el.load()
               el.play().catch(() => {})
             }
