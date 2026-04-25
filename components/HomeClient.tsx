@@ -67,16 +67,18 @@ export default function HomeClient({
         className="relative flex items-center -mt-16 lg:-mt-[72px]"
         style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
       >
-        {/* YouTube hero background */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/PnMbDWEwmMI?autoplay=1&mute=1&loop=1&playlist=PnMbDWEwmMI&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
-            className="absolute w-[300%] h-[300%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{ border: 'none', pointerEvents: 'none' }}
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
+        {/* Hero video — /public/hero-video.mp4, no conditions, no error state */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/hero-costa-rica.jpg"
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
 
         {/* Overlay — dark tint over video */}
         <div
