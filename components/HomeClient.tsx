@@ -41,14 +41,14 @@ export default function HomeClient({
   const { t, lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
 
-  // Hero video: ensure playback on mount AND when page is restored from bfcache
-  // (fixes Cmd+R / browser back showing a paused poster instead of playing video)
+  // Hero video: handles every refresh case (hard, soft, bfcache restore, client nav)
   const videoRef = useRef<HTMLVideoElement>(null)
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
     const tryPlay = () => { video.play().catch(() => {}) }
     tryPlay()
+    // bfcache restore (Cmd+R, browser back/forward)
     const onPageShow = (e: PageTransitionEvent) => { if (e.persisted) tryPlay() }
     window.addEventListener('pageshow', onPageShow)
     return () => window.removeEventListener('pageshow', onPageShow)
@@ -81,9 +81,10 @@ export default function HomeClient({
         className="relative flex items-center -mt-16 lg:-mt-[72px]"
         style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
       >
-        {/* Hero video — /public/hero-video.mp4, no conditions, no error state */}
+        {/* Hero video — /public/hero-video.mp4 served by Vercel, no DB dep, no conditions */}
         <video
           ref={videoRef}
+          data-build="bfcache-v2-2026-04-25"
           autoPlay
           muted
           loop
