@@ -21,7 +21,6 @@ const HEIGHT: Record<HeroHeight, string> = {
 interface HomeClientProps {
   featuredProperties: PropertyRow[]
   lang?: 'es' | 'en'
-  heroVideoUrl?: string
   heroHeight?: HeroHeight
   heroOverlay?: number
   heroBrightness?: number
@@ -32,7 +31,6 @@ interface HomeClientProps {
 export default function HomeClient({
   featuredProperties,
   lang: langProp,
-  heroVideoUrl,
   heroHeight,
   heroOverlay,
   heroBrightness,
@@ -69,7 +67,7 @@ export default function HomeClient({
         className="relative flex items-center -mt-16 lg:-mt-[72px]"
         style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
       >
-        {/* Background — DB-sourced video */}
+        {/* Background — video served from /public, no external dependencies */}
         <video
           autoPlay
           muted
@@ -79,33 +77,17 @@ export default function HomeClient({
           poster="/hero-costa-rica.jpg"
           className="absolute inset-0 w-full h-full object-cover"
           ref={(el) => {
-            if (el) {
-              el.load()
-              el.play().catch(() => {})
-            }
+            if (el) { el.load(); el.play().catch(() => {}) }
           }}
         >
-          <source
-            src={heroVideoUrl || "https://vtmesmtcnazoqaputoqs.supabase.co/storage/v1/object/public/site-assets/hero-video.mp4"}
-            type="video/mp4"
-          />
+          <source src="/hero-video.mp4" type="video/mp4" />
         </video>
 
-        {/*
-          Overlay:
-          - Video  → dynamic black at heroOverlay % (default 45)
-          - Static → brand gradient (high opacity keeps text readable)
-        */}
-        {heroVideoUrl
-          ? (
-            <div
-              className="absolute inset-0 transition-opacity duration-300"
-              style={{ backgroundColor: `rgba(0,0,0,${(heroOverlay ?? 45) / 100})` }}
-            />
-          ) : (
-            <div className="absolute inset-0" style={{ background: 'var(--gradient-hero)' }} />
-          )
-        }
+        {/* Overlay — dark tint over video */}
+        <div
+          className="absolute inset-0 transition-opacity duration-300"
+          style={{ backgroundColor: `rgba(0,0,0,${(heroOverlay ?? 45) / 100})` }}
+        />
 
         {/* Subtle grid texture */}
         <div
