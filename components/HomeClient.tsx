@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Shield, MapPin, Users } from 'lucide-react'
@@ -15,6 +14,24 @@ const HEIGHT: Record<HeroHeight, string> = {
   cinematic: '50vh',
   landscape:  '65vh',
   full:       '85vh',
+}
+
+// Always renders video. Poster handles visual fallback. No state, no error handler.
+function HeroBackground({ videoUrl, brightness }: { videoUrl?: string; brightness: number }) {
+  return (
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      poster="/hero-costa-rica.jpg"
+      className="absolute inset-0 w-full h-full object-cover"
+      style={{ filter: `brightness(${brightness}%)` }}
+    >
+      <source src={videoUrl || '/hero-video.mp4'} type="video/mp4" />
+    </video>
+  )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -40,19 +57,6 @@ export default function HomeClient({
 }: HomeClientProps) {
   const { t, lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
-
-  // Hero video: handles every refresh case (hard, soft, bfcache restore, client nav)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-    const tryPlay = () => { video.play().catch(() => {}) }
-    tryPlay()
-    // bfcache restore (Cmd+R, browser back/forward)
-    const onPageShow = (e: PageTransitionEvent) => { if (e.persisted) tryPlay() }
-    window.addEventListener('pageshow', onPageShow)
-    return () => window.removeEventListener('pageshow', onPageShow)
-  }, [])
 
   // Normalise any legacy Spanish href values from the DB before passing to ServicesPanels
   const normalizedCards = (serviceCards ?? []).map((card) => ({
@@ -81,20 +85,7 @@ export default function HomeClient({
         className="relative flex items-center -mt-16 lg:-mt-[72px]"
         style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
       >
-        {/* Hero video — /public/hero-video.mp4 served by Vercel, no DB dep, no conditions */}
-        <video
-          ref={videoRef}
-          data-build="bfcache-v2-2026-04-25"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/hero-costa-rica.jpg"
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/hero-video.mp4" type="video/mp4" />
-        </video>
+        <HeroBackground brightness={heroBrightness ?? 100} />
 
         {/* Overlay — dark tint over video */}
         <div
