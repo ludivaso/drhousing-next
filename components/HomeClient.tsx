@@ -21,6 +21,7 @@ const HEIGHT: Record<HeroHeight, string> = {
 interface HomeClientProps {
   featuredProperties: PropertyRow[]
   lang?: 'es' | 'en'
+  heroVideoUrl?: string
   heroHeight?: HeroHeight
   heroOverlay?: number
   heroBrightness?: number
@@ -31,6 +32,7 @@ interface HomeClientProps {
 export default function HomeClient({
   featuredProperties,
   lang: langProp,
+  heroVideoUrl,
   heroHeight,
   heroOverlay,
   heroBrightness,
@@ -80,7 +82,8 @@ export default function HomeClient({
             if (el) { el.load(); el.play().catch(() => {}) }
           }}
         >
-          <source src="/hero-video.mp4" type="video/mp4" />
+          {/* DB URL from admin panel takes priority; /hero-video.mp4 is the bundled fallback */}
+          <source src={heroVideoUrl || '/hero-video.mp4'} type="video/mp4" />
         </video>
 
         {/* Overlay — dark tint over video */}

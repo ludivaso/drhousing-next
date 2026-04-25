@@ -174,10 +174,25 @@ export default function HomepageSettingsPage() {
           <p className="pt-1">Use <strong>HandBrake</strong> (free) to convert any video to web-ready MP4.</p>
         </div>
 
+        {/* Active source info */}
+        <div className="bg-muted/40 border border-border rounded-lg px-4 py-3 text-xs space-y-1">
+          <p className="font-medium text-foreground">Active video source</p>
+          <p className="text-muted-foreground">
+            <span className="font-medium text-foreground">Priority 1 — Custom URL below</span> (set by admin upload)
+          </p>
+          <p className="text-muted-foreground">
+            <span className="font-medium text-foreground">Priority 2 — Bundled fallback:</span>{' '}
+            <code className="bg-muted px-1 rounded">/hero-video.mp4</code> (served from Vercel, always reliable)
+          </p>
+          <p className="text-muted-foreground pt-1">
+            If the custom URL is blank or fails, the bundled file is used automatically.
+          </p>
+        </div>
+
         {/* URL input */}
         <div className="space-y-2">
           <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Direct Video URL (.mp4 or .webm)
+            Custom Video URL (.mp4)
           </label>
           <input
             type="url"
@@ -187,7 +202,7 @@ export default function HomepageSettingsPage() {
             className="w-full px-4 py-3 border border-border rounded bg-background text-sm focus:outline-none focus:border-primary/50"
           />
           <p className="text-xs text-muted-foreground">
-            Leave blank to use the static hero image as fallback.
+            Leave blank to use the bundled <code className="bg-muted px-1 rounded">/hero-video.mp4</code> from Vercel.
           </p>
         </div>
 
@@ -200,10 +215,10 @@ export default function HomepageSettingsPage() {
             className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded text-sm hover:bg-secondary transition-colors disabled:opacity-50"
           >
             <Upload className="w-4 h-4" />
-            {uploading ? 'Uploading…' : 'Upload to Supabase storage'}
+            {uploading ? 'Uploading…' : 'Upload new video'}
           </button>
           <span className="text-xs text-muted-foreground">
-            Bucket: <code className="bg-muted px-1 rounded">site-assets</code> (must be public)
+            Uploads to Supabase bucket <code className="bg-muted px-1 rounded">site-assets</code> and sets the URL above automatically
           </span>
           <input
             ref={fileRef}
@@ -215,17 +230,15 @@ export default function HomepageSettingsPage() {
         </div>
 
         {/* Preview */}
-        {heroVideoUrl && (
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground font-medium">Preview:</p>
-            <video
-              muted loop playsInline controls
-              className="w-full rounded border border-border max-h-52 object-cover bg-black"
-            >
-              <source src={heroVideoUrl} />
-            </video>
-          </div>
-        )}
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground font-medium">Preview:</p>
+          <video
+            muted loop playsInline controls
+            className="w-full rounded border border-border max-h-52 object-cover bg-black"
+          >
+            <source src={heroVideoUrl || '/hero-video.mp4'} />
+          </video>
+        </div>
       </section>
 
       {/* ── Appearance — overlay & brightness ── */}
