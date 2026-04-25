@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Shield, MapPin, Users } from 'lucide-react'
@@ -8,56 +7,13 @@ import PropertyCard from '@/components/PropertyCard'
 import ServicesPanels from '@/components/ServicesPanels'
 import { useI18n } from '@/lib/i18n/context'
 import type { PropertyRow } from '@/lib/supabase/queries'
-import type { ServiceCardConfig, HeroHeight, SiteSettings } from '@/lib/supabase/settings'
-
-// ── Detect MIME type from URL extension ──────────────────────────────────────
-function mimeType(url: string): string {
-  if (/\.webm(\?|$)/i.test(url)) return 'video/webm'
-  if (/\.og[gv](\?|$)/i.test(url)) return 'video/ogg'
-  return 'video/mp4'
-}
+import type { ServiceCardConfig, HeroHeight } from '@/lib/supabase/settings'
 
 // ── Hero height map ───────────────────────────────────────────────────────────
 const HEIGHT: Record<HeroHeight, string> = {
   cinematic: '50vh',
   landscape:  '65vh',
   full:       '85vh',
-}
-
-// ── Hero background: video loop with static image fallback ────────────────────
-function HeroBackground({
-  videoUrl,
-  brightness,
-}: {
-  videoUrl?: string
-  brightness: number
-}) {
-  const [videoFailed, setVideoFailed] = useState(false)
-
-  if (videoUrl && !videoFailed) {
-    return (
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        poster="/hero-costa-rica.jpg"
-        onError={() => setVideoFailed(true)}
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: `brightness(${brightness}%)` }}
-      >
-        <source src={videoUrl} type={mimeType(videoUrl)} />
-      </video>
-    )
-  }
-
-  return (
-    <div
-      className="absolute inset-0 bg-cover bg-center"
-      style={{ backgroundImage: 'url(/hero-costa-rica.jpg)' }}
-    />
-  )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -113,11 +69,20 @@ export default function HomeClient({
         className="relative flex items-center -mt-16 lg:-mt-[72px]"
         style={{ minHeight: HEIGHT[heroHeight ?? 'cinematic'] }}
       >
-        {/* Background — video if available, static image as fallback */}
-        <HeroBackground
-          videoUrl={heroVideoUrl}
-          brightness={heroBrightness ?? 100}
-        />
+        {/* Background — DB-sourced video */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/hero-costa-rica.jpg"
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          {heroVideoUrl && (
+            <source src={heroVideoUrl} type="video/mp4" />
+          )}
+        </video>
 
         {/*
           Overlay:
