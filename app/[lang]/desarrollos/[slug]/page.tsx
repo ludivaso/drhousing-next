@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: { params: { slug: string; lan
   const title = lang === 'es' ? dev.nameEs : dev.nameEn
   const description = lang === 'es' ? dev.subtitleEs : dev.subtitleEn
   return {
-    title: `${title} | DR Housing`,
+    title,
     description,
     alternates: {
       canonical: `https://drhousing.net/${lang}/desarrollos/${dev.slug}`,

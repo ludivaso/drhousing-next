@@ -94,7 +94,6 @@ export default function PropertyDetails({
 
   if (allFeatures.length === 0) return null
 
-  const title   = lang === 'es' ? 'Destacados de la Residencia' : 'Residence Highlights'
   const subtitle = lang === 'es' ? 'Lo Que Hace Única Esta Propiedad' : 'What Sets This Home Apart'
   const countLabel = lang === 'es'
     ? `${allFeatures.length} característica${allFeatures.length !== 1 ? 's' : ''}`
@@ -113,9 +112,6 @@ export default function PropertyDetails({
       >
         <div>
           <p className="font-serif text-[15px] font-medium text-[#1A1A1A] leading-tight">
-            {title}
-          </p>
-          <p className="font-sans text-xs text-[#9A9A8A] mt-0.5">
             {open
               ? (lang === 'es' ? 'Haz clic para colapsar' : 'Click to collapse')
               : subtitle + ' · ' + countLabel}

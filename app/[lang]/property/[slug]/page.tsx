@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import {
   getHeroImage,
   getPropertyFeatures,
@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
   ).slice(0, 120)
   const description = [price, specs, rawDesc].filter(Boolean).join(' — ')
 
-  const url = `https://drhousing.net/property/${property.slug}`
+  const url = `https://drhousing.net/${lang}/property/${property.reference_id}`
 
   return {
     title,
@@ -114,10 +114,7 @@ export default async function PropertyDetailPage({ params }: { params: { lang: s
   const property = await findProperty(params.slug)
   if (!property) notFound()
 
-  // Redirect to canonical slug when navigated via reference_id or a stale slug
-  if (property.slug && property.slug !== params.slug) {
-    redirect(`/${params.lang}/property/${property.slug}`)
-  }
+  // No redirect — reference_id IS the canonical URL; slug is mutable and must not be exposed
 
   const propertyFeatures = await getPropertyFeatures(property.id)
 
@@ -225,7 +222,7 @@ export default async function PropertyDetailPage({ params }: { params: { lang: s
     '@type': 'RealEstateListing',
     name: property.title,
     description: (property.description || '').slice(0, 300),
-    url: `https://drhousing.net/property/${property.slug}`,
+    url: `https://drhousing.net/${lang}/property/${property.reference_id}`,
     image: property.images ?? [],
     datePosted: property.created_at,
     offers: {

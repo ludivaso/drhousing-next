@@ -21,7 +21,7 @@ export async function generateMetadata({
   if (!zone) return {}
 
   const lang = params.lang === 'es' ? 'es' : 'en'
-  const title = `Properties for Sale in ${zone.nameEn} | DR Housing`
+  const title = `Properties for Sale in ${zone.nameEn}`
   const description = zone.descriptionEn.slice(0, 160)
   const canonical = `https://drhousing.net/${lang}/for-sale/${zone.slug}`
   const altEs     = `https://drhousing.net/es/venta/${zone.slug}`

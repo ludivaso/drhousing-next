@@ -47,7 +47,7 @@ function rowToDev(r: Record<string, any>): Development {
 
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
   const lang = params.lang === 'es' ? 'es' : 'en'
-  const title = lang === 'es' ? 'Desarrollos | DR Housing' : 'New Developments | DR Housing'
+  const title = lang === 'es' ? 'Desarrollos' : 'New Developments'
   const description = lang === 'es'
     ? 'Construcción nueva y preventas seleccionadas en el Valle Central de Costa Rica.'
     : "Curated new construction and pre-sales across Costa Rica's Central Valley."

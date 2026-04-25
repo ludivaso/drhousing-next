@@ -55,7 +55,7 @@ function t(lang: 'es' | 'en', key: string, vars?: Record<string, string | number
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
   const lang = params.lang === 'es' ? 'es' : 'en'
   return {
-    title: lang === 'en' ? 'Properties | DR Housing' : 'Propiedades | DR Housing',
+    title: lang === 'en' ? 'Properties' : 'Propiedades',
     description: lang === 'en'
       ? 'Houses, apartments and land for sale and rent in Costa Rica'
       : 'Casas, apartamentos y terrenos en venta y alquiler en Costa Rica',

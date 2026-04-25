@@ -41,6 +41,7 @@ function HeroBackground({
         muted
         loop
         playsInline
+        preload="auto"
         poster="/hero-costa-rica.jpg"
         onError={() => setVideoFailed(true)}
         className="absolute inset-0 w-full h-full object-cover"
@@ -211,8 +212,8 @@ export default function HomeClient({
               {t('home.featured.noProperties')}
             </p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredProperties.slice(0, 3).map((property) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProperties.slice(0, 4).map((property) => (
                 <PropertyCard key={property.id} property={property} lang={lang} />
               ))}
             </div>

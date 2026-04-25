@@ -112,7 +112,7 @@ export default function PropertyCard({ property, lang = 'es', compact = false }:
       {/* Content */}
       <div className={contentPad}>
         <p className={locationClass}>
-          {property.zone || property.location_name}
+          {(property.zone && property.zone !== 'Sin zona') ? property.zone : property.location_name}
         </p>
 
         <h3 className={titleClass}>

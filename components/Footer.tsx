@@ -60,9 +60,12 @@ export default function Footer() {
 
           {/* Col 3 — Newsletter (inline, minimal) */}
           <div>
-            <p className="text-xs text-primary-foreground/40 tracking-widest uppercase mb-4">
-              {lang === 'en' ? 'Market Intelligence' : 'Inteligencia de Mercado'}
-            </p>
+            <Link
+              href={`/${lang}/tools`}
+              className="text-xs text-primary-foreground/40 tracking-widest uppercase mb-4 hover:text-gold transition-colors duration-300 block"
+            >
+              {lang === 'en' ? 'Market Intelligence →' : 'Inteligencia de Mercado →'}
+            </Link>
 
             {submitted ? (
               <p className="text-sm text-gold/70 italic">
@@ -96,11 +99,11 @@ export default function Footer() {
         <div className="container-wide py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/25">
           <p>© {new Date().getFullYear()} DR Housing</p>
           <div className="flex items-center gap-6">
-            <Link href={`/${lang}/privacidad`} className="hover:text-primary-foreground/50 transition-colors">
-              Privacy
+            <Link href={lang === 'en' ? '/en/privacy' : '/es/privacidad'} className="hover:text-primary-foreground/50 transition-colors">
+              {lang === 'en' ? 'Privacy' : 'Privacidad'}
             </Link>
-            <Link href={`/${lang}/terminos`} className="hover:text-primary-foreground/50 transition-colors">
-              Terms
+            <Link href={lang === 'en' ? '/en/terms' : '/es/terminos'} className="hover:text-primary-foreground/50 transition-colors">
+              {lang === 'en' ? 'Terms' : 'Términos'}
             </Link>
             <Link
               href="/admin"

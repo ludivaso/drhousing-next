@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      // Locale-aware privacy/terms canonical redirects
+      { source: '/en/privacidad', destination: '/en/privacy',    permanent: true },
+      { source: '/en/terminos',   destination: '/en/terms',      permanent: true },
+      { source: '/es/privacy',    destination: '/es/privacidad', permanent: true },
+      { source: '/es/terms',      destination: '/es/terminos',   permanent: true },
+    ]
+  },
   // Packages that use Node.js-only APIs — must not be bundled by webpack
   experimental: {
     serverComponentsExternalPackages: [

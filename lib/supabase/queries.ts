@@ -34,7 +34,7 @@ export async function getPublicProperties(): Promise<PropertyRow[]> {
   return data ?? []
 }
 
-/** Featured properties for homepage — exactly 3, ordered by featured_order from Supabase */
+/** Featured properties for homepage — up to 4, ordered by featured_order from Supabase */
 export async function getFeaturedProperties(): Promise<PropertyRow[]> {
   const { data, error } = await supabase
     .from('properties')
@@ -43,7 +43,7 @@ export async function getFeaturedProperties(): Promise<PropertyRow[]> {
     .eq('hidden', false)
     .or('visibility.eq.public,visibility.is.null')
     .order('featured_order', { ascending: true, nullsFirst: false })
-    .limit(3)
+    .limit(4)
 
   if (error) {
     console.error('getFeaturedProperties error:', error.message)
