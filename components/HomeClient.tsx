@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Shield, MapPin, Users } from 'lucide-react'
@@ -43,17 +42,6 @@ export default function HomeClient({
   const { t, lang: i18nLang } = useI18n()
   const lang = langProp ?? i18nLang
 
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video || !heroVideoUrl) return
-    video.load()
-    video.play().catch(() => {
-      // Autoplay blocked by browser policy — poster image shows, that's fine
-    })
-  }, [heroVideoUrl])
-
   // Normalise any legacy Spanish href values from the DB before passing to ServicesPanels
   const normalizedCards = (serviceCards ?? []).map((card) => ({
     ...card,
@@ -83,7 +71,6 @@ export default function HomeClient({
       >
         {/* Background — DB-sourced video */}
         <video
-          ref={videoRef}
           autoPlay
           muted
           loop
@@ -91,10 +78,17 @@ export default function HomeClient({
           preload="auto"
           poster="/hero-costa-rica.jpg"
           className="absolute inset-0 w-full h-full object-cover"
+          ref={(el) => {
+            if (el && el.paused) {
+              el.load()
+              el.play().catch(() => {})
+            }
+          }}
         >
-          {heroVideoUrl && (
-            <source src={heroVideoUrl} type="video/mp4" />
-          )}
+          <source
+            src={heroVideoUrl || "https://vtmesmtcnazoqaputoqs.supabase.co/storage/v1/object/public/site-assets/hero-video.mp4"}
+            type="video/mp4"
+          />
         </video>
 
         {/*
