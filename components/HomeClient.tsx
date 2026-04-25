@@ -35,19 +35,26 @@ function HeroBackground({
   const [videoFailed, setVideoFailed] = useState(false)
 
   if (videoUrl && !videoFailed) {
+    // Derive companion WebM URL by swapping the extension; safe if .webm doesn't
+    // exist yet — browser skips that source and loads MP4 instead.
+    const webmUrl = videoUrl.replace(/\.mp4(\?|$)/i, '.webm$1')
+
     return (
       <video
         autoPlay
         muted
         loop
         playsInline
-        preload="auto"
+        preload="none"
         poster="/hero-costa-rica.jpg"
         onError={() => setVideoFailed(true)}
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: `brightness(${brightness}%)` }}
       >
-        <source src={videoUrl} type={mimeType(videoUrl)} />
+        {/* WebM first — Chrome, Firefox, Edge (~30% smaller file) */}
+        {webmUrl !== videoUrl && <source src={webmUrl} type="video/webm" />}
+        {/* MP4 fallback — Safari and all other browsers */}
+        <source src={videoUrl} type="video/mp4" />
       </video>
     )
   }
@@ -155,28 +162,6 @@ export default function HomeClient({
               {t('home.hero.title')}{' '}
               <span className="text-gold">{t('home.hero.titleHighlight')}</span>
             </h1>
-
-            <p
-              className="text-lg text-primary-foreground/70 leading-relaxed mb-10 max-w-xl animate-slide-up"
-              style={{ animationDelay: '0.1s' }}
-            >
-              {t('home.hero.description')}
-            </p>
-
-            <div
-              className="flex flex-wrap gap-8 mt-16 pt-8 border-t border-primary-foreground/10 animate-fade-in"
-              style={{ animationDelay: '0.3s' }}
-            >
-              <Link href={`/${lang}/services`} className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
-                {t('home.hero.relocationGuidance')} →
-              </Link>
-              <Link href={`/${lang}/services`} className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
-                {t('home.hero.investorServices')} →
-              </Link>
-              <Link href={`/${lang}/tools`} className="text-xs text-primary-foreground/50 hover:text-primary-foreground/80 transition-colors tracking-wide uppercase">
-                {t('home.hero.calculatorsTools')} →
-              </Link>
-            </div>
           </div>
         </div>
       </section>
