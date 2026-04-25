@@ -45,7 +45,7 @@ function HeroBackground({
         muted
         loop
         playsInline
-        preload="none"
+        preload="auto"
         poster="/hero-costa-rica.jpg"
         onError={() => setVideoFailed(true)}
         className="absolute inset-0 w-full h-full object-cover"
