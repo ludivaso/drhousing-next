@@ -35,10 +35,6 @@ function HeroBackground({
   const [videoFailed, setVideoFailed] = useState(false)
 
   if (videoUrl && !videoFailed) {
-    // Derive companion WebM URL by swapping the extension; safe if .webm doesn't
-    // exist yet — browser skips that source and loads MP4 instead.
-    const webmUrl = videoUrl.replace(/\.mp4(\?|$)/i, '.webm$1')
-
     return (
       <video
         autoPlay
@@ -51,10 +47,7 @@ function HeroBackground({
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: `brightness(${brightness}%)` }}
       >
-        {/* WebM first — Chrome, Firefox, Edge (~30% smaller file) */}
-        {webmUrl !== videoUrl && <source src={webmUrl} type="video/webm" />}
-        {/* MP4 fallback — Safari and all other browsers */}
-        <source src={videoUrl} type="video/mp4" />
+        <source src={videoUrl} type={mimeType(videoUrl)} />
       </video>
     )
   }
