@@ -27,7 +27,6 @@ export default async function HomePage({ params }: { params: { lang: string } })
     <HomeClient
       featuredProperties={featuredProperties}
       lang={lang}
-      heroVideoUrl={settings.heroVideoUrl}
       heroHeight={settings.heroHeight}
       heroOverlay={settings.heroOverlay}
       heroBrightness={settings.heroBrightness}
