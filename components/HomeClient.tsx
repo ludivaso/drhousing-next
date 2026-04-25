@@ -1,4 +1,4 @@
-'use client'
+'use client' // v2
 
 import Link from 'next/link'
 import Image from 'next/image'
