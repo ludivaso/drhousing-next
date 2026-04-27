@@ -50,6 +50,21 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
+## Python Setup
+
+This project requires Python 3.14. The recommended way to install it is via [uv](https://github.com/astral-sh/uv), a fast Python package and project manager that does not rely on the system `pip`.
+
+```sh
+# Install uv (macOS/Linux)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Keep uv current if it is already installed
+uv self update
+
+# Install the required Python version
+uv python install 3.14
+```
+
 ## What technologies are used for this project?
 
 This project is built with:
