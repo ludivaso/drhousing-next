@@ -44,6 +44,16 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      // Public origin — listed so any drhousing.net-hosted asset (e.g. a
+      // future /og-fallback.jpg) can pass through the image optimizer.
+      {
+        protocol: 'https',
+        hostname: 'www.drhousing.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'drhousing.net',
+      },
     ],
   },
 }

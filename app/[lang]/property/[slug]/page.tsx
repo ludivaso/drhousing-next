@@ -8,6 +8,11 @@ import { supabase } from '@/lib/supabase/client'
 import type { PropertyRow, AgentRow, FeatureRow } from '@/lib/supabase/queries'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
 
+// Public origin used to build absolute URLs for crawlers (OG / Twitter cards).
+// Must be the exact host Meta/WhatsApp/LinkedIn will fetch — they don't follow
+// www↔apex redirects when scraping previews.
+const SITE_ORIGIN = 'https://www.drhousing.net'
+
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export const dynamicParams = true
@@ -45,6 +50,18 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
 
   // Best available image: featured_images first, then gallery
   const heroImage = getHeroImage(property)
+
+  // Route the raw Supabase image through Next's image optimizer so the OG
+  // payload is ~1200px wide JPEG/WebP instead of a 2560×1440 raw asset.
+  // WhatsApp / Facebook / LinkedIn previews require:
+  //   • absolute URL on the same origin as the page
+  //   • <8 MB, ~1200×630 dimensions
+  // The optimizer fetches the underlying Supabase URL (whitelisted in
+  // next.config.mjs) and returns a resized image inline. We declare 1200×630
+  // as a hint only — the optimizer preserves aspect ratio.
+  const ogImageUrl = heroImage
+    ? `${SITE_ORIGIN}/_next/image?url=${encodeURIComponent(heroImage)}&w=1200&q=85`
+    : null
 
   // Price string
   const monthSuffix = lang === 'en' ? '/month' : '/mes'
@@ -87,15 +104,15 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
       type: 'website',
       locale: 'es_CR',
       siteName: 'DR Housing',
-      images: heroImage
-        ? [{ url: heroImage, width: 1200, height: 630, alt: title }]
+      images: ogImageUrl
+        ? [{ url: ogImageUrl, width: 1200, height: 630, alt: title }]
         : [],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: heroImage ? [heroImage] : [],
+      images: ogImageUrl ? [ogImageUrl] : [],
     },
     alternates: {
       canonical: url,
