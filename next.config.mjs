@@ -25,6 +25,7 @@ const nextConfig = {
     return config
   },
   images: {
+    unoptimized: true,
     // Cost controls — ~85% transformation reduction without breaking live
     // surfaces. `qualities` omitted: it's a Next 15 option; on 14.2.29 it
     // is silently ignored so it gives no benefit. Add it when upgrading.
