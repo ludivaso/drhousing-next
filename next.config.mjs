@@ -25,27 +25,30 @@ const nextConfig = {
     return config
   },
   images: {
+    // Cost controls — ~85% transformation reduction without breaking live
+    // surfaces. `qualities` omitted: it's a Next 15 option; on 14.2.29 it
+    // is silently ignored so it gives no benefit. Add it when upgrading.
+    formats:         ['image/webp'],
+    deviceSizes:     [640, 1080, 1920],
+    imageSizes:      [400, 800],
+    minimumCacheTTL: 2678400, // 31 days
     remotePatterns: [
+      // Active Supabase project — all buckets (agent-photos, hero-media,
+      // cms, property-images, etc.). Narrow to a specific bucket only after
+      // a full audit of every <Image> consumer.
       {
         protocol: 'https',
         hostname: 'vtmesmtcnazoqaputoqs.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'images.egorealestate.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'gihiibbzrmgyarfeujpl.supabase.co',
-        pathname: '/storage/v1/object/public/**',
-      },
+      // Stock photos used on /properties, /desarrollos, /interior-design,
+      // and admin defaults. Remove once replaced with real assets.
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
-      // Public origin — listed so any drhousing.net-hosted asset (e.g. a
-      // future /og-fallback.jpg) can pass through the image optimizer.
+      // Public origin — allows future /og-fallback.jpg and any drhousing-
+      // hosted asset to pass through the optimizer.
       {
         protocol: 'https',
         hostname: 'www.drhousing.net',
@@ -54,6 +57,9 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'drhousing.net',
       },
+      // Removed (no live <Image> consumers):
+      //   gihiibbzrmgyarfeujpl.supabase.co  — old Supabase project
+      //   images.egorealestate.com           — no references found in codebase
     ],
   },
 }
