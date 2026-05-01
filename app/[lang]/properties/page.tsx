@@ -110,7 +110,8 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
     .order('featured_order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
 
-  if (searchParams.status)   query = query.eq('status', searchParams.status)
+  if (searchParams.status === 'for_rent')  query = query.gt('price_rent_monthly', 0)
+  if (searchParams.status === 'for_sale')  query = query.gt('price_sale', 0)
   if (searchParams.tipo)     query = query.eq('property_type', searchParams.tipo)
   if (searchParams.min)      query = query.gte('price_sale', Number(searchParams.min))
   if (searchParams.max)      query = query.lte('price_sale', Number(searchParams.max))
