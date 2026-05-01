@@ -7,6 +7,7 @@ import { getHeroImage } from '@/lib/supabase/queries'
 import CarouselCard from './PropertyCard'
 import PropertyDetailPanel from './PropertyDetailPanel'
 import ShortlistPill from './ShortlistPill'
+import CuratedListHeader from './CuratedListHeader'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type EventType =
@@ -30,7 +31,7 @@ export default function CuratedListView({
   initialProperties,
   propertyNotes,
 }: CuratedListViewProps) {
-  const lang     = list.language === 'es' ? 'es' : 'en'
+  const [lang, setLang] = useState<'en' | 'es'>(list.language === 'es' ? 'es' : 'en')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createClient() as any
 
@@ -188,29 +189,48 @@ export default function CuratedListView({
     ? getHeroImage(initialProperties[0])
     : null
 
+  // ── Header WhatsApp message (generic, no specific property) ──────────────
+  const headerWhatsAppMessage = lang === 'es'
+    ? `Hola Diego, estoy viendo la selección de propiedades para ${list.client_name ?? 'mi selección'}. ¿Podemos hablar?`
+    : `Hi Diego, I'm viewing the property selection for ${list.client_name ?? 'me'}. Can we chat?`
+
   // ── Empty state ───────────────────────────────────────────────────────────
   if (initialProperties.length === 0) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center px-6 bg-[#F5F2EE]">
-        <div className="text-center max-w-sm">
-          <div className="w-12 h-px bg-[#C9A96E] mx-auto mb-6" />
-          <p className="font-serif text-xl text-[#1A1A1A] mb-3">
-            {lang === 'es'
-              ? 'Esta lista no tiene propiedades aún'
-              : 'This list has no properties yet'}
-          </p>
-          <p className="text-[#6B6B6B] text-sm leading-relaxed">
-            {lang === 'es'
-              ? 'Diego está preparando tu selección personalizada. Te contactará pronto.'
-              : 'Diego is still curating your selection. He will reach out shortly.'}
-          </p>
+      <div className="min-h-screen bg-[#F5F2EE]">
+        <CuratedListHeader
+          lang={lang}
+          onLangChange={setLang}
+          clientName={list.client_name ?? null}
+          whatsAppMessage={headerWhatsAppMessage}
+        />
+        <div className="min-h-[60vh] flex items-center justify-center px-6">
+          <div className="text-center max-w-sm">
+            <div className="w-12 h-px bg-[#C9A96E] mx-auto mb-6" />
+            <p className="font-serif text-xl text-[#1A1A1A] mb-3">
+              {lang === 'es'
+                ? 'Esta lista no tiene propiedades aún'
+                : 'This list has no properties yet'}
+            </p>
+            <p className="text-[#6B6B6B] text-sm leading-relaxed">
+              {lang === 'es'
+                ? 'Diego está preparando tu selección personalizada. Te contactará pronto.'
+                : 'Diego is still curating your selection. He will reach out shortly.'}
+            </p>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-[#F5F2EE]">
+      <CuratedListHeader
+        lang={lang}
+        onLangChange={setLang}
+        clientName={list.client_name ?? null}
+        whatsAppMessage={headerWhatsAppMessage}
+      />
       <ShortlistPill count={heartedCount} lang={lang} onScrollToFirst={scrollToFirstHearted} />
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
@@ -277,7 +297,7 @@ export default function CuratedListView({
               onSelect={() => selectProperty(property.id)}
               onHeart={() => toggleHeart(property.id)}
               onWhatsApp={() => whatsAppForProperty(property)}
-              language={list.language ?? 'en'}
+              language={lang}
             />
           ))}
         </div>
@@ -302,7 +322,7 @@ export default function CuratedListView({
           <PropertyDetailPanel
             property={selectedProperty}
             note={propertyNotes[selectedProperty.id] ?? null}
-            language={list.language ?? 'en'}
+            language={lang}
             clientName={list.client_name ?? null}
             onWhatsApp={() => whatsAppForProperty(selectedProperty)}
             onClose={() => {
@@ -320,6 +340,6 @@ export default function CuratedListView({
           </div>
         )}
       </div>
-    </>
+    </div>
   )
 }
