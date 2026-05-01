@@ -71,13 +71,17 @@ export default async function CuratedListPage({
   const propertyIds: string[] = list.property_ids ?? []
   let orderedProperties: PropertyRow[] = []
 
+  console.log('[curated] property_ids:', propertyIds)
+
   if (propertyIds.length > 0) {
+    // NO visibility filter — Diego intentionally includes off-market / hidden
+    // properties in curated lists. Filter by ID only.
     const { data: rows } = (await supabase
       .from('properties')
       .select('*')
-      .in('id', propertyIds)
-      // Keep public or null visibility — curated may include unlisted/hidden
-      .or('visibility.eq.public,visibility.is.null')) as { data: PropertyRow[] | null; error: unknown }
+      .in('id', propertyIds)) as { data: PropertyRow[] | null; error: unknown }
+
+    console.log('[curated] fetched properties count:', rows?.length ?? 0)
 
     // .in() does NOT preserve order — manually sort to match property_ids
     const map = new Map((rows ?? []).map((p) => [p.id, p]))
