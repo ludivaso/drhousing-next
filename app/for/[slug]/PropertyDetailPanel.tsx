@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import {
   Bed, Bath, Maximize, Ruler, Calendar,
   MessageCircle, ArrowLeft, ChevronDown, ChevronUp,
+  ChevronLeft, ChevronRight,
 } from 'lucide-react'
 import { formatPrice } from '@/lib/supabase/queries'
 import type { PropertyRow } from '@/src/integrations/supabase/types'
@@ -45,6 +46,45 @@ export default function PropertyDetailPanel({
 
   // ── Lightbox ──────────────────────────────────────────────────────────────
   const [lightboxOpen, setLightboxOpen] = useState(false)
+
+  // ── Touch swipe for gallery ────────────────────────────────────────────────
+  const touchStartX = useRef<number>(0)
+  const touchStartY = useRef<number>(0)
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const deltaX = touchStartX.current - e.changedTouches[0].clientX
+    const deltaY = touchStartY.current - e.changedTouches[0].clientY
+    // Only act on dominant horizontal swipes with minimum 50px distance
+    if (Math.abs(deltaX) < Math.abs(deltaY)) return
+    if (Math.abs(deltaX) < 50) return
+    if (deltaX > 0) {
+      setMainImageIndex(i => Math.min(i + 1, allImages.length - 1))
+    } else {
+      setMainImageIndex(i => Math.max(i - 1, 0))
+    }
+  }
+
+  // ── Keyboard navigation (arrow keys when lightbox is closed) ──────────────
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (lightboxOpen) return // lightbox owns keys when open
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        setMainImageIndex(i => Math.max(0, i - 1))
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        setMainImageIndex(i => Math.min(allImages.length - 1, i + 1))
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [allImages.length, lightboxOpen])
 
   // ── Description expand/collapse ───────────────────────────────────────────
   const description =
@@ -99,9 +139,11 @@ export default function PropertyDetailPanel({
       {/* ── Main image ────────────────────────────────────────────────────── */}
       {mainImage ? (
         <div
-          className="relative w-full overflow-hidden rounded-none cursor-zoom-in"
+          className="relative w-full overflow-hidden rounded-none cursor-zoom-in group"
           style={{ aspectRatio: '16/9' }}
           onClick={() => setLightboxOpen(true)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -110,6 +152,7 @@ export default function PropertyDetailPanel({
             className="w-full h-full object-cover object-center"
             style={{ display: 'block' }}
           />
+
           {/* Zoom hint */}
           <div className="absolute bottom-2 right-2 bg-black/50 rounded-full px-2 py-1
                           text-white text-[10px] flex items-center gap-1 pointer-events-none">
@@ -119,6 +162,42 @@ export default function PropertyDetailPanel({
             </svg>
             {lang === 'es' ? 'Ver fotos' : 'View photos'}
           </div>
+
+          {/* Previous arrow — always visible on mobile, hover-only on desktop */}
+          {mainImageIndex > 0 && (
+            <button
+              onClick={e => { e.stopPropagation(); setMainImageIndex(i => i - 1) }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-10
+                         w-10 h-10 rounded-full
+                         bg-black/40 hover:bg-black/60
+                         backdrop-blur-sm
+                         flex items-center justify-center
+                         text-white
+                         transition-all duration-200
+                         opacity-100 md:opacity-0 md:group-hover:opacity-100"
+              aria-label="Previous photo"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
+
+          {/* Next arrow — always visible on mobile, hover-only on desktop */}
+          {mainImageIndex < allImages.length - 1 && (
+            <button
+              onClick={e => { e.stopPropagation(); setMainImageIndex(i => i + 1) }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-10
+                         w-10 h-10 rounded-full
+                         bg-black/40 hover:bg-black/60
+                         backdrop-blur-sm
+                         flex items-center justify-center
+                         text-white
+                         transition-all duration-200
+                         opacity-100 md:opacity-0 md:group-hover:opacity-100"
+              aria-label="Next photo"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
         </div>
       ) : (
         <div className="w-full h-48 bg-[#F5F2EE] flex items-center justify-center">
@@ -131,20 +210,20 @@ export default function PropertyDetailPanel({
       {/* ── Thumbnail strip ───────────────────────────────────────────────── */}
       {allImages.length > 1 && (
         <div
-          className="flex gap-2 px-6 py-3 overflow-x-auto bg-[#FAFAF8]
-                     border-b border-[#E8E3DC]"
-          style={{ scrollbarWidth: 'none' } as React.CSSProperties}
+          className="flex gap-2 px-6 mt-2 pb-1 overflow-x-auto bg-[#FAFAF8] border-b border-[#E8E3DC] py-3"
+          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
         >
           {allImages.map((img, i) => (
             <button
               key={i}
               onClick={() => setMainImageIndex(i)}
               className={[
-                'flex-none w-16 h-12 rounded-md overflow-hidden transition-all',
+                'flex-none rounded overflow-hidden transition-all duration-150',
                 i === mainImageIndex
                   ? 'ring-2 ring-[#C9A96E] opacity-100'
-                  : 'opacity-60 hover:opacity-90',
+                  : 'opacity-50 hover:opacity-80',
               ].join(' ')}
+              style={{ width: '64px', aspectRatio: '4/3' }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img} alt="" className="w-full h-full object-cover" />

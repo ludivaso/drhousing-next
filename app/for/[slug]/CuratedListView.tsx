@@ -234,9 +234,10 @@ export default function CuratedListView({
       <ShortlistPill count={heartedCount} lang={lang} onScrollToFirst={scrollToFirstHearted} />
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
+      {/* Header is fixed so hero starts at y=0 and bleeds behind the transparent header */}
       <section
         className="relative w-full overflow-hidden"
-        style={{ height: 'clamp(280px, 55vh, 520px)' }}
+        style={{ height: 'clamp(160px, 28vh, 260px)' }}
       >
         {heroImage && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -247,29 +248,21 @@ export default function CuratedListView({
           />
         )}
         <div className="absolute inset-0 bg-[#1A1A1A]/55" />
-        <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
-          {/* Logo — use png with brightness filter; fail silently */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo.png"
-            alt="DR Housing"
-            className="h-8 mb-6 opacity-90"
-            style={{ filter: 'brightness(0) invert(1)' }}
-            onError={(e) => { e.currentTarget.style.display = 'none' }}
-          />
-          <h1 className="font-serif text-white text-3xl md:text-4xl lg:text-5xl
-                         font-semibold leading-tight mb-3 max-w-2xl">
+        {/* pt-[72px] pushes content below the fixed 72px header */}
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center pt-[72px]">
+          <h1 className="font-serif text-white text-2xl md:text-3xl lg:text-4xl
+                         font-semibold leading-tight mb-2 max-w-2xl">
             {lang === 'es'
               ? `Propiedades Seleccionadas para ${list.client_name ?? ''}`
               : `Properties Selected for ${list.client_name ?? ''}`}
           </h1>
-          <div className="w-10 h-px bg-[#C9A96E] mb-3" />
+          <div className="w-10 h-px bg-[#C9A96E] mb-2" />
           <p className="text-white/70 text-sm font-light tracking-widest uppercase">
             {initialProperties.length}{' '}
             {lang === 'es' ? 'propiedades' : 'properties'}
           </p>
           {list.message && (
-            <p className="mt-4 text-white/80 text-sm max-w-lg leading-relaxed italic">
+            <p className="mt-3 text-white/80 text-xs max-w-lg leading-relaxed italic">
               {list.message}
             </p>
           )}
