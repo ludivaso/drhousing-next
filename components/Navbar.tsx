@@ -187,28 +187,54 @@ export default function Navbar() {
             </div>
           </div>
           <div className="w-px h-4 bg-current opacity-20 mx-1" />
-          <button
-            onClick={toggleLang}
-            className={[
-              'flex items-center gap-1.5 text-sm transition-colors border rounded px-2 py-1',
-              solid ? 'text-muted-foreground hover:text-foreground border-border' : 'text-white/80 hover:text-white border-white/30',
-            ].join(' ')}
-          >
-            {currentLang === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
-          </button>
+          <div className="flex items-center rounded-full border border-[#E8E3DC] overflow-hidden text-xs font-medium">
+            <button
+              onClick={() => currentLang !== 'en' && toggleLang()}
+              className={`px-3 py-1.5 transition-colors duration-150 ${
+                currentLang === 'en'
+                  ? 'bg-[#C9A96E] text-white'
+                  : 'text-[#6B6B6B] hover:text-[#1A1A1A] hover:bg-[#F0EBE3]'
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => currentLang !== 'es' && toggleLang()}
+              className={`px-3 py-1.5 transition-colors duration-150 ${
+                currentLang === 'es'
+                  ? 'bg-[#C9A96E] text-white'
+                  : 'text-[#6B6B6B] hover:text-[#1A1A1A] hover:bg-[#F0EBE3]'
+              }`}
+            >
+              ES
+            </button>
+          </div>
         </div>
 
         {/* Mobile right: lang + hamburger */}
         <div className="lg:hidden flex items-center gap-2">
-          <button
-            onClick={toggleLang}
-            className={[
-              'flex items-center gap-1 text-sm transition-colors border rounded px-2 py-1',
-              solid ? 'text-muted-foreground hover:text-foreground border-border' : 'text-white/80 hover:text-white border-white/30',
-            ].join(' ')}
-          >
-            {currentLang === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
-          </button>
+          <div className="flex items-center rounded-full border border-[#E8E3DC] overflow-hidden text-xs font-medium">
+            <button
+              onClick={() => currentLang !== 'en' && toggleLang()}
+              className={`px-3 py-1.5 transition-colors duration-150 ${
+                currentLang === 'en'
+                  ? 'bg-[#C9A96E] text-white'
+                  : 'text-[#6B6B6B] hover:text-[#1A1A1A] hover:bg-[#F0EBE3]'
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => currentLang !== 'es' && toggleLang()}
+              className={`px-3 py-1.5 transition-colors duration-150 ${
+                currentLang === 'es'
+                  ? 'bg-[#C9A96E] text-white'
+                  : 'text-[#6B6B6B] hover:text-[#1A1A1A] hover:bg-[#F0EBE3]'
+              }`}
+            >
+              ES
+            </button>
+          </div>
           <button
             type="button"
             className={`p-2 transition-colors ${solid ? 'text-muted-foreground hover:text-foreground' : 'text-white hover:text-white/80'}`}
@@ -261,12 +287,28 @@ export default function Navbar() {
                 <Mail className="w-4 h-4 shrink-0" />
                 info@drhousing.net
               </a>
-              <button
-                onClick={() => { toggleLang(); setMobileMenuOpen(false) }}
-                className="flex items-center gap-2 text-muted-foreground text-sm"
-              >
-                {labels.switchLang}
-              </button>
+              <div className="flex items-center rounded-full border border-[#E8E3DC] overflow-hidden text-xs font-medium self-start">
+                <button
+                  onClick={() => { if (currentLang !== 'en') { toggleLang(); setMobileMenuOpen(false) } }}
+                  className={`px-3 py-1.5 transition-colors duration-150 ${
+                    currentLang === 'en'
+                      ? 'bg-[#C9A96E] text-white'
+                      : 'text-[#6B6B6B] hover:text-[#1A1A1A] hover:bg-[#F0EBE3]'
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => { if (currentLang !== 'es') { toggleLang(); setMobileMenuOpen(false) } }}
+                  className={`px-3 py-1.5 transition-colors duration-150 ${
+                    currentLang === 'es'
+                      ? 'bg-[#C9A96E] text-white'
+                      : 'text-[#6B6B6B] hover:text-[#1A1A1A] hover:bg-[#F0EBE3]'
+                  }`}
+                >
+                  ES
+                </button>
+              </div>
             </div>
           </div>
         </div>
