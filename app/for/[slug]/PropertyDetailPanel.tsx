@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   Bed, Bath, Maximize, Ruler, Calendar,
   MessageCircle, ArrowLeft, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { formatPrice } from '@/lib/supabase/queries'
 import type { PropertyRow } from '@/src/integrations/supabase/types'
+import ImageLightbox from './ImageLightbox'
 
 interface PropertyDetailPanelProps {
   property: PropertyRow
@@ -39,6 +40,12 @@ export default function PropertyDetailPanel({
   const [mainImageIndex, setMainImageIndex] = useState(0)
   const mainImage = allImages[mainImageIndex] ?? null
 
+  // Reset gallery to first image whenever the displayed property changes
+  useEffect(() => { setMainImageIndex(0) }, [property.id])
+
+  // ── Lightbox ──────────────────────────────────────────────────────────────
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+
   // ── Description expand/collapse ───────────────────────────────────────────
   const description =
     (lang === 'en' ? (property.description_en ?? property.description) : (property.description ?? property.description_en)) ??
@@ -68,6 +75,15 @@ export default function PropertyDetailPanel({
   return (
     <div className="w-full bg-white">
 
+      {/* ── Lightbox ──────────────────────────────────────────────────────── */}
+      {lightboxOpen && (
+        <ImageLightbox
+          images={allImages}
+          initialIndex={mainImageIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+
       {/* ── Back button ───────────────────────────────────────────────────── */}
       <div className="px-6 pt-5 pb-1">
         <button
@@ -82,13 +98,27 @@ export default function PropertyDetailPanel({
 
       {/* ── Main image ────────────────────────────────────────────────────── */}
       {mainImage ? (
-        <div className="relative w-full bg-[#F5F2EE]" style={{ height: 'clamp(240px, 50vh, 480px)' }}>
+        <div
+          className="relative w-full overflow-hidden rounded-none cursor-zoom-in"
+          style={{ aspectRatio: '16/9' }}
+          onClick={() => setLightboxOpen(true)}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={mainImage}
             alt={title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
+            style={{ display: 'block' }}
           />
+          {/* Zoom hint */}
+          <div className="absolute bottom-2 right-2 bg-black/50 rounded-full px-2 py-1
+                          text-white text-[10px] flex items-center gap-1 pointer-events-none">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+            {lang === 'es' ? 'Ver fotos' : 'View photos'}
+          </div>
         </div>
       ) : (
         <div className="w-full h-48 bg-[#F5F2EE] flex items-center justify-center">

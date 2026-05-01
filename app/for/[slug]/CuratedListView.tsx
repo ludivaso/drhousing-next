@@ -135,7 +135,7 @@ export default function CuratedListView({
   )
 
   // ── Selected property + detail panel ─────────────────────────────────────
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null)
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(initialProperties[0]?.id ?? null)
   const detailRef = useRef<HTMLDivElement>(null)
 
   const selectProperty = useCallback(
