@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { MessageCircle } from 'lucide-react'
-import { useI18n } from '@/lib/i18n/context'
 import type { PropertyRow, CuratedListRow } from '@/src/integrations/supabase/types'
 import PropertyCard from './PropertyCard'
 import PropertyDetailPanel from './PropertyDetailPanel'
-import LangToggle from './LangToggle'
 
 export default function CuratedPortfolioClient({
   list,
@@ -15,7 +13,25 @@ export default function CuratedPortfolioClient({
   list: CuratedListRow
   properties: PropertyRow[]
 }) {
-  const { lang, setLang } = useI18n()
+  const [lang, setLang] = useState<'en' | 'es'>('en')
+
+  useEffect(() => {
+    function readLang(): 'en' | 'es' {
+      if (typeof window === 'undefined') return 'en'
+      const stored = localStorage.getItem('i18nextLng')
+      if (stored?.startsWith('es')) return 'es'
+      return list.language === 'es' ? 'es' : 'en'
+    }
+    setLang(readLang())
+
+    function onStorage(e: StorageEvent) {
+      if (e.key === 'i18nextLng') {
+        setLang(e.newValue?.startsWith('es') ? 'es' : 'en')
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [list.language])
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(
     properties[0]?.id ?? null
   )
@@ -59,18 +75,6 @@ export default function CuratedPortfolioClient({
                 {lang === 'en' ? `For: ${list.client_name}` : `Para: ${list.client_name}`}
               </p>
             )}
-          </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <LangToggle value={lang} onChange={setLang} />
-            <a
-              href={`https://wa.me/50686540888?text=${waMessage}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-[#25D366] text-white text-sm font-medium hover:bg-[#25D366]/90 transition-colors"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">WhatsApp</span>
-            </a>
           </div>
         </div>
       </header>
