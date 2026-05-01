@@ -1,96 +1,12 @@
 'use client'
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { Bed, Bath, Maximize, MessageCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { MessageCircle } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
-import { formatPrice, getHeroImage } from '@/lib/supabase/queries'
 import type { PropertyRow, CuratedListRow } from '@/src/integrations/supabase/types'
-
-// Status badge labels — bilingual
-const STATUS_LABELS: Record<string, { es: string; en: string; cls: string }> = {
-  for_sale:       { es: 'En Venta',    en: 'For Sale',   cls: 'bg-gold/20 text-foreground border border-gold/40' },
-  for_rent:       { es: 'En Alquiler', en: 'For Rent',   cls: 'bg-primary/10 text-primary border border-primary/20' },
-  presale:        { es: 'Preventa',    en: 'Pre-Sale',   cls: 'bg-amber-100 text-amber-800 border border-amber-200' },
-  under_contract: { es: 'En Proceso',  en: 'Under Contract', cls: 'bg-blue-100 text-blue-800 border border-blue-200' },
-  sold:           { es: 'Vendido',     en: 'Sold',       cls: 'bg-gray-100 text-gray-600 border border-gray-200' },
-  rented:         { es: 'Alquilado',   en: 'Rented',     cls: 'bg-gray-100 text-gray-600 border border-gray-200' },
-}
-
-function PropertyCard({ property, lang }: { property: PropertyRow; lang: string }) {
-  const image = getHeroImage(property)
-  const title = lang === 'en' && property.title_en ? property.title_en : property.title
-  const price = property.price_sale ?? property.price_rent_monthly
-  const status = STATUS_LABELS[property.status] ?? { es: property.status, en: property.status, cls: 'bg-muted text-muted-foreground' }
-  const isRent = property.status === 'for_rent'
-
-  return (
-    <Link
-      href={`/property/${property.reference_id || property.slug}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group block card-elevated overflow-hidden hover:shadow-xl transition-shadow"
-    >
-      {/* Image */}
-      <div className="relative h-56 overflow-hidden bg-secondary">
-        {image ? (
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
-            unoptimized
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-secondary">
-            <span className="text-muted-foreground text-sm">Sin imagen</span>
-          </div>
-        )}
-        <div className="absolute top-3 left-3">
-          <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${status.cls}`}>
-            {lang === 'en' ? status.en : status.es}
-          </span>
-        </div>
-        {price && (
-          <div className="absolute bottom-3 right-3 bg-foreground/80 text-background px-3 py-1.5 rounded text-sm font-semibold backdrop-blur-sm">
-            {formatPrice(price, property.currency)}
-            {isRent && <span className="text-xs font-normal opacity-80">{lang === 'en' ? '/mo' : '/mes'}</span>}
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="p-5">
-        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{property.location_name}</p>
-        <h3 className="font-serif text-lg font-semibold text-foreground group-hover:text-[#C9A96E] transition-colors line-clamp-2 mb-3">
-          {title}
-        </h3>
-
-        {/* Specs strip */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          {property.bedrooms > 0 && (
-            <span className="flex items-center gap-1.5">
-              <Bed className="w-4 h-4 flex-shrink-0" />
-              {property.bedrooms}
-            </span>
-          )}
-          {property.bathrooms > 0 && (
-            <span className="flex items-center gap-1.5">
-              <Bath className="w-4 h-4 flex-shrink-0" />
-              {property.bathrooms}
-            </span>
-          )}
-          {property.construction_size_sqm && (
-            <span className="flex items-center gap-1.5">
-              <Maximize className="w-4 h-4 flex-shrink-0" />
-              {property.construction_size_sqm} m²
-            </span>
-          )}
-        </div>
-      </div>
-    </Link>
-  )
-}
+import PropertyCard from './PropertyCard'
+import PropertyDetailPanel from './PropertyDetailPanel'
+import LangToggle from './LangToggle'
 
 export default function CuratedPortfolioClient({
   list,
@@ -99,7 +15,29 @@ export default function CuratedPortfolioClient({
   list: CuratedListRow
   properties: PropertyRow[]
 }) {
-  const { lang } = useI18n()
+  const { lang, setLang } = useI18n()
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(
+    properties[0]?.id ?? null
+  )
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+
+  const selectedProperty = properties.find(p => p.id === selectedPropertyId) ?? null
+
+  // Keyboard: left/right switches between properties (photo arrows handle their own clicks)
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (lightboxOpen) return
+      const currentIndex = properties.findIndex(p => p.id === selectedPropertyId)
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        setSelectedPropertyId(properties[currentIndex - 1].id)
+      }
+      if (e.key === 'ArrowRight' && currentIndex < properties.length - 1) {
+        setSelectedPropertyId(properties[currentIndex + 1].id)
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [properties, selectedPropertyId, lightboxOpen])
 
   const waMessage = encodeURIComponent(
     lang === 'en'
@@ -109,68 +47,102 @@ export default function CuratedPortfolioClient({
 
   return (
     <>
-      {/* noindex handled by metadata export in page.tsx — robots.ts also covers /for/* */}
-
-      {/* Minimal unbranded header */}
-      <header className="border-b border-border bg-card">
-        <div className="container-wide h-16 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium">
+      {/* Header */}
+      <header className="border-b border-border bg-card sticky top-0 z-20">
+        <div className="container-wide h-16 flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium truncate">
               {lang === 'en' ? 'Private Property Selection' : 'Selección Privada de Propiedades'}
             </p>
             {list.client_name && (
-              <p className="font-serif text-lg font-semibold text-foreground">
+              <p className="font-serif text-lg font-semibold text-foreground truncate">
                 {lang === 'en' ? `For: ${list.client_name}` : `Para: ${list.client_name}`}
               </p>
             )}
           </div>
-          <a
-            href={`https://wa.me/50686540888?text=${waMessage}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-[#25D366] text-white text-sm font-medium hover:bg-[#25D366]/90 transition-colors"
-          >
-            <MessageCircle className="w-4 h-4" />
-            WhatsApp
-          </a>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <LangToggle value={lang} onChange={setLang} />
+            <a
+              href={`https://wa.me/50686540888?text=${waMessage}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-[#25D366] text-white text-sm font-medium hover:bg-[#25D366]/90 transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span className="hidden sm:inline">WhatsApp</span>
+            </a>
+          </div>
         </div>
       </header>
 
-      {/* Optional message from advisor */}
+      {/* Optional advisor message */}
       {list.message && (
-        <div className="bg-secondary/50 border-b border-border py-4">
+        <div className="bg-secondary/50 border-b border-border py-3">
           <div className="container-wide">
             <p className="text-muted-foreground text-sm italic">{list.message}</p>
           </div>
         </div>
       )}
 
-      {/* Property grid */}
-      <main className="section-padding bg-background">
-        <div className="container-wide">
-          <p className="text-muted-foreground text-sm mb-8">
-            {properties.length}{' '}
-            {lang === 'en'
-              ? `propert${properties.length === 1 ? 'y' : 'ies'} selected for you`
-              : `propiedad${properties.length === 1 ? '' : 'es'} seleccionadas para usted`}
-          </p>
+      {/* Main content */}
+      <main className="container-wide py-6">
+        <p className="text-muted-foreground text-sm mb-4">
+          {properties.length}{' '}
+          {lang === 'es' ? 'propiedades' : 'properties'}
+        </p>
 
-          {properties.length === 0 ? (
-            <div className="text-center py-20 text-muted-foreground">
-              {lang === 'en' ? 'No properties in this selection.' : 'No hay propiedades en esta selección.'}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties.map((p) => (
-                <PropertyCard key={p.id} property={p} lang={lang} />
+        {properties.length === 0 ? (
+          <div className="text-center py-20 text-muted-foreground">
+            {lang === 'es'
+              ? 'Diego está terminando de curar tu selección'
+              : 'Diego is still curating your selection'}
+          </div>
+        ) : (
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Property list — horizontal scroll on mobile, vertical on desktop */}
+            <div
+              className="flex lg:flex-col gap-3
+                         overflow-x-auto lg:overflow-x-visible lg:overflow-y-auto
+                         lg:w-72 xl:w-80 lg:flex-shrink-0
+                         lg:max-h-[calc(100vh-10rem)]
+                         pb-2 lg:pb-0 lg:pr-1"
+            >
+              {properties.map((p, i) => (
+                <PropertyCard
+                  key={p.id}
+                  property={p}
+                  lang={lang}
+                  isSelected={p.id === selectedPropertyId}
+                  index={i}
+                  onClick={() => setSelectedPropertyId(p.id)}
+                />
               ))}
             </div>
-          )}
-        </div>
+
+            {/* Detail panel */}
+            <div className="flex-1 min-w-0">
+              {selectedProperty ? (
+                <PropertyDetailPanel
+                  property={selectedProperty}
+                  lang={lang}
+                  lightboxOpen={lightboxOpen}
+                  onLightboxChange={setLightboxOpen}
+                  onClose={() => setSelectedPropertyId(null)}
+                />
+              ) : (
+                <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">
+                  {lang === 'es'
+                    ? '← Toca una propiedad para ver los detalles'
+                    : '← Tap a property to see details'}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </main>
 
-      {/* Footer CTA */}
-      <footer className="bg-[#2C2C2C] text-white/80 py-8">
+      {/* Footer */}
+      <footer className="bg-[#2C2C2C] text-white/80 py-8 mt-8">
         <div className="container-wide flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
           <p>
             {lang === 'en'
@@ -181,7 +153,7 @@ export default function CuratedPortfolioClient({
             href={`https://wa.me/50686540888?text=${waMessage}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-gold text-[#1A1A1A] font-medium hover:bg-gold/90 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-[#C9A96E] text-[#1A1A1A] font-medium hover:bg-[#C9A96E]/90 transition-colors"
           >
             <MessageCircle className="w-4 h-4" />
             {lang === 'en' ? 'Contact via WhatsApp' : 'Contactar por WhatsApp'}
