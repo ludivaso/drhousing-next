@@ -595,6 +595,69 @@ export type Database = {
         }
         Relationships: []
       }
+      curated_list_actions: {
+        Row: {
+          id: string
+          curated_list_id: string
+          anonymous_id: string
+          property_id: string
+          hearted: boolean
+          sort_order: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          curated_list_id: string
+          anonymous_id: string
+          property_id: string
+          hearted?: boolean
+          sort_order?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          curated_list_id?: string
+          anonymous_id?: string
+          property_id?: string
+          hearted?: boolean
+          sort_order?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      curated_list_events: {
+        Row: {
+          id: string
+          curated_list_id: string
+          anonymous_id: string
+          event_type: string
+          property_id: string | null
+          metadata: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          curated_list_id: string
+          anonymous_id: string
+          event_type: string
+          property_id?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          curated_list_id?: string
+          anonymous_id?: string
+          event_type?: string
+          property_id?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       curated_lists: {
         Row: {
           id: string
@@ -602,6 +665,8 @@ export type Database = {
           title: string
           description: string | null
           property_ids: string[]
+          property_notes: Json | null
+          access_token: string | null
           client_name: string | null
           contact_email: string | null
           contact_phone: string | null
@@ -623,6 +688,8 @@ export type Database = {
           title: string
           description?: string | null
           property_ids?: string[]
+          property_notes?: Json | null
+          access_token?: string | null
           client_name?: string | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -644,6 +711,8 @@ export type Database = {
           title?: string
           description?: string | null
           property_ids?: string[]
+          property_notes?: Json | null
+          access_token?: string | null
           client_name?: string | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -974,6 +1043,8 @@ export type LeadRow = Tables<'leads'>
 export type ProfileRow = Tables<'profiles'>
 export type AmenityRow = Tables<'amenities_master'>
 export type CuratedListRow = Tables<'curated_lists'>
+export type CuratedListActionRow = Tables<'curated_list_actions'>
+export type CuratedListEventRow = Tables<'curated_list_events'>
 export type TicketRow = Tables<'support_tickets'>
 export type FeatureRow = Tables<'features'>
 export type PropertyFeatureRow = Tables<'property_features'>
