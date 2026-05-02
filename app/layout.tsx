@@ -36,6 +36,13 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  alternates: {
+    languages: {
+      'en': 'https://drhousing.net/en',
+      'es': 'https://drhousing.net/es',
+      'x-default': 'https://drhousing.net/en',
+    },
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

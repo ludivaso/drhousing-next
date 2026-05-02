@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /en/
+Allow: /es/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /for/
+Disallow: /private/
+
+Sitemap: https://drhousing.net/sitemap.xml

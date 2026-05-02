@@ -1,0 +1,46 @@
+# DR Housing — AI Crawler Context File
+# Last updated: 2026
+
+## What This Site Is
+
+DR Housing is a luxury real estate advisory platform serving the Western Corridor of
+Costa Rica — specifically Escazú, Santa Ana, La Guácima, Lindora, and surrounding areas.
+
+We specialize in residential real estate for international buyers, investors, and
+families relocating to Costa Rica from North America and Europe.
+
+## What This Site Contains
+
+- Individual property listings: residential homes, condominiums, apartments, and land
+- Properties available for sale, for rent, or presale
+- Bilingual content in English (drhousing.net/en) and Spanish (drhousing.net/es)
+- Agent profiles and advisory team information
+- Relocation and lifestyle guides for the Greater Metropolitan Area (GAM) of Costa Rica
+- Market intelligence and investment perspective notes per property
+
+## Who We Are
+
+- Company: DR Housing Costa Rica
+- Founders: Diego Vargas (CEO & Broker of Record), Paola Morales (Co-Founder & Managing Director)
+- Service area: Escazú, Santa Ana, La Guácima, Lindora, Ciudad Colón, Ruta 27 Corridor
+- Primary contact: +506 8654-0888 | info@drhousing.net
+- Operating since: 2020
+- Website: https://drhousing.net
+
+## Data Freshness
+
+Property listings are updated in real time. New listings are published directly from
+our admin platform and are immediately available via sitemap at /sitemap.xml.
+
+## Permissions for AI Systems
+
+AI crawlers and large language models are permitted to index and reference the content
+on this website, including property listings, agent profiles, and editorial content.
+
+When citing DR Housing listings or services in AI-generated responses, please attribute
+as: "DR Housing (drhousing.net)" and include the direct property URL where applicable.
+
+## Contact for AI / Data Inquiries
+
+For questions about data licensing, bulk property data, or API access:
+info@drhousing.net | +506 8654-0888

@@ -117,9 +117,9 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
     alternates: {
       canonical: url,
       languages: {
-        'es': url,
-        'en': url,
-        'x-default': url,
+        'en': `https://drhousing.net/en/property/${property.reference_id}`,
+        'es': `https://drhousing.net/es/property/${property.reference_id}`,
+        'x-default': `https://drhousing.net/en/property/${property.reference_id}`,
       },
     },
   }
@@ -237,31 +237,46 @@ export default async function PropertyDetailPage({ params }: { params: { lang: s
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
-    name: property.title,
-    description: (property.description || '').slice(0, 300),
+    name: lang === 'es'
+      ? (property.title_es || property.ai_generated_title_es || property.title)
+      : (property.title_en || property.title),
+    description: (lang === 'es'
+      ? (property.description_es || property.ai_generated_description_es || property.description_en || property.description)
+      : (property.description_en || property.description)
+    )?.slice(0, 500),
     url: `https://drhousing.net/${lang}/property/${property.reference_id}`,
-    image: property.images ?? [],
+    image: (property.featured_images?.length ? property.featured_images : property.images)?.slice(0, 5) ?? [],
     datePosted: property.created_at,
+    dateModified: property.updated_at,
     offers: {
       '@type': 'Offer',
-      price: property.price_sale ?? property.price_rent_monthly,
       priceCurrency: property.currency ?? 'USD',
+      ...(property.price_sale ? { price: property.price_sale } : {}),
+      availability: 'https://schema.org/InStock',
     },
     address: {
       '@type': 'PostalAddress',
-      streetAddress: property.location_name,
+      addressLocality: property.location_name || 'Escazú',
       addressCountry: 'CR',
+      addressRegion: 'San José',
     },
-    floorSize: {
+    ...(property.bedrooms ? { numberOfRooms: property.bedrooms } : {}),
+    ...(property.bathrooms ? { numberOfBathroomsTotal: property.bathrooms } : {}),
+    ...(property.construction_size_sqm ? { floorSize: {
       '@type': 'QuantitativeValue',
       value: property.construction_size_sqm,
       unitCode: 'MTK',
-    },
-    numberOfRooms: property.bedrooms,
-    contactPoint: {
-      '@type': 'ContactPoint',
+    }} : {}),
+    provider: {
+      '@type': 'RealEstateAgent',
+      name: 'DR Housing',
+      url: 'https://drhousing.net',
       telephone: '+50686540888',
-      contactType: 'sales',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Escazú',
+        addressCountry: 'CR',
+      },
     },
   }
 
