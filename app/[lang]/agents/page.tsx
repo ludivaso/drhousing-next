@@ -4,9 +4,22 @@ import AgentesClient from './AgentesClient'
 
 export const revalidate = 3600
 
-export const metadata: Metadata = {
-  title: 'Our Advisors',
-  description: 'Meet our real estate advisors specialized in luxury properties in Costa Rica.',
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+  const lang = params.lang === 'es' ? 'es' : 'en'
+  return {
+    title: lang === 'es' ? 'Nuestros Asesores' : 'Our Advisors',
+    description: lang === 'es'
+      ? 'Conoce a nuestros asesores inmobiliarios especializados en propiedades de lujo en Costa Rica.'
+      : 'Meet our real estate advisors specialized in luxury properties in Costa Rica.',
+    alternates: {
+      canonical: `https://drhousing.net/${lang}/agents`,
+      languages: {
+        'en':        'https://drhousing.net/en/agents',
+        'es':        'https://drhousing.net/es/agents',
+        'x-default': 'https://drhousing.net/en/agents',
+      },
+    },
+  }
 }
 
 export default async function AgentesPage({ params }: { params: { lang: string } }) {

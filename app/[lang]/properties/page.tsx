@@ -59,6 +59,14 @@ export async function generateMetadata({ params }: { params: { lang: string } })
     description: lang === 'en'
       ? 'Houses, apartments and land for sale and rent in Costa Rica'
       : 'Casas, apartamentos y terrenos en venta y alquiler en Costa Rica',
+    alternates: {
+      canonical: `https://drhousing.net/${lang}/properties`,
+      languages: {
+        'en':        'https://drhousing.net/en/properties',
+        'es':        'https://drhousing.net/es/properties',
+        'x-default': 'https://drhousing.net/en/properties',
+      },
+    },
   }
 }
 
