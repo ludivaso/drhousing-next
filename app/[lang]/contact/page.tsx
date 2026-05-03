@@ -16,6 +16,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
         'x-default': 'https://drhousing.net/en/contact',
       },
     },
+    robots: { index: true, follow: true },
   }
 }
 

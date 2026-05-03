@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { ZONE_CONFIG, ZONE_SLUGS } from '@/config/zones'
 import ZoneLandingPage from '@/components/zones/ZoneLandingPage'
 import type { PropertyRow } from '@/lib/supabase/queries'
+import { buildItemListSchema } from '@/lib/seo/helpers'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -45,6 +46,7 @@ export async function generateMetadata({
         'x-default': altEn,
       },
     },
+    robots: { index: true, follow: true },
   }
 }
 
@@ -76,30 +78,11 @@ export default async function AlquilerZonePage({
 
   const properties = (data ?? []) as PropertyRow[]
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateListing',
-    name: `Alquiler de Propiedades en ${zone.nameEs}`,
-    description: zone.descriptionEs.slice(0, 300),
-    url: `https://drhousing.net/es/alquiler/${zone.slug}`,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: zone.nameEs,
-      addressCountry: 'CR',
-    },
-    numberOfItems: properties.length,
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+50686540888',
-      contactType: 'sales',
-    },
-  }
-
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildItemListSchema(properties, lang, 'rentals')) }}
       />
       <ZoneLandingPage zone={zone} properties={properties} mode="rent" lang="es" />
     </>

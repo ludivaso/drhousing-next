@@ -19,6 +19,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
         'x-default': 'https://drhousing.net/en/agents',
       },
     },
+    robots: { index: true, follow: true },
   }
 }
 

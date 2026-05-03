@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import type { Metadata } from 'next'
+import { buildItemListSchema } from '@/lib/seo/helpers'
 import FilterBar from '@/components/FilterBar'
 import ActiveFilterTags from '@/components/ActiveFilterTags'
 import PropertiesGrid from '@/components/PropertiesGrid'
@@ -67,6 +68,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
         'x-default': 'https://drhousing.net/en/properties',
       },
     },
+    robots: { index: true, follow: true },
   }
 }
 
@@ -178,6 +180,10 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
 
   return (
     <PropertiesFilterProvider>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildItemListSchema(properties, lang, 'all')) }}
+      />
       <CatalogHero
         imageUrl={HERO_IMAGE}
         eyebrow={hero.eyebrow}

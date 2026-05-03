@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getFeaturedProperties } from '@/lib/supabase/queries'
 import { getSiteSettings } from '@/lib/supabase/settings'
 import HomeClient from '@/components/HomeClient'
+import { buildOrganizationSchema } from '@/lib/seo/helpers'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }: { params: { lang: string } })
       locale: isEs ? 'es_CR' : 'en_US',
       type: 'website',
     },
+    robots: { index: true, follow: true },
   }
 }
 
@@ -45,76 +47,11 @@ export default async function HomePage({ params }: { params: { lang: string } })
     getSiteSettings(),
   ])
 
-  const orgJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': ['Organization', 'LocalBusiness', 'RealEstateAgent'],
-    '@id': 'https://drhousing.net',
-    name: 'DR Housing',
-    legalName: 'DR Housing Costa Rica',
-    url: 'https://drhousing.net',
-    logo: 'https://drhousing.net/logo.png',
-    image: 'https://drhousing.net/og-fallback.jpg',
-    description: 'DR Housing is a luxury real estate advisory firm specializing in residential properties in Escazú, Santa Ana, and the Western Corridor of Costa Rica. We serve international buyers, investors, and relocating families.',
-    telephone: '+50686540888',
-    email: 'info@drhousing.net',
-    foundingDate: '2020',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'Escazú',
-      addressLocality: 'Escazú',
-      addressRegion: 'San José',
-      addressCountry: 'CR',
-      postalCode: '10201',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 9.9281,
-      longitude: -84.1413,
-    },
-    areaServed: [
-      { '@type': 'City', name: 'Escazú' },
-      { '@type': 'City', name: 'Santa Ana' },
-      { '@type': 'Place', name: 'La Guácima' },
-      { '@type': 'Place', name: 'Lindora' },
-      { '@type': 'Place', name: 'Ciudad Colón' },
-    ],
-    knowsAbout: [
-      'Luxury Real Estate Costa Rica',
-      'Property Investment Costa Rica',
-      'Relocation Services Costa Rica',
-      'Escazú Real Estate',
-      'Santa Ana Real Estate',
-    ],
-    sameAs: [
-      'https://www.instagram.com/drhousing.cr',
-      'https://www.facebook.com/drhousing.cr',
-    ],
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+50686540888',
-      contactType: 'customer service',
-      availableLanguage: ['English', 'Spanish'],
-      contactOption: 'TollFree',
-    },
-    founder: [
-      {
-        '@type': 'Person',
-        name: 'Diego Vargas',
-        jobTitle: 'Founder, CEO & Broker of Record',
-      },
-      {
-        '@type': 'Person',
-        name: 'Paola Morales',
-        jobTitle: 'Co-Founder & Managing Director',
-      },
-    ],
-  }
-
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildOrganizationSchema()) }}
       />
       <HomeClient
         featuredProperties={featuredProperties}

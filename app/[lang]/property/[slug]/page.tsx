@@ -7,6 +7,7 @@ import {
 import { supabase } from '@/lib/supabase/client'
 import type { PropertyRow, AgentRow, FeatureRow } from '@/lib/supabase/queries'
 import PropertyDetailClient from '@/components/PropertyDetailClient'
+import { isPropertyPublic, buildPropertySchema } from '@/lib/seo/helpers'
 
 // Public origin used to build absolute URLs for crawlers (OG / Twitter cards).
 // Must be the exact host Meta/WhatsApp/LinkedIn will fetch — they don't follow
@@ -47,6 +48,8 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
 
   const property = await findProperty(params.slug)
   if (!property) return {}
+
+  const isPublic = isPropertyPublic(property)
 
   // Best available image: featured_images first, then gallery
   const heroImage = getHeroImage(property)
@@ -122,6 +125,9 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
         'x-default': `https://drhousing.net/en/property/${property.reference_id}`,
       },
     },
+    robots: isPublic
+      ? { index: true, follow: true }
+      : { index: false, follow: false, googleBot: { index: false } },
   }
 }
 
@@ -234,58 +240,18 @@ export default async function PropertyDetailPage({ params }: { params: { lang: s
 
   const relatedProperties: PropertyRow[] = related
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateListing',
-    name: lang === 'es'
-      ? (property.title_es || property.ai_generated_title_es || property.title)
-      : (property.title_en || property.title),
-    description: (lang === 'es'
-      ? (property.description_es || property.ai_generated_description_es || property.description_en || property.description)
-      : (property.description_en || property.description)
-    )?.slice(0, 500),
-    url: `https://drhousing.net/${lang}/property/${property.reference_id}`,
-    image: (property.featured_images?.length ? property.featured_images : property.images)?.slice(0, 5) ?? [],
-    datePosted: property.created_at,
-    dateModified: property.updated_at,
-    offers: {
-      '@type': 'Offer',
-      priceCurrency: property.currency ?? 'USD',
-      ...(property.price_sale ? { price: property.price_sale } : {}),
-      availability: 'https://schema.org/InStock',
-    },
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: property.location_name || 'Escazú',
-      addressCountry: 'CR',
-      addressRegion: 'San José',
-    },
-    ...(property.bedrooms ? { numberOfRooms: property.bedrooms } : {}),
-    ...(property.bathrooms ? { numberOfBathroomsTotal: property.bathrooms } : {}),
-    ...(property.construction_size_sqm ? { floorSize: {
-      '@type': 'QuantitativeValue',
-      value: property.construction_size_sqm,
-      unitCode: 'MTK',
-    }} : {}),
-    provider: {
-      '@type': 'RealEstateAgent',
-      name: 'DR Housing',
-      url: 'https://drhousing.net',
-      telephone: '+50686540888',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Escazú',
-        addressCountry: 'CR',
-      },
-    },
-  }
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {isPropertyPublic(property) && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              buildPropertySchema(property, lang, property.reference_id ?? params.slug)
+            ),
+          }}
+        />
+      )}
       <PropertyDetailClient
         property={property}
         relatedProperties={relatedProperties}
