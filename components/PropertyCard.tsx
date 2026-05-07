@@ -6,19 +6,14 @@ import FavoriteButton from '@/components/FavoriteButton'
 import en from '@/messages/en.json'
 import es from '@/messages/es.json'
 
-// Square-meters → square-feet conversion for international buyers.
-// 1 m² = 10.764 ft². Returned formatted with thousands separators.
-const sqmToFt2 = (sqm: number): string =>
-  Math.round(sqm * 10.764).toLocaleString('en-US')
-
 const STATUS_CLASSES: Record<string, string> = {
   for_sale:       'badge-sale',
   for_rent:       'badge-rent',
   both:           'badge-both',
-  presale:        'badge-both',
-  under_contract: 'bg-amber-600 text-white text-xs font-medium tracking-wide px-2.5 py-1 rounded',
-  sold:           'bg-muted text-muted-foreground text-xs font-medium tracking-wide px-2.5 py-1 rounded',
-  rented:         'bg-muted text-muted-foreground text-xs font-medium tracking-wide px-2.5 py-1 rounded',
+  presale:        'badge-sale',
+  under_contract: 'badge-sale',
+  sold:           'bg-muted text-muted-foreground text-[10px] font-semibold tracking-[0.08em] uppercase px-[10px] py-1 rounded font-sans',
+  rented:         'bg-muted text-muted-foreground text-[10px] font-semibold tracking-[0.08em] uppercase px-[10px] py-1 rounded font-sans',
 }
 
 function getStatusLabel(status: string, lang: 'es' | 'en'): string {
@@ -142,25 +137,13 @@ export default function PropertyCard({ property, lang = 'es', compact = false }:
           {property.construction_size_sqm && (
             <span className="flex items-center gap-1.5">
               <Maximize className={statIcon} />
-              {/* Compact card: m² only (space-constrained carousel).
-                  Regular card: show both m² + ft² for international buyers. */}
-              {compact ? (
-                <span>{property.construction_size_sqm.toLocaleString('en-US')} m²</span>
-              ) : (
-                <span>
-                  {property.construction_size_sqm.toLocaleString('en-US')} m²{' '}
-                  <span className="opacity-60">({sqmToFt2(property.construction_size_sqm)} ft²)</span>
-                </span>
-              )}
+              <span>{property.construction_size_sqm.toLocaleString('en-US')} m²</span>
             </span>
           )}
           {!compact && property.land_size_sqm && property.land_size_sqm > 0 && (
             <span className="flex items-center gap-1.5">
               <TreePine className={statIcon} />
-              <span>
-                {property.land_size_sqm.toLocaleString('en-US')} m²{' '}
-                <span className="opacity-60">({sqmToFt2(property.land_size_sqm)} ft²)</span>
-              </span>
+              <span>{property.land_size_sqm.toLocaleString('en-US')} m²</span>
             </span>
           )}
         </div>

@@ -93,16 +93,6 @@ export default function HomeClient({
           style={{ backgroundColor: `rgba(0,0,0,${(heroOverlay ?? 45) / 100})` }}
         />
 
-        {/* Subtle grid texture */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              'linear-gradient(hsl(var(--primary-foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary-foreground)) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-          }}
-        />
-
         <div className="container-wide relative z-10 py-24">
           <div className="max-w-2xl">
             <span className="inline-block text-gold text-xs tracking-widest uppercase mb-8 animate-fade-in">

@@ -130,24 +130,19 @@
     transform: translateY(-2px);
   }
 
-  /* Property status badges */
-  .badge-sale {
-    background-color: #2C2C2C;
-    color: #FFFFFF;
-    @apply text-xs font-medium tracking-wide px-2.5 py-1 rounded;
-  }
-
-  .badge-rent {
-    background-color: #FFFFFF;
-    color: #1A1A1A;
-    border: 1px solid #1A1A1A;
-    @apply text-xs font-medium tracking-wide px-2.5 py-1 rounded;
-  }
-
+  /* Property status badges — unified black/white across all types */
+  .badge-sale,
+  .badge-rent,
   .badge-both {
-    background-color: #C9A96E;
-    color: #1A1A1A;
-    @apply text-xs font-medium tracking-wide px-2.5 py-1 rounded;
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    @apply font-sans;
   }
 
   .link-underline {

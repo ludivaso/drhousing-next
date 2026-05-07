@@ -344,16 +344,19 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
   const whatsappText  = encodeURIComponent(t('propertyDetail.whatsAppMessage', { ref: p.reference_id ?? p.title ?? '' }))
   const whatsappHref  = `https://wa.me/50686540888?text=${whatsappText}`
 
-  // Status badge logic
+  // Status badge logic — unified black/white style for all active types
+  const BADGE_CLASS = 'font-sans text-[10px] font-semibold tracking-[0.08em] uppercase px-[10px] py-1 rounded'
+    + ' bg-[#1A1A1A] text-white'
+
   function getStatusBadge() {
     if (p.price_sale && p.price_rent_monthly) {
-      return { label: t('property.status.both'), className: 'bg-amber-500 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+      return { label: t('property.status.both'), className: BADGE_CLASS }
     }
     if (p.price_sale) {
-      return { label: t('property.status.for_sale'), className: 'bg-green-600 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+      return { label: t('property.status.for_sale'), className: BADGE_CLASS }
     }
     if (p.price_rent_monthly) {
-      return { label: t('property.status.for_rent'), className: 'bg-blue-600 text-white text-xs font-medium tracking-wide uppercase px-2.5 py-1 rounded font-sans' }
+      return { label: t('property.status.for_rent'), className: BADGE_CLASS }
     }
     return null
   }
@@ -468,7 +471,7 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
                 </p>
               )}
               {p.price_rent_monthly && (
-                <p className="font-serif text-xl font-bold text-blue-600">
+                <p className="font-serif text-xl font-bold" style={{ color: '#C9A96E' }}>
                   {formatPrice(p.price_rent_monthly, p.currency)}
                   <span className="text-sm font-sans text-muted-foreground font-normal ml-1">{lang === 'en' ? '/month' : '/mes'}</span>
                 </p>
@@ -893,9 +896,9 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       icon: <Building2 className="w-5 h-5" />,
       value: (
-        <span>
-          {p.construction_size_sqm.toLocaleString('en-US')} m²{' '}
-          <span className="text-xs text-muted-foreground font-normal">({ft2} ft²)</span>
+        <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+          <span>{p.construction_size_sqm.toLocaleString('en-US')} m²</span>
+          <span className="text-sm text-muted-foreground font-normal">({ft2} ft²)</span>
         </span>
       ),
       label: lang === 'en' ? 'Built' : 'Construcción',
@@ -906,9 +909,9 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       icon: <TreePine className="w-5 h-5" />,
       value: (
-        <span>
-          {p.land_size_sqm.toLocaleString('en-US')} m²{' '}
-          <span className="text-xs text-muted-foreground font-normal">({ft2} ft²)</span>
+        <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+          <span>{p.land_size_sqm.toLocaleString('en-US')} m²</span>
+          <span className="text-sm text-muted-foreground font-normal">({ft2} ft²)</span>
         </span>
       ),
       label: lang === 'en' ? 'Land' : 'Terreno',
