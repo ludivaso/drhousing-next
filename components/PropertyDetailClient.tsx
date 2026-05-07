@@ -6,11 +6,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   ArrowLeft,
-  BedDouble,
-  Bath,
-  Building2,
-  TreePine,
-  Layers,
   MapPin,
   CheckCircle2,
   X,
@@ -873,79 +868,146 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'es' | 'en' }) {
-  type SpecItem = { icon: React.ReactNode; value: React.ReactNode; label: string }
+  type SimpleItem = { type: 'simple'; icon: React.ReactNode; value: React.ReactNode; label: string }
+  type SizeItem   = { type: 'size';   icon: React.ReactNode; sqm: number;            label: string }
+  type SpecItem   = SimpleItem | SizeItem
 
   const specs: SpecItem[] = []
 
+  // 1 — Bedrooms
   if (p.bedrooms > 0) {
     specs.push({
-      icon: <BedDouble className="w-5 h-5" />,
+      type: 'simple',
+      icon: (
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 9V19"/>
+          <path d="M22 9V19"/>
+          <path d="M2 19h20"/>
+          <path d="M2 13h20"/>
+          <path d="M2 9a5 5 0 015-5h10a5 5 0 015 5"/>
+          <rect x="6" y="9" width="5" height="4" rx="1"/>
+          <rect x="13" y="9" width="5" height="4" rx="1"/>
+        </svg>
+      ),
       value: p.bedrooms,
       label: lang === 'en' ? 'Bedrooms' : 'Habitaciones',
     })
   }
+
+  // 2 — Bathrooms
   if (p.bathrooms > 0) {
     specs.push({
-      icon: <Bath className="w-5 h-5" />,
+      type: 'simple',
+      icon: (
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 12h16a1 1 0 011 1v2a4 4 0 01-4 4H7a4 4 0 01-4-4v-2a1 1 0 011-1z"/>
+          <path d="M6 12V5a2 2 0 012-2h1"/>
+          <circle cx="9" cy="3" r="1"/>
+          <path d="M6 19v2M18 19v2"/>
+        </svg>
+      ),
       value: p.bathrooms,
       label: lang === 'en' ? 'Bathrooms' : 'Baños',
     })
   }
-  if (p.construction_size_sqm) {
-    const ft2 = Math.round(p.construction_size_sqm * 10.764).toLocaleString('en-US')
+
+  // 3 — Parking (garage_spaces — NEW, was not in old SpecBar)
+  if (p.garage_spaces && p.garage_spaces > 0) {
     specs.push({
-      icon: <Building2 className="w-5 h-5" />,
-      value: (
-        <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
-          <span>{p.construction_size_sqm.toLocaleString('en-US')} m²</span>
-          <span className="text-sm text-muted-foreground font-normal">({ft2} ft²)</span>
-        </span>
+      type: 'simple',
+      icon: (
+        <svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="#C9A96E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 28 L5 24 Q5 22 7 22 L11 22 L16 14 Q17 12 19 12 L29 12 Q31 12 32 14 L37 22 L41 22 Q43 22 43 24 L43 28 Q43 30 41 30 L38 30"/>
+          <path d="M22 30 L26 30"/>
+          <path d="M10 30 L7 30 Q5 30 5 28"/>
+          <circle cx="14" cy="31" r="4.5"/>
+          <circle cx="34" cy="31" r="4.5"/>
+          <path d="M17 22 L20 14.5 L28 14.5 L31 22 Z"/>
+        </svg>
       ),
+      value: p.garage_spaces,
+      label: lang === 'en' ? 'Parking' : 'Parqueos',
+    })
+  }
+
+  // 4 — Levels
+  if (p.levels && p.levels > 0) {
+    specs.push({
+      type: 'simple',
+      icon: (
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 12l10 5 10-5"/>
+          <path d="M2 17l10 5 10-5"/>
+        </svg>
+      ),
+      value: p.levels,
+      label: lang === 'en' ? 'Levels' : 'Niveles',
+    })
+  }
+
+  // 5 — Construction size
+  if (p.construction_size_sqm) {
+    specs.push({
+      type: 'size',
+      icon: (
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="1"/>
+          <path d="M3 9h18"/>
+          <path d="M3 15h18"/>
+          <path d="M9 3v18"/>
+          <path d="M15 3v18"/>
+        </svg>
+      ),
+      sqm: p.construction_size_sqm,
       label: lang === 'en' ? 'Built' : 'Construcción',
     })
   }
+
+  // 6 — Land size
   if (p.land_size_sqm && p.land_size_sqm > 0) {
-    const ft2 = Math.round(p.land_size_sqm * 10.764).toLocaleString('en-US')
     specs.push({
-      icon: <TreePine className="w-5 h-5" />,
-      value: (
-        <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
-          <span>{p.land_size_sqm.toLocaleString('en-US')} m²</span>
-          <span className="text-sm text-muted-foreground font-normal">({ft2} ft²)</span>
-        </span>
+      type: 'size',
+      icon: (
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 3l-5 7h3l-4 6h6v4h-2v1h6v-1h-2v-4h6l-4-6h3l-5-7z"/>
+        </svg>
       ),
+      sqm: p.land_size_sqm,
       label: lang === 'en' ? 'Land' : 'Terreno',
-    })
-  }
-  if (p.levels && p.levels > 0) {
-    specs.push({
-      icon: <Layers className="w-5 h-5" />,
-      value: p.levels === 1 ? (
-        <span style={{ color: '#C9A96E' }}>{lang === 'en' ? 'Single Level' : 'Un Nivel'}</span>
-      ) : p.levels,
-      label: lang === 'en' ? 'Levels' : 'Niveles',
     })
   }
 
   if (specs.length === 0) return null
 
   return (
-    <div
-      className="flex flex-wrap gap-6 py-5"
-      style={{ borderTop: '1px solid #E8E3DC', borderBottom: '1px solid #E8E3DC' }}
-    >
-      {specs.map((s, i) => (
-        <div key={i} className="flex items-center gap-2">
-          <span style={{ color: '#C9A96E' }}>{s.icon}</span>
-          <div>
-            <p className="font-sans font-semibold text-foreground text-base leading-none">{s.value}</p>
-            <p className="font-sans text-muted-foreground text-xs mt-0.5">{s.label}</p>
+    <div className="overflow-x-auto border-y border-[#E8E3DC]">
+      <div className="flex items-stretch min-w-max">
+        {specs.map((s, i) => (
+          <div
+            key={i}
+            className={`flex items-center gap-3 px-5 md:px-6 py-4${i > 0 ? ' border-l border-[#E8E3DC]' : ''}`}
+          >
+            <div className="flex-shrink-0">{s.icon}</div>
+            {s.type === 'simple' ? (
+              <div>
+                <p className="font-sans text-2xl font-bold text-foreground leading-none">{s.value}</p>
+                <p className="font-sans text-[11px] text-muted-foreground mt-1">{s.label}</p>
+              </div>
+            ) : (
+              <div>
+                <p className="font-sans text-xl font-bold text-foreground leading-tight">
+                  {s.sqm.toLocaleString('en-US')} m²
+                </p>
+                <p className="font-sans text-[11px] text-muted-foreground mt-0.5">
+                  {Math.round(s.sqm * 10.764).toLocaleString('en-US')} ft²
+                </p>
+                <p className="font-sans text-[11px] text-muted-foreground mt-0.5">{s.label}</p>
+              </div>
+            )}
           </div>
-          {i < specs.length - 1 && (
-            <span className="ml-4 h-8 w-px" style={{ backgroundColor: '#E8E3DC' }} />
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
