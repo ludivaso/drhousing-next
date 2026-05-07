@@ -879,10 +879,8 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'simple',
       icon: (
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 9V19"/>
-          <path d="M22 9V19"/>
-          <path d="M2 19h20"/>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 9V19M22 9V19M2 19h20"/>
           <path d="M2 13h20"/>
           <path d="M2 9a5 5 0 015-5h10a5 5 0 015 5"/>
           <rect x="6" y="9" width="5" height="4" rx="1"/>
@@ -899,7 +897,7 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'simple',
       icon: (
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 12h16a1 1 0 011 1v2a4 4 0 01-4 4H7a4 4 0 01-4-4v-2a1 1 0 011-1z"/>
           <path d="M6 12V5a2 2 0 012-2h1"/>
           <circle cx="9" cy="3" r="1"/>
@@ -911,12 +909,12 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     })
   }
 
-  // 3 — Parking (garage_spaces — NEW, was not in old SpecBar)
+  // 3 — Parking (garage_spaces)
   if (p.garage_spaces && p.garage_spaces > 0) {
     specs.push({
       type: 'simple',
       icon: (
-        <svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="#C9A96E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M5 28 L5 24 Q5 22 7 22 L11 22 L16 14 Q17 12 19 12 L29 12 Q31 12 32 14 L37 22 L41 22 Q43 22 43 24 L43 28 Q43 30 41 30 L38 30"/>
           <path d="M22 30 L26 30"/>
           <path d="M10 30 L7 30 Q5 30 5 28"/>
@@ -935,7 +933,7 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'simple',
       icon: (
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 2L2 7l10 5 10-5-10-5z"/>
           <path d="M2 12l10 5 10-5"/>
           <path d="M2 17l10 5 10-5"/>
@@ -951,12 +949,9 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'size',
       icon: (
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="1"/>
-          <path d="M3 9h18"/>
-          <path d="M3 15h18"/>
-          <path d="M9 3v18"/>
-          <path d="M15 3v18"/>
+          <path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>
         </svg>
       ),
       sqm: p.construction_size_sqm,
@@ -969,7 +964,7 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'size',
       icon: (
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 3l-5 7h3l-4 6h6v4h-2v1h6v-1h-2v-4h6l-4-6h3l-5-7z"/>
         </svg>
       ),
@@ -980,34 +975,63 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
 
   if (specs.length === 0) return null
 
+  const simpleItems = specs.filter((s): s is SimpleItem => s.type === 'simple')
+  const sizeItems   = specs.filter((s): s is SizeItem   => s.type === 'size')
+
+  const simpleColsMap: Record<number, string> = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-2',
+    3: 'grid-cols-3',
+    4: 'grid-cols-4',
+  }
+  const sizeColsMap: Record<number, string> = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-2',
+  }
+
+  const simpleCols = simpleColsMap[simpleItems.length] ?? 'grid-cols-4'
+  const sizeCols   = sizeColsMap[sizeItems.length]     ?? 'grid-cols-2'
+  const hasBothRows = simpleItems.length > 0 && sizeItems.length > 0
+
   return (
-    <div className="overflow-x-auto border-y border-[#E8E3DC]">
-      <div className="flex items-stretch min-w-max">
-        {specs.map((s, i) => (
-          <div
-            key={i}
-            className={`flex items-center gap-3 px-5 md:px-6 py-4${i > 0 ? ' border-l border-[#E8E3DC]' : ''}`}
-          >
-            <div className="flex-shrink-0">{s.icon}</div>
-            {s.type === 'simple' ? (
+    <div className="border-y border-[#E8E3DC]">
+      {simpleItems.length > 0 && (
+        <div className={`grid ${simpleCols}${hasBothRows ? ' border-b border-[#E8E3DC]' : ''}`}>
+          {simpleItems.map((s, i) => (
+            <div
+              key={i}
+              className={`flex items-center gap-3 px-5 py-4${i > 0 ? ' border-l border-[#E8E3DC]' : ''}`}
+            >
+              <div className="flex-shrink-0">{s.icon}</div>
               <div>
-                <p className="font-sans text-2xl font-bold text-foreground leading-none">{s.value}</p>
-                <p className="font-sans text-[11px] text-muted-foreground mt-1">{s.label}</p>
+                <p className="font-sans text-[22px] font-medium text-foreground leading-none">{s.value}</p>
+                <p className="font-sans text-[10px] text-muted-foreground mt-1 tracking-wide">{s.label}</p>
               </div>
-            ) : (
+            </div>
+          ))}
+        </div>
+      )}
+      {sizeItems.length > 0 && (
+        <div className={`grid ${sizeCols}`}>
+          {sizeItems.map((s, i) => (
+            <div
+              key={i}
+              className={`flex items-center gap-3 px-5 py-4${i > 0 ? ' border-l border-[#E8E3DC]' : ''}`}
+            >
+              <div className="flex-shrink-0">{s.icon}</div>
               <div>
-                <p className="font-sans text-xl font-bold text-foreground leading-tight">
+                <p className="font-sans text-[17px] font-medium text-foreground leading-tight">
                   {s.sqm.toLocaleString('en-US')} m²
                 </p>
-                <p className="font-sans text-[11px] text-muted-foreground mt-0.5">
+                <p className="font-sans text-[10px] text-muted-foreground mt-0.5 font-light">
                   {Math.round(s.sqm * 10.764).toLocaleString('en-US')} ft²
                 </p>
-                <p className="font-sans text-[11px] text-muted-foreground mt-0.5">{s.label}</p>
+                <p className="font-sans text-[10px] text-muted-foreground mt-0.5 tracking-wide">{s.label}</p>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
