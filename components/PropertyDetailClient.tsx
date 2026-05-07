@@ -879,9 +879,8 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'simple',
       icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 9V19M22 9V19M2 19h20"/>
-          <path d="M2 13h20"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 9V19M22 9V19M2 19h20M2 13h20"/>
           <path d="M2 9a5 5 0 015-5h10a5 5 0 015 5"/>
           <rect x="6" y="9" width="5" height="4" rx="1"/>
           <rect x="13" y="9" width="5" height="4" rx="1"/>
@@ -897,7 +896,7 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'simple',
       icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 12h16a1 1 0 011 1v2a4 4 0 01-4 4H7a4 4 0 01-4-4v-2a1 1 0 011-1z"/>
           <path d="M6 12V5a2 2 0 012-2h1"/>
           <circle cx="9" cy="3" r="1"/>
@@ -914,7 +913,7 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'simple',
       icon: (
-        <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="22" height="22" viewBox="0 0 48 48" fill="none" stroke="#C9A96E" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M5 28 L5 24 Q5 22 7 22 L11 22 L16 14 Q17 12 19 12 L29 12 Q31 12 32 14 L37 22 L41 22 Q43 22 43 24 L43 28 Q43 30 41 30 L38 30"/>
           <path d="M22 30 L26 30"/>
           <path d="M10 30 L7 30 Q5 30 5 28"/>
@@ -933,7 +932,7 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'simple',
       icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 2L2 7l10 5 10-5-10-5z"/>
           <path d="M2 12l10 5 10-5"/>
           <path d="M2 17l10 5 10-5"/>
@@ -949,7 +948,7 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'size',
       icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="1"/>
           <path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>
         </svg>
@@ -964,7 +963,7 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
     specs.push({
       type: 'size',
       icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 3l-5 7h3l-4 6h6v4h-2v1h6v-1h-2v-4h6l-4-6h3l-5-7z"/>
         </svg>
       ),
@@ -1000,13 +999,13 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
           {simpleItems.map((s, i) => (
             <div
               key={i}
-              className={`flex items-center gap-3 px-5 py-4${i > 0 ? ' border-l border-[#E8E3DC]' : ''}`}
+              className={`flex flex-col items-center justify-center gap-1.5 px-3 py-4${i > 0 ? ' border-l border-[#E8E3DC]' : ''}`}
             >
-              <div className="flex-shrink-0">{s.icon}</div>
-              <div>
-                <p className="font-sans text-[22px] font-medium text-foreground leading-none">{s.value}</p>
-                <p className="font-sans text-[10px] text-muted-foreground mt-1 tracking-wide">{s.label}</p>
+              <div className="flex items-center gap-1.5">
+                {s.icon}
+                <span className="font-sans text-[17px] font-medium text-foreground leading-none">{s.value}</span>
               </div>
+              <span className="font-sans text-[10px] text-muted-foreground tracking-wide text-center">{s.label}</span>
             </div>
           ))}
         </div>
@@ -1016,18 +1015,20 @@ function SpecBar({ property: p, lang = 'es' }: { property: PropertyRow; lang: 'e
           {sizeItems.map((s, i) => (
             <div
               key={i}
-              className={`flex items-center gap-3 px-5 py-4${i > 0 ? ' border-l border-[#E8E3DC]' : ''}`}
+              className={`flex flex-col items-center justify-center gap-1.5 px-3 py-4${i > 0 ? ' border-l border-[#E8E3DC]' : ''}`}
             >
-              <div className="flex-shrink-0">{s.icon}</div>
-              <div>
-                <p className="font-sans text-[17px] font-medium text-foreground leading-tight">
-                  {s.sqm.toLocaleString('en-US')} m²
-                </p>
-                <p className="font-sans text-[10px] text-muted-foreground mt-0.5 font-light">
-                  {Math.round(s.sqm * 10.764).toLocaleString('en-US')} ft²
-                </p>
-                <p className="font-sans text-[10px] text-muted-foreground mt-0.5 tracking-wide">{s.label}</p>
+              <div className="flex items-center gap-2">
+                {s.icon}
+                <div className="flex flex-col">
+                  <span className="font-sans text-[15px] font-medium text-foreground leading-tight">
+                    {s.sqm.toLocaleString('en-US')} m²
+                  </span>
+                  <span className="font-sans text-[9px] text-muted-foreground font-light mt-0.5">
+                    {Math.round(s.sqm * 10.764).toLocaleString('en-US')} ft²
+                  </span>
+                </div>
               </div>
+              <span className="font-sans text-[10px] text-muted-foreground tracking-wide text-center">{s.label}</span>
             </div>
           ))}
         </div>
