@@ -88,27 +88,50 @@ export default function PropertyDetailPanel({
 
   // ── Description expand/collapse ───────────────────────────────────────────
   const description =
-    (lang === 'en' ? (property.description_en ?? property.description) : (property.description ?? property.description_en)) ??
-    (property.ai_generated_description_en ?? property.ai_generated_description_es) ??
-    null
+    lang === 'en'
+      ? (property.description_en ??
+         property.description_es ??
+         property.description ?? '')
+      : (property.description_es ??
+         property.description ??
+         property.description_en ?? '')
   const DESCRIPTION_LIMIT = 300
   const [descExpanded, setDescExpanded] = useState(false)
   const descTruncated = description && description.length > DESCRIPTION_LIMIT && !descExpanded
 
   // ── Features & amenities ──────────────────────────────────────────────────
-  const features = (lang === 'en'
-    ? (property.features_en ?? property.features)
-    : (property.features ?? property.features_en)
-  ) ?? []
+  const features: string[] =
+    lang === 'en'
+      ? ((property.features_en as string[] | null) ??
+         (property.features_es as string[] | null) ??
+         (property.features as string[] | null) ?? [])
+      : ((property.features_es as string[] | null) ??
+         (property.features as string[] | null) ??
+         (property.features_en as string[] | null) ?? [])
 
-  const amenities = (lang === 'en'
-    ? (property.amenities_en ?? property.amenities)
-    : (property.amenities ?? property.amenities_en)
-  ) ?? []
+  const amenities: string[] =
+    lang === 'en'
+      ? ((property.amenities_en as string[] | null) ??
+         (property.amenities_es as string[] | null) ??
+         (property.amenities as string[] | null) ?? [])
+      : ((property.amenities_es as string[] | null) ??
+         (property.amenities as string[] | null) ??
+         (property.amenities_en as string[] | null) ?? [])
 
   // ── Price ─────────────────────────────────────────────────────────────────
-  const isRent  = !!property.price_rent_monthly && !property.price_sale
-  const price   = property.price_sale ?? property.price_rent_monthly
+  const hasSale = !!property.price_sale
+  const hasRent = !!property.price_rent_monthly
+  const hasBoth = hasSale && hasRent
+
+  // Format helpers
+  const saleFormatted = hasSale
+    ? `$${Number(property.price_sale).toLocaleString()}`
+    : null
+
+  const rentFormatted = hasRent
+    ? `$${Number(property.price_rent_monthly).toLocaleString()}${lang === 'es' ? '/mes' : '/mo'}`
+    : null
+
   const title   = (lang === 'en' ? (property.title_en ?? property.title) : (property.title_es ?? property.title)) ?? ''
   const refId   = property.reference_id ?? property.id.slice(0, 8).toUpperCase()
 
@@ -251,15 +274,36 @@ export default function PropertyDetailPanel({
                          leading-tight mb-2">
             {title}
           </h2>
-          {price && (
-            <p className="text-[#C9A96E] text-xl font-semibold">
-              {formatPrice(price, property.currency ?? 'USD')}
-              {isRent && (
-                <span className="text-sm font-normal text-[#9B9B9B] ml-1">
-                  {lang === 'es' ? '/mes' : '/mo'}
-                </span>
-              )}
-            </p>
+
+          {/* Both prices — show on same line separated by dot */}
+          {hasBoth && (
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-2xl font-semibold" style={{ color: '#C9A96E' }}>
+                {saleFormatted}
+              </span>
+              <span className="text-[#6B6B6B] text-sm">·</span>
+              <span className="text-lg font-medium" style={{ color: '#C9A96E' }}>
+                {rentFormatted}
+              </span>
+            </div>
+          )}
+
+          {/* Sale only */}
+          {hasSale && !hasRent && (
+            <div>
+              <span className="text-2xl font-semibold" style={{ color: '#C9A96E' }}>
+                {saleFormatted}
+              </span>
+            </div>
+          )}
+
+          {/* Rent only */}
+          {!hasSale && hasRent && (
+            <div>
+              <span className="text-2xl font-semibold" style={{ color: '#C9A96E' }}>
+                {rentFormatted}
+              </span>
+            </div>
           )}
         </div>
 
