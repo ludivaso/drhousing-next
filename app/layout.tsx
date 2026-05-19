@@ -8,9 +8,7 @@ export const metadata: Metadata = {
   },
   description:
     'Premium luxury homes and investment properties in Escazú, Santa Ana and the Ruta 27 corridor. Expert advisory for international buyers.',
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://drhousing.net'
-  ),
+  metadataBase: new URL('https://drhousing.net'),
   openGraph: {
     siteName: 'DR Housing',
     type: 'website',
