@@ -20,8 +20,7 @@ export async function GET(request: NextRequest) {
     try {
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/properties` +
-          `?slug=eq.${encodeURIComponent(slug)}` +
-          `&or=(visibility.eq.public,visibility.is.null)` +
+          `?and=(or(slug.eq.${encodeURIComponent(slug)},reference_id.eq.${encodeURIComponent(slug)}),or(visibility.eq.public,visibility.is.null))` +
           `&select=title_es,title,location_name,price_sale,price_rent_monthly,currency,featured_images,images` +
           `&limit=1`,
         {
