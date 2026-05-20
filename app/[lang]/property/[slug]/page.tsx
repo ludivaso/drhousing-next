@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
     property.featured_images?.[0] ?? property.images?.[0]
 
   const ogImageUrl = rawImage
-    ? `https://drhousing.net/_next/image?url=${encodeURIComponent(rawImage)}&w=1200&q=85`
+    ? rawImage
     : `https://drhousing.net/og-default.jpg`
 
   // Price string
