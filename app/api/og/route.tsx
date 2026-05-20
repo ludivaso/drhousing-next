@@ -1,59 +1,86 @@
 import { ImageResponse } from 'next/og'
 import { NextRequest } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 
 export const runtime = 'edge'
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://drhousing.net').replace(/\/$/, '')
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const slug = searchParams.get('slug')
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-
-  let imageUrl = 'https://drhousing.net/og-default.jpg'
-  let title = 'DR Housing | Luxury Real Estate Costa Rica'
-  let location = 'Escazú · Santa Ana · Costa Rica'
+  let title = 'DR Housing'
+  let subtitle = 'Luxury Real Estate · Costa Rica'
   let price = ''
+  let heroSrc = `${SITE_URL}/og-default.jpg`
 
   if (slug) {
-    const { data: property } = await supabase
-      .from('properties')
-      .select('title, title_es, featured_images, images, location_name, price_sale, price_rent_monthly, currency')
-      .or('visibility.eq.public,visibility.is.null')
-      .eq('slug', slug)
-      .single()
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/properties` +
+          `?slug=eq.${encodeURIComponent(slug)}` +
+          `&or=(visibility.eq.public,visibility.is.null)` +
+          `&select=title_es,title,location_name,price_sale,price_rent_monthly,currency,featured_images,images` +
+          `&limit=1`,
+        {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+        }
+      )
+      if (res.ok) {
+        const data = await res.json()
+        const prop = Array.isArray(data) ? data[0] : null
+        if (prop) {
+          title = prop.title_es ?? prop.title ?? title
+          subtitle = prop.location_name ?? subtitle
 
-    if (property) {
-      const rawImage = property.featured_images?.[0] ?? property.images?.[0]
-      if (rawImage) imageUrl = rawImage
-      title = property.title_es ?? property.title ?? title
-      location = property.location_name ?? location
-      if (property.price_sale) {
-        price = `$${Number(property.price_sale).toLocaleString('en-US')} ${property.currency ?? 'USD'}`
-      } else if (property.price_rent_monthly) {
-        price = `$${Number(property.price_rent_monthly).toLocaleString('en-US')}/mes`
+          if (prop.price_sale) {
+            price = `$${Number(prop.price_sale).toLocaleString('en-US')} USD`
+          } else if (prop.price_rent_monthly) {
+            price = `$${Number(prop.price_rent_monthly).toLocaleString('en-US')}/mes`
+          }
+
+          const rawImg: string | undefined =
+            prop.featured_images?.[0] ?? prop.images?.[0]
+
+          if (rawImg) {
+            // Route all image formats (including AVIF/WebP) through Next.js image
+            // optimizer so Satori always receives a JPEG — never fails on format.
+            heroSrc = `${SITE_URL}/_next/image?url=${encodeURIComponent(rawImg)}&w=1200&q=85`
+          }
+        }
       }
+    } catch {
+      // silent fallback — og-default.jpg shown
     }
   }
+
+  const displayTitle =
+    title.length > 68
+      ? title.slice(0, 65).replace(/\s\S*$/, '') + '…'
+      : title
 
   return new ImageResponse(
     (
       <div
         style={{
-          width: '1200px',
-          height: '630px',
+          width: 1200,
+          height: 630,
           display: 'flex',
           position: 'relative',
-          fontFamily: 'Georgia, serif',
+          overflow: 'hidden',
+          fontFamily: 'Georgia, "Times New Roman", serif',
         }}
       >
-        {/* Background image */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* Full-bleed hero photo */}
         <img
-          src={imageUrl}
+          src={heroSrc}
+          width={1200}
+          height={630}
           style={{
             position: 'absolute',
             inset: 0,
@@ -62,55 +89,87 @@ export async function GET(request: NextRequest) {
             objectFit: 'cover',
           }}
         />
-        {/* Dark gradient overlay */}
+
+        {/* Gradient overlay — transparent top, dark bottom */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%)',
+            background:
+              'linear-gradient(180deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.22) 38%, rgba(0,0,0,0.84) 100%)',
+            display: 'flex',
           }}
         />
-        {/* Content */}
+
+        {/* Gold top accent bar */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 5,
+            backgroundColor: '#C9A96E',
+          }}
+        />
+
+        {/* Bottom text block */}
         <div
           style={{
             position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
-            padding: '40px 48px',
+            padding: '0 56px 44px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '8px',
+            gap: 10,
           }}
         >
-          {price ? (
-            <div style={{ color: '#C9A96E', fontSize: '22px', fontWeight: 600 }}>
-              {price}
-            </div>
-          ) : null}
+          <div
+            style={{
+              color: '#C9A96E',
+              fontSize: 13,
+              letterSpacing: 5,
+              textTransform: 'uppercase',
+            }}
+          >
+            DR HOUSING · COSTA RICA
+          </div>
+
           <div
             style={{
               color: '#FFFFFF',
-              fontSize: '36px',
+              fontSize: 40,
               fontWeight: 700,
               lineHeight: 1.2,
-              maxWidth: '900px',
+              textShadow: '0 2px 8px rgba(0,0,0,0.5)',
             }}
           >
-            {title.length > 80 ? title.slice(0, 77) + '...' : title}
+            {displayTitle}
           </div>
-          <div style={{ color: '#E8E3DC', fontSize: '20px' }}>
-            {location}
-          </div>
-          <div style={{ color: '#C9A96E', fontSize: '16px', marginTop: '4px' }}>
-            DR Housing · drhousing.net
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 20,
+              marginTop: 4,
+            }}
+          >
+            <div style={{ color: '#E8E3DC', fontSize: 20 }}>{subtitle}</div>
+            {price ? (
+              <>
+                <div style={{ color: '#C9A96E', fontSize: 20 }}>·</div>
+                <div style={{ color: '#C9A96E', fontSize: 22, fontWeight: 600 }}>
+                  {price}
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
       </div>
     ),
-    {
-      width: 1200,
-      height: 630,
-    }
+    { width: 1200, height: 630 }
   )
 }
