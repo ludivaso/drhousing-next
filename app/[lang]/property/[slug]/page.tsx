@@ -46,8 +46,12 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
 
   const isPublic = isPropertyPublic(property)
 
-  // Build OG image URL — /api/og renders a JPEG-compatible image (avif → JPEG)
-  const ogImageUrl = `https://drhousing.net/api/og?slug=${params.slug}`
+  const rawImage: string | undefined =
+    property.featured_images?.[0] ?? property.images?.[0]
+
+  const ogImageUrl = rawImage
+    ? `https://drhousing.net/_next/image?url=${encodeURIComponent(rawImage)}&w=1200&q=85`
+    : `https://drhousing.net/og-default.jpg`
 
   // Price string
   const monthSuffix = lang === 'en' ? '/month' : '/mes'
