@@ -45,7 +45,9 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
   if (!property) return {}
 
   const isPublic = isPropertyPublic(property)
-  const rawImageUrl = (property.featured_images?.[0] ?? property.images?.[0]) as string | undefined
+
+  // Build OG image URL — /api/og renders a JPEG-compatible image (avif → JPEG)
+  const ogImageUrl = `https://drhousing.net/api/og?slug=${params.slug}`
 
   // Price string
   const monthSuffix = lang === 'en' ? '/month' : '/mes'
@@ -68,7 +70,7 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
     ? (property.title_en || property.title_es || property.title || 'Property in Costa Rica')
     : (property.title_es || property.ai_generated_title_es || property.title_en || property.title || 'Propiedad en Costa Rica')
 
-  const rawDesc = property.description_es ?? property.description ?? ''
+  const rawDesc = property.description_es ?? property.description_en ?? property.description ?? ''
   const ogDescription = rawDesc.length > 160
     ? rawDesc.slice(0, 157).replace(/\s+\S*$/, '') + '...'
     : rawDesc
@@ -86,15 +88,13 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
       type: 'website',
       locale: 'es_CR',
       siteName: 'DR Housing',
-      images: rawImageUrl
-        ? [{ url: rawImageUrl, width: 1200, height: 630, alt: title }]
-        : [],
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: property.title_es ?? property.title }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description: ogDescription,
-      images: rawImageUrl ? [rawImageUrl] : [],
+      images: [ogImageUrl],
     },
     alternates: {
       canonical: url,
