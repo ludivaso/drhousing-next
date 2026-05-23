@@ -17,6 +17,7 @@ import {
 import { formatPrice, type PropertyRow, type AgentRow, type FeatureRow } from '@/lib/supabase/queries'
 import PropertyCard from '@/components/PropertyCard'
 import FavoriteButton from '@/components/FavoriteButton'
+import { PropertyShareSheet } from '@/components/property/PropertyShareSheet'
 import { useI18n } from '@/lib/i18n/context'
 import { usePathname } from 'next/navigation'
 import PropertyDetails, { type PropertyFeatureItem } from '@/components/properties/PropertyDetails'
@@ -440,10 +441,16 @@ export default function PropertyDetailClient({ property, relatedProperties = [],
               <h1 className="font-serif text-3xl font-semibold text-foreground mb-1">
                 {title}
               </h1>
-              <FavoriteButton
-                propertyId={p.id}
-                className="mt-1 w-9 h-9 rounded-full border border-border bg-background hover:bg-muted shadow-sm flex-shrink-0"
-              />
+              <div className="flex items-center gap-2 flex-shrink-0 mt-1">
+                <PropertyShareSheet
+                  url={`https://drhousing.net/${lang}/property/${p.reference_id ?? p.slug}`}
+                  title={title}
+                />
+                <FavoriteButton
+                  propertyId={p.id}
+                  className="w-9 h-9 rounded-full border border-border bg-background hover:bg-muted shadow-sm"
+                />
+              </div>
             </div>
 
             {/* Subtitle */}
