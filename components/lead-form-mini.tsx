@@ -1,0 +1,203 @@
+'use client'
+
+import { useState, type FormEvent } from 'react'
+import { Loader2, CheckCircle } from 'lucide-react'
+
+export interface InterestOption {
+  value: string
+  labelEn: string
+  labelEs: string
+}
+
+interface LeadFormMiniProps {
+  lang: 'en' | 'es'
+  source: string
+  leadType: 'buying' | 'selling'
+  interestOptions: InterestOption[]
+}
+
+function formatPhone(raw: string): string {
+  const stripped = raw.replace(/\s+/g, '')
+  if (stripped.startsWith('+')) return stripped
+  if (stripped.startsWith('506')) return `+${stripped}`
+  return `+506${stripped}`
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  )
+}
+
+export default function LeadFormMini({ lang, source, leadType, interestOptions }: LeadFormMiniProps) {
+  const [fullName, setFullName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [interest, setInterest] = useState(interestOptions[0]?.value ?? '')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const isEs = lang === 'es'
+  const selectedOption = interestOptions.find((o) => o.value === interest)
+  const interestLabel = selectedOption
+    ? isEs ? selectedOption.labelEs : selectedOption.labelEn
+    : interest
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!fullName.trim() || !phone.trim()) return
+
+    setSubmitting(true)
+    setError(null)
+
+    const formattedPhone = formatPhone(phone)
+    const autoMessage = `Lead from ${source} — interested in ${interestLabel}`
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/submit-lead`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: fullName.trim(),
+            email: '',
+            phone: formattedPhone,
+            message: autoMessage,
+            lead_type: leadType,
+            preferred_contact_method: 'whatsapp',
+            source_campaign: source,
+            country_of_origin: null,
+            timeline: 'exploring',
+            budget_min: null,
+            budget_max: null,
+            interested_areas: [],
+          }),
+        }
+      )
+
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        throw new Error((json as { error?: string }).error ?? 'Error')
+      }
+
+      setSubmitted(true)
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : isEs
+          ? 'Error al enviar. Inténtalo de nuevo.'
+          : 'Error sending. Please try again.'
+      )
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const waText = isEs
+    ? `Hola, soy ${fullName}. Me interesa ${interestLabel}.`
+    : `Hello, I'm ${fullName}. I'm interested in ${interestLabel}.`
+  const waUrl = `https://wa.me/50686540888?text=${encodeURIComponent(waText)}`
+
+  if (submitted) {
+    return (
+      <div className="text-center py-8">
+        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+          <CheckCircle className="w-8 h-8 text-green-600" />
+        </div>
+        <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
+          {isEs ? '¡Mensaje enviado!' : 'Message sent!'}
+        </h3>
+        <p className="text-muted-foreground text-sm mb-6">
+          {isEs ? 'Nos comunicaremos contigo pronto.' : "We'll be in touch soon."}
+        </p>
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#25D366] text-white font-medium text-sm hover:opacity-90 transition-opacity"
+        >
+          <WhatsAppIcon />
+          {isEs ? 'Continuar por WhatsApp' : 'Continue on WhatsApp'}
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <input
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder={isEs ? 'Tu nombre completo' : 'Your full name'}
+          required
+          className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm min-h-[48px]"
+        />
+      </div>
+
+      <div>
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder={isEs ? 'Tu WhatsApp (+506 o internacional)' : 'Your WhatsApp (+506 or intl.)'}
+          required
+          className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm min-h-[48px]"
+        />
+      </div>
+
+      <div>
+        <select
+          value={interest}
+          onChange={(e) => setInterest(e.target.value)}
+          className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm min-h-[48px]"
+        >
+          {interestOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {isEs ? opt.labelEs : opt.labelEn}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {error && (
+        <div className="space-y-3">
+          <p className="text-red-600 text-sm">{error}</p>
+          <a
+            href={`https://wa.me/50686540888?text=${encodeURIComponent(
+              isEs ? 'Hola, me gustaría más información.' : 'Hello, I would like more information.'
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#25D366] text-white font-medium text-sm hover:opacity-90 transition-opacity"
+          >
+            <WhatsAppIcon />
+            {isEs ? 'Contactar por WhatsApp' : 'Contact via WhatsApp'}
+          </a>
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={submitting}
+        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm min-h-[52px] hover:bg-primary/90 transition-colors disabled:opacity-60"
+      >
+        {submitting ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            {isEs ? 'Enviando...' : 'Sending...'}
+          </>
+        ) : isEs ? (
+          'Iniciar conversación'
+        ) : (
+          'Start conversation'
+        )}
+      </button>
+    </form>
+  )
+}
