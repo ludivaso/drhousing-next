@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import type { PropertyRow, CuratedListRow } from '@/src/integrations/supabase/types'
 import CuratedListView from './CuratedListView'
@@ -43,6 +44,11 @@ export default async function CuratedListPage({
   params: { slug: string }
   searchParams: { k?: string }
 }) {
+  // System curated lists (slug starts with '_') are never browsable publicly
+  if (params.slug.startsWith('_')) {
+    notFound()
+  }
+
   const supabase = createSupabaseServerClient()
 
   // 1. Fetch the curated list

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Camera, Globe, Eye, ShieldCheck, ArrowRight } from 'lucide-react'
+import { Camera, Globe, Lock, MapPin, ArrowRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { PropertyRow } from '@/lib/supabase/queries'
 import { getHeroImage } from '@/lib/supabase/queries'
@@ -104,24 +104,7 @@ function SellersJsonLd({ lang }: { lang: string }) {
   )
 }
 
-// ─── Data fetching ────────────────────────────────────────────────────────────
-
-async function getRecentlySoldRented(): Promise<PropertyRow[]> {
-  const { data, error } = await supabase
-    .from('properties')
-    .select('*')
-    .in('status', ['sold', 'rented'])
-    .eq('hidden', false)
-    .or('visibility.eq.public,visibility.is.null')
-    .order('updated_at', { ascending: false })
-    .limit(6)
-
-  if (error) {
-    console.error('getRecentlySoldRented error:', error.message)
-    return []
-  }
-  return (data ?? []) as PropertyRow[]
-}
+// ─── Data fetching moved inline into page component (see below) ───────────────
 
 // ─── Pillar data ──────────────────────────────────────────────────────────────
 
@@ -143,20 +126,20 @@ const SELLER_PILLARS = [
       'Tu propiedad llega a compradores en EE.UU., Canadá y Europa vía Facebook Catalog, Encuentra24, WhatsApp Business y nuestros canales editoriales.',
   },
   {
-    icon: Eye,
+    icon: Lock,
     titleEn: 'Discreet & Off-Market',
     titleEs: 'Ventas Discretas y Off-Market',
     bodyEn: 'Prefer privacy? We sell to qualified buyers without a public listing.',
     bodyEs: '¿Prefieres discreción? Vendemos a compradores calificados sin publicación pública.',
   },
   {
-    icon: ShieldCheck,
-    titleEn: 'Licensed Brokerage',
-    titleEs: 'Corretaje Licenciado',
+    icon: MapPin,
+    titleEn: "15+ Years in Costa Rica's Western Corridor",
+    titleEs: 'Más de 15 años en el Corredor Oeste',
     bodyEn:
-      'Diego Rodríguez, Broker of Record, ensures every transaction is legally sound.',
+      "Diego Vargas and team have built deep relationships and on-the-ground knowledge across Escazú, Santa Ana, La Guácima, and Lindora. Direct accountability from first call to closing — your home turf is our home turf.",
     bodyEs:
-      'Diego Rodríguez, Broker of Record, garantiza que cada transacción cumple la ley.',
+      'Diego Vargas y su equipo han construido relaciones profundas y conocimiento en sitio en Escazú, Santa Ana, La Guácima y Lindora. Responsabilidad directa desde la primera llamada hasta el cierre — tu zona es nuestra zona.',
   },
 ]
 
@@ -209,7 +192,35 @@ export default async function SellersPage({ params }: { params: { lang: string }
   const lang = params.lang === 'es' ? 'es' : 'en'
   const isEs = lang === 'es'
 
-  const soldRented = await getRecentlySoldRented()
+  // Fetch the system curated list for sellers-page closings
+  const { data: curatedList } = await supabase
+    .from('curated_lists')
+    .select('property_ids')
+    .eq('slug', '_sellers-page-closings')
+    .eq('is_active', true)
+    .maybeSingle()
+
+  let closedProperties: PropertyRow[] = []
+
+  if (
+    curatedList?.property_ids &&
+    Array.isArray(curatedList.property_ids) &&
+    curatedList.property_ids.length > 0
+  ) {
+    const { data: properties } = await supabase
+      .from('properties')
+      .select('*')
+      .in('id', curatedList.property_ids)
+      .eq('hidden', false)
+      .or('visibility.eq.public,visibility.is.null')
+
+    if (properties && properties.length > 0) {
+      // Preserve admin-controlled order from property_ids array
+      closedProperties = curatedList.property_ids
+        .map((id: string) => properties.find((p) => p.id === id))
+        .filter(Boolean) as PropertyRow[]
+    }
+  }
 
   const waSellerUrl =
     'https://wa.me/50686540888?text=' +
@@ -408,8 +419,8 @@ export default async function SellersPage({ params }: { params: { lang: string }
         </div>
       </section>
 
-      {/* ── RECENTLY SOLD / TRACK RECORD ─────────────────────────────────────── */}
-      {soldRented.length > 0 && (
+      {/* ── RECENTLY CLOSED / TRACK RECORD ──────────────────────────────────── */}
+      {closedProperties.length > 0 && (
         <section className="section-padding bg-background">
           <div className="container-wide">
             <div className="text-center mb-10">
@@ -424,7 +435,7 @@ export default async function SellersPage({ params }: { params: { lang: string }
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {soldRented.slice(0, 6).map((property) => {
+              {closedProperties.map((property) => {
                 const heroImage = getHeroImage(property)
                 const title =
                   lang === 'es'

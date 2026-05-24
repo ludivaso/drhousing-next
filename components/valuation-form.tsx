@@ -12,7 +12,7 @@ const LOCATIONS = [
   'Santa Ana',
   'La Guácima',
   'Lindora',
-  'Otro / Other',
+  'Other',
 ]
 
 function formatPhone(raw: string): string {
@@ -33,7 +33,8 @@ function WhatsAppIcon() {
 export default function ValuationForm({ lang }: ValuationFormProps) {
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
-  const [location, setLocation] = useState(LOCATIONS[0])
+  const [location, setLocation] = useState('')
+  const [locationError, setLocationError] = useState(false)
   const [sizeSqm, setSizeSqm] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -44,6 +45,13 @@ export default function ValuationForm({ lang }: ValuationFormProps) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!fullName.trim() || !phone.trim()) return
+
+    // Validate location explicitly — empty string means placeholder not changed
+    if (!location) {
+      setLocationError(true)
+      return
+    }
+    setLocationError(false)
 
     setSubmitting(true)
     setError(null)
@@ -93,9 +101,10 @@ export default function ValuationForm({ lang }: ValuationFormProps) {
     }
   }
 
+  const locationLabel = location || (isEs ? 'mi área' : 'my area')
   const waText = isEs
-    ? `Hola, soy ${fullName}. Quiero una valoración gratuita de mi propiedad en ${location}${sizeSqm ? `, ${sizeSqm}m²` : ''}.`
-    : `Hello, I'm ${fullName}. I'd like a free valuation for my property in ${location}${sizeSqm ? `, ${sizeSqm}m²` : ''}.`
+    ? `Hola, soy ${fullName}. Quiero una valoración gratuita de mi propiedad en ${locationLabel}${sizeSqm ? `, ${sizeSqm}m²` : ''}.`
+    : `Hello, I'm ${fullName}. I'd like a free valuation for my property in ${locationLabel}${sizeSqm ? `, ${sizeSqm}m²` : ''}.`
   const waUrl = `https://wa.me/50686540888?text=${encodeURIComponent(waText)}`
 
   if (submitted) {
@@ -152,15 +161,26 @@ export default function ValuationForm({ lang }: ValuationFormProps) {
       <div>
         <select
           value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm min-h-[48px]"
+          onChange={(e) => { setLocation(e.target.value); setLocationError(false) }}
+          required
+          className={`w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm min-h-[48px] ${
+            locationError ? 'border-red-500' : 'border-input'
+          } ${!location ? 'text-muted-foreground' : ''}`}
         >
+          <option value="" disabled>
+            {isEs ? 'Selecciona la ubicación' : 'Select property location'}
+          </option>
           {LOCATIONS.map((loc) => (
             <option key={loc} value={loc}>
-              {loc}
+              {loc === 'Other' ? (isEs ? 'Otra' : 'Other') : loc}
             </option>
           ))}
         </select>
+        {locationError && (
+          <p className="text-red-600 text-xs mt-1">
+            {isEs ? 'Por favor selecciona una ubicación' : 'Please select a location'}
+          </p>
+        )}
       </div>
 
       <div>
