@@ -1289,6 +1289,43 @@
       "button": "Hablar con un Especialista del GAM Oeste"
     }
   },
+  "buyers": {
+    "hero_badge": "Escazú · Santa Ana · La Guácima · Lindora",
+    "hero_title": "Encuentra tu hogar en el Corredor Oeste de Costa Rica",
+    "hero_subtitle": "Casas de lujo curadas, asesoría de relocation y concierge bilingüe — para familias e inversionistas internacionales que se mudan a Costa Rica.",
+    "cta_primary": "Iniciar conversación",
+    "cta_secondary": "Ver propiedades",
+    "pillars_heading": "Por qué comprar con DR Housing",
+    "pillars_subhead": "No somos solo un agente. Somos tu equipo completo en Costa Rica.",
+    "areas_heading": "Zonas que cubrimos",
+    "process_heading": "Nuestro proceso",
+    "featured_heading": "Propiedades destacadas",
+    "form_heading": "Inicia la conversación",
+    "form_subhead": "Cuéntanos qué buscas y te enviamos propiedades que encajan con tu perfil.",
+    "wa_heading": "¿Prefieres hablar directamente?",
+    "wa_subhead": "Escríbenos por WhatsApp ahora mismo. Respuesta inmediata durante horas hábiles."
+  },
+  "sellers": {
+    "hero_badge": "Vendedores y Arrendadores · Corredor Oeste",
+    "hero_title": "Vende tu propiedad de lujo en el Corredor Oeste de Costa Rica",
+    "hero_subtitle": "Alcance internacional, producción de medios de lujo y red de compradores calificados — respaldado por un corretaje licenciado.",
+    "cta_primary": "Solicitar valoración gratuita",
+    "cta_whatsapp": "WhatsApp",
+    "valuation_badge": "100% gratuito · Sin compromiso",
+    "valuation_heading": "Valoración gratuita de tu propiedad",
+    "valuation_subhead": "Completa el formulario y te contactamos en menos de 2 horas.",
+    "pillars_heading": "Por qué publicar con DR Housing",
+    "channels_heading": "Dónde se verá tu propiedad",
+    "process_heading": "Nuestro proceso de venta",
+    "sold_heading": "Transacciones recientes",
+    "sold_subhead": "Un historial de ventas y arrendamientos exitosos en el Corredor Oeste.",
+    "wa_heading": "¿Listo para hablar sobre tu propiedad?",
+    "wa_subhead": "Escríbenos ahora. Sin presión, sin compromiso — solo una conversación honesta."
+  },
+  "nav": {
+    "for_sellers": "Vendedores",
+    "for_buyers": "Compradores"
+  },
   "seo": {
     "home": {
       "title": "Asesoría Inmobiliaria en Costa Rica",

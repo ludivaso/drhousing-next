@@ -107,6 +107,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { en: '/en/desarrollos',     es: '/es/desarrollos',      freq: 'weekly',  priority: 0.7 },
     { en: '/en/blog',            es: '/es/blog',             freq: 'weekly',  priority: 0.6 },
     { en: '/en/guia-west-gam',   es: '/es/guia-west-gam',   freq: 'monthly', priority: 0.5 },
+    { en: '/en/buyers',          es: '/es/buyers',           freq: 'weekly',  priority: 0.8 },
+    { en: '/en/sellers',         es: '/es/sellers',          freq: 'weekly',  priority: 0.8 },
   ]
 
   const staticRoutes: MetadataRoute.Sitemap = staticDefs.flatMap(({ en, es, freq, priority }) => [

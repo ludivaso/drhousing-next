@@ -1289,6 +1289,43 @@
       "button": "Speak with a West GAM Specialist"
     }
   },
+  "buyers": {
+    "hero_badge": "Escazú · Santa Ana · La Guácima · Lindora",
+    "hero_title": "Find Your Home in Costa Rica's Western Corridor",
+    "hero_subtitle": "Curated luxury homes, relocation guidance, and bilingual concierge — for international families and investors moving to Costa Rica.",
+    "cta_primary": "Start a conversation",
+    "cta_secondary": "Browse properties",
+    "pillars_heading": "Why Buy with DR Housing",
+    "pillars_subhead": "We're not just an agent. We're your full team in Costa Rica.",
+    "areas_heading": "Areas We Cover",
+    "process_heading": "Our Process",
+    "featured_heading": "Featured Properties",
+    "form_heading": "Start the Conversation",
+    "form_subhead": "Tell us what you need and we'll send you properties that match your profile.",
+    "wa_heading": "Prefer to talk directly?",
+    "wa_subhead": "Message us on WhatsApp right now. Immediate response during business hours."
+  },
+  "sellers": {
+    "hero_badge": "Sellers & Landlords · Costa Rica's Western Corridor",
+    "hero_title": "Sell Your Luxury Property in Costa Rica's Western Corridor",
+    "hero_subtitle": "International marketing reach, luxury-grade media, and a qualified buyer network — backed by a fully licensed brokerage.",
+    "cta_primary": "Get free valuation",
+    "cta_whatsapp": "WhatsApp",
+    "valuation_badge": "100% free · No commitment",
+    "valuation_heading": "Free Property Valuation",
+    "valuation_subhead": "Fill in the form and we'll reach out within 2 hours.",
+    "pillars_heading": "Why List with DR Housing",
+    "channels_heading": "Where Your Property Gets Seen",
+    "process_heading": "Our Selling Process",
+    "sold_heading": "Recently Closed Transactions",
+    "sold_subhead": "A track record of successful sales and rentals across the Western Corridor.",
+    "wa_heading": "Ready to talk about your property?",
+    "wa_subhead": "Message us now. No pressure, no commitment — just an honest conversation."
+  },
+  "nav": {
+    "for_sellers": "For Sellers",
+    "for_buyers": "For Buyers"
+  },
   "seo": {
     "home": {
       "title": "Costa Rica Real Estate Advisory",

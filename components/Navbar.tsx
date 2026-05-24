@@ -53,18 +53,22 @@ export default function Navbar() {
   }
 
   const labels = {
-    home:          currentLang === 'es' ? 'Inicio'      : 'Home',
-    properties:    currentLang === 'es' ? 'Propiedades' : 'Properties',
-    agents:        currentLang === 'es' ? 'Agentes'     : 'Advisors',
-    services:      currentLang === 'es' ? 'Servicios'   : 'Solutions',
-    contact:       currentLang === 'es' ? 'Contacto'    : 'Contact',
-    toolsInsights: currentLang === 'es' ? 'Recursos'    : 'Resources',
+    home:          currentLang === 'es' ? 'Inicio'        : 'Home',
+    properties:    currentLang === 'es' ? 'Propiedades'   : 'Properties',
+    sellers:       currentLang === 'es' ? 'Vendedores'    : 'For Sellers',
+    buyers:        currentLang === 'es' ? 'Compradores'   : 'For Buyers',
+    agents:        currentLang === 'es' ? 'Agentes'       : 'Advisors',
+    services:      currentLang === 'es' ? 'Servicios'     : 'Solutions',
+    contact:       currentLang === 'es' ? 'Contacto'      : 'Contact',
+    toolsInsights: currentLang === 'es' ? 'Recursos'      : 'Resources',
     switchLang:    currentLang === 'es' ? '🇺🇸 Switch to English' : '🇨🇷 Cambiar a Español',
   }
 
   const navigation = [
     { name: labels.home,       href: `/${currentLang}` },
     { name: labels.properties, href: `/${currentLang}/properties` },
+    { name: labels.sellers,    href: `/${currentLang}/sellers` },
+    { name: labels.buyers,     href: `/${currentLang}/buyers` },
     { name: labels.agents,     href: `/${currentLang}/agents` },
     { name: labels.services,   href: `/${currentLang}/services` },
     { name: labels.contact,    href: `/${currentLang}/contact` },
