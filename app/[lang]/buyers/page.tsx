@@ -22,8 +22,8 @@ export async function generateMetadata({
 
   return {
     title: isEs
-      ? 'Comprar Propiedades en Costa Rica | DR Housing'
-      : 'Buy Property in Costa Rica — Western Corridor | DR Housing',
+      ? 'Comprar Propiedades en Costa Rica — Corredor Oeste'
+      : 'Buy Property in Costa Rica — Western Corridor',
     description: isEs
       ? 'Casas de lujo en Escazú, Santa Ana, La Guácima y Lindora. Concierge bilingüe, portafolio off-market y asesoría legal para familias e inversionistas internacionales.'
       : 'Luxury homes in Escazú, Santa Ana, La Guácima and Lindora. Bilingual concierge, off-market portfolio, and legal advisory for international families and investors.',

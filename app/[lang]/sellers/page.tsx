@@ -23,8 +23,8 @@ export async function generateMetadata({
 
   return {
     title: isEs
-      ? 'Vender Propiedad de Lujo en Costa Rica | DR Housing'
-      : 'Sell Your Luxury Property in Costa Rica | DR Housing',
+      ? 'Vender Propiedad de Lujo en Costa Rica — Corredor Oeste'
+      : 'Sell Your Luxury Property in Costa Rica — Western Corridor',
     description: isEs
       ? 'Valoración gratuita, producción de medios de lujo y red de compradores internacionales calificados. Corredor licenciado — Escazú, Santa Ana, La Guácima, Lindora.'
       : 'Free valuation, luxury-grade media production, and a qualified international buyer network. Licensed brokerage — Escazú, Santa Ana, La Guácima, Lindora.',
