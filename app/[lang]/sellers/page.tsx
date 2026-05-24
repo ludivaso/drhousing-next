@@ -7,6 +7,7 @@ import type { PropertyRow } from '@/lib/supabase/queries'
 import { getHeroImage } from '@/lib/supabase/queries'
 import ValuationForm from '@/components/valuation-form'
 import { WhatsAppFAB } from '@/components/WhatsAppCTA'
+import PageHeroBanner from '@/components/page-hero-banner'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -230,15 +231,22 @@ export default async function SellersPage({ params }: { params: { lang: string }
     <>
       <SellersJsonLd lang={lang} />
 
+      {/* ── PAGE HERO BANNER ────────────────────────────────────────────────── */}
+      <PageHeroBanner
+        pageKey="sellers"
+        fallbackImageUrl="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2400&q=80"
+        eyebrow={lang === 'es' ? 'PARA VENDEDORES · CORREDOR OESTE' : 'FOR SELLERS · WESTERN CORRIDOR'}
+        lang={lang}
+      />
+
       {/* ── HERO + VALUATION FORM ───────────────────────────────────────────── */}
       <section
-        data-hero="true"
         className="relative bg-[#F5F2EE] overflow-hidden"
       >
         {/* Gold accent line */}
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#C9A96E]" />
 
-        <div className="container-wide relative z-10 py-20 lg:py-28">
+        <div className="container-wide relative z-10 py-10 lg:py-14">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Left: Copy */}
             <div className="pt-4">

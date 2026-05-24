@@ -6,6 +6,7 @@ import { getFeaturedProperties } from '@/lib/supabase/queries'
 import PropertyCard from '@/components/PropertyCard'
 import LeadFormMini from '@/components/lead-form-mini'
 import { WhatsAppFAB } from '@/components/WhatsAppCTA'
+import PageHeroBanner from '@/components/page-hero-banner'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -216,15 +217,22 @@ export default async function BuyersPage({ params }: { params: { lang: string } 
     <>
       <BuyersJsonLd lang={lang} />
 
+      {/* ── PAGE HERO BANNER ────────────────────────────────────────────────── */}
+      <PageHeroBanner
+        pageKey="buyers"
+        fallbackImageUrl="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=2400&q=80"
+        eyebrow={lang === 'es' ? 'PARA COMPRADORES · CORREDOR OESTE' : 'FOR BUYERS · WESTERN CORRIDOR'}
+        lang={lang}
+      />
+
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
       <section
-        data-hero="true"
         className="relative min-h-[60vh] lg:min-h-[70vh] flex items-center bg-[#F5F2EE] overflow-hidden"
       >
         {/* Gold accent line */}
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#C9A96E]" />
 
-        <div className="container-wide relative z-10 py-24 lg:py-32">
+        <div className="container-wide relative z-10 py-12 lg:py-16">
           {/* Badge */}
           <p className="inline-block text-[11px] font-semibold tracking-[0.15em] uppercase text-[#C9A96E] mb-6 font-sans">
             Escazú · Santa Ana · La Guácima · Lindora
