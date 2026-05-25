@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShieldCheck, Users, Lock, Network, MapPin, ArrowRight, CheckCircle } from 'lucide-react'
+import { UserCheck, Users, Lock, Network, MapPin, ArrowRight, CheckCircle } from 'lucide-react'
 import { getFeaturedProperties } from '@/lib/supabase/queries'
 import PropertyCard from '@/components/PropertyCard'
 import LeadFormMini from '@/components/lead-form-mini'
@@ -104,11 +104,11 @@ function BuyersJsonLd({ lang }: { lang: string }) {
 
 const PILLARS = [
   {
-    icon: ShieldCheck,
-    titleEn: 'Broker of Record Licensed',
-    titleEs: 'Corredor Titular Licenciado',
-    bodyEn: 'Fully licensed brokerage with legal accountability under Costa Rican law.',
-    bodyEs: 'Corretaje licenciado con responsabilidad legal bajo la ley costarricense.',
+    icon: UserCheck,
+    titleEn: 'Founder-Led & Locally Based',
+    titleEs: 'Liderado por su Fundador, Basado Localmente',
+    bodyEn: "Diego Vargas and team live and work in Costa Rica's Western Corridor. Every client gets direct accountability from the founder — no junior agents, no offshore call centers, no hand-offs.",
+    bodyEs: 'Diego Vargas y su equipo viven y trabajan en el Corredor Oeste de Costa Rica. Cada cliente recibe responsabilidad directa del fundador — sin agentes junior, sin call centers offshore, sin pases de mano.',
   },
   {
     icon: Users,

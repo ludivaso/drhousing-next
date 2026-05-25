@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Camera, Globe, Lock, MapPin, ArrowRight } from 'lucide-react'
+import { Camera, Globe, Lock, MapPin, ArrowRight, Facebook, MessageCircle, Building2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { PropertyRow } from '@/lib/supabase/queries'
 import { getHeroImage } from '@/lib/supabase/queries'
@@ -27,8 +27,8 @@ export async function generateMetadata({
       ? 'Vender Propiedad de Lujo en Costa Rica — Corredor Oeste'
       : 'Sell Your Luxury Property in Costa Rica — Western Corridor',
     description: isEs
-      ? 'Valoración gratuita, producción de medios de lujo y red de compradores internacionales calificados. Corredor licenciado — Escazú, Santa Ana, La Guácima, Lindora.'
-      : 'Free valuation, luxury-grade media production, and a qualified international buyer network. Licensed brokerage — Escazú, Santa Ana, La Guácima, Lindora.',
+      ? 'Valoración gratuita, producción de medios de lujo y red de compradores internacionales calificados. Servicio liderado por su fundador en Escazú, Santa Ana, La Guácima y Lindora.'
+      : 'Free valuation, luxury-grade media production, and a qualified international buyer network. Founder-led service across Escazú, Santa Ana, La Guácima and Lindora.',
     alternates: {
       canonical: `https://drhousing.net/${lang}/sellers`,
       languages: {
@@ -42,8 +42,8 @@ export async function generateMetadata({
         ? 'Vender Propiedad de Lujo en Costa Rica | DR Housing'
         : 'Sell Luxury Property in Costa Rica | DR Housing',
       description: isEs
-        ? 'Alcance internacional, medios de lujo y red de compradores calificados — respaldado por un corretaje licenciado.'
-        : 'International reach, luxury-grade media, and qualified buyer network — backed by a licensed brokerage.',
+        ? 'Alcance internacional, medios de lujo y red de compradores calificados — liderado por su fundador y basado localmente.'
+        : 'International reach, luxury-grade media, and a qualified buyer network — founder-led and locally based.',
       url: `https://drhousing.net/${lang}/sellers`,
       siteName: 'DR Housing',
       locale: isEs ? 'es_CR' : 'en_US',
@@ -147,11 +147,11 @@ const SELLER_PILLARS = [
 // ─── Channels data ────────────────────────────────────────────────────────────
 
 const CHANNELS = [
-  { icon: '🌐', nameEn: 'drhousing.net', nameEs: 'drhousing.net', descEn: 'Own portfolio site', descEs: 'Sitio propio' },
-  { icon: '📘', nameEn: 'Facebook Catalog', nameEs: 'Catálogo de Facebook', descEn: 'Meta Ads targeting', descEs: 'Anuncios Meta' },
-  { icon: '💬', nameEn: 'WhatsApp Business', nameEs: 'WhatsApp Business', descEn: 'Direct buyer catalog', descEs: 'Catálogo directo' },
-  { icon: '🏠', nameEn: 'Encuentra24', nameEs: 'Encuentra24', descEn: "Central America's #1 portal", descEs: 'Portal #1 de Centroamérica' },
-  { icon: '🔒', nameEn: 'Private Buyer List', nameEs: 'Lista Privada de Compradores', descEn: 'Curated qualified buyers', descEs: 'Compradores calificados' },
+  { Icon: Globe,         nameEn: 'drhousing.net',         nameEs: 'drhousing.net',              descEn: 'Own portfolio site',           descEs: 'Sitio propio' },
+  { Icon: Facebook,      nameEn: 'Facebook Catalog',       nameEs: 'Catálogo de Facebook',        descEn: 'Meta Ads targeting',           descEs: 'Anuncios Meta' },
+  { Icon: MessageCircle, nameEn: 'WhatsApp Business',      nameEs: 'WhatsApp Business',           descEn: 'Direct buyer catalog',         descEs: 'Catálogo directo' },
+  { Icon: Building2,     nameEn: 'Encuentra24',            nameEs: 'Encuentra24',                 descEn: "Central America's #1 portal", descEs: 'Portal #1 de Centroamérica' },
+  { Icon: Lock,          nameEn: 'Private Buyer List',     nameEs: 'Lista Privada de Compradores', descEn: 'Curated qualified buyers',    descEs: 'Compradores calificados' },
 ]
 
 // ─── Process steps ────────────────────────────────────────────────────────────
@@ -264,8 +264,8 @@ export default async function SellersPage({ params }: { params: { lang: string }
 
               <p className="text-[#6B6B6B] text-lg leading-relaxed mb-8 font-sans">
                 {isEs
-                  ? 'Alcance internacional, producción de medios de lujo y red de compradores calificados — respaldado por un corretaje licenciado.'
-                  : 'International marketing reach, luxury-grade media, and a qualified buyer network — backed by a fully licensed brokerage.'}
+                  ? 'Alcance internacional, producción de medios de lujo y red de compradores calificados — liderado por su fundador, basado localmente, con responsabilidad directa desde la primera llamada hasta el cierre.'
+                  : 'International marketing reach, luxury-grade media, and a qualified buyer network — founder-led, locally based, accountable from first call to closing.'}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -293,7 +293,7 @@ export default async function SellersPage({ params }: { params: { lang: string }
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-[#E8E3DC]">
                 {[
                   { num: '15+', label: isEs ? 'Años de experiencia' : 'Years of experience' },
-                  { num: '100%', label: isEs ? 'Corretaje licenciado' : 'Licensed brokerage' },
+                  { num: '100%', label: isEs ? 'Liderado por su fundador' : 'Founder-led service' },
                   { num: 'EN/ES', label: isEs ? 'Equipo bilingüe' : 'Bilingual team' },
                 ].map((stat) => (
                   <div key={stat.num} className="text-center">
@@ -380,20 +380,25 @@ export default async function SellersPage({ params }: { params: { lang: string }
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {CHANNELS.map((ch) => (
-              <div
-                key={ch.nameEn}
-                className="bg-card rounded-lg p-5 text-center border border-border shadow-sm"
-              >
-                <div className="text-3xl mb-3">{ch.icon}</div>
-                <h3 className="font-serif text-sm font-semibold text-foreground mb-1">
-                  {isEs ? ch.nameEs : ch.nameEn}
-                </h3>
-                <p className="text-muted-foreground text-xs font-sans">
-                  {isEs ? ch.descEs : ch.descEn}
-                </p>
-              </div>
-            ))}
+            {CHANNELS.map((ch) => {
+              const ChIcon = ch.Icon
+              return (
+                <div
+                  key={ch.nameEn}
+                  className="bg-card rounded-lg p-5 text-center border border-border shadow-sm"
+                >
+                  <div className="flex justify-center mb-3">
+                    <ChIcon className="w-7 h-7 text-[#C9A96E]" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="font-serif text-sm font-semibold text-foreground mb-1">
+                    {isEs ? ch.nameEs : ch.nameEn}
+                  </h3>
+                  <p className="text-muted-foreground text-xs font-sans">
+                    {isEs ? ch.descEs : ch.descEn}
+                  </p>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
