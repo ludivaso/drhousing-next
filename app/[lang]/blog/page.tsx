@@ -52,8 +52,10 @@ type PostCard = {
   image: string | null
 }
 
-function toCard(p: BlogPostRow): PostCard {
-  return { slug: p.slug, title: p.title_es, excerpt: p.excerpt_es, category: p.category, published_at: p.published_at, read_time: null, image: p.featured_image }
+function toCard(p: BlogPostRow, lang: 'en' | 'es'): PostCard {
+  const title   = lang === 'en' ? (p.title_en   ?? p.title_es)   : p.title_es
+  const excerpt = lang === 'en' ? (p.excerpt_en ?? p.excerpt_es) : p.excerpt_es
+  return { slug: p.slug, title, excerpt, category: p.category, published_at: p.published_at, read_time: null, image: p.featured_image }
 }
 
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
@@ -67,7 +69,7 @@ export default async function BlogPage({ params }: { params: { lang: string } })
   const locale = lang === 'es' ? 'es-CR' : 'en-US'
 
   const dbPosts = await getPublishedPosts()
-  const posts: PostCard[] = dbPosts.length > 0 ? dbPosts.map(toCard) : STATIC_POSTS
+  const posts: PostCard[] = dbPosts.length > 0 ? dbPosts.map(p => toCard(p, lang)) : STATIC_POSTS
 
   const [featured, ...rest] = posts
 
