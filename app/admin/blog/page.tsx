@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Plus, Eye, EyeOff, Star, Pencil } from 'lucide-react'
+import { Plus, Eye, EyeOff, Pencil } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 async function getAllPosts() {
@@ -7,7 +7,7 @@ async function getAllPosts() {
     const admin = createAdminClient()
     const { data, error } = await (admin as any)
       .from('blog_posts')
-      .select('id,slug,title,category,published,featured,published_at,created_at,image,read_time')
+      .select('id,slug,title_es,category,status,published_at,created_at,featured_image')
       .order('created_at', { ascending: false })
     if (error) return null
     return data ?? []
@@ -112,8 +112,7 @@ CREATE POLICY "Auth full access"
                 <tr key={post.id} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      {post.featured && <Star className="w-3.5 h-3.5 text-gold flex-shrink-0" />}
-                      <span className="font-medium line-clamp-1">{post.title}</span>
+                      <span className="font-medium line-clamp-1">{post.title_es}</span>
                     </div>
                     <span className="text-xs text-muted-foreground font-mono">/blog/{post.slug}</span>
                   </td>
@@ -122,7 +121,7 @@ CREATE POLICY "Auth full access"
                     {new Date(post.published_at ?? post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </td>
                   <td className="px-4 py-3">
-                    {post.published
+                    {post.status === 'published'
                       ? <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full"><Eye className="w-3 h-3" /> Live</span>
                       : <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted border border-border px-2 py-0.5 rounded-full"><EyeOff className="w-3 h-3" /> Draft</span>
                     }

@@ -18,9 +18,9 @@ export async function generateMetadata({ params }: { params: { lang: string; slu
   const lang = params.lang === 'es' ? 'es' : 'en'
   const dbPost = await getPublishedPostBySlug(params.slug)
   if (dbPost) {
-    const title = lang === 'en' ? (dbPost.title_en ?? dbPost.title) : dbPost.title
-    const description = lang === 'en' ? (dbPost.excerpt_en ?? dbPost.excerpt ?? title) : (dbPost.excerpt ?? title)
-    return { title, description, openGraph: { title, images: dbPost.image ? [{ url: dbPost.image }] : [] } }
+    const title = lang === 'en' ? (dbPost.title_en ?? dbPost.title_es) : dbPost.title_es
+    const description = lang === 'en' ? (dbPost.excerpt_en ?? dbPost.excerpt_es ?? title) : (dbPost.excerpt_es ?? title)
+    return { title, description, openGraph: { title, images: dbPost.featured_image ? [{ url: dbPost.featured_image }] : [] } }
   }
   const staticPost = POSTS_BY_SLUG[params.slug]
   if (staticPost) return { title: staticPost.title, description: staticPost.title, openGraph: { title: staticPost.title, images: [{ url: staticPost.image }] } }
@@ -34,17 +34,17 @@ export default async function BlogPostPage({ params }: { params: { lang: string;
     // Normalise to the shape BlogPostClient expects
     const post = {
       slug:       dbPost.slug,
-      title:      dbPost.title,
-      titleEn:    dbPost.title_en  ?? dbPost.title,
+      title:      dbPost.title_es,
+      titleEn:    dbPost.title_en       ?? dbPost.title_es,
       category:   dbPost.category,
-      categoryEn: dbPost.category_en ?? dbPost.category,
-      date:       dbPost.published_at ?? dbPost.created_at,
-      readTime:   dbPost.read_time ?? '5 min',
-      image:      dbPost.image ?? '/hero-costa-rica.jpg',
-      content:    dbPost.content    ?? '',
-      contentEn:  dbPost.content_en ?? dbPost.content ?? '',
-      excerpt:    dbPost.excerpt    ?? '',
-      excerptEn:  dbPost.excerpt_en ?? dbPost.excerpt ?? '',
+      categoryEn: dbPost.category,
+      date:       dbPost.published_at   ?? dbPost.created_at,
+      readTime:   '5 min',
+      image:      dbPost.featured_image ?? '/hero-costa-rica.jpg',
+      content:    dbPost.body_es        ?? '',
+      contentEn:  dbPost.body_en        ?? dbPost.body_es ?? '',
+      excerpt:    dbPost.excerpt_es     ?? '',
+      excerptEn:  dbPost.excerpt_en     ?? dbPost.excerpt_es ?? '',
     }
     return <BlogPostClient post={post} />
   }

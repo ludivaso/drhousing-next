@@ -53,7 +53,7 @@ type PostCard = {
 }
 
 function toCard(p: BlogPostRow): PostCard {
-  return { slug: p.slug, title: p.title, excerpt: p.excerpt, category: p.category, published_at: p.published_at, read_time: p.read_time, image: p.image }
+  return { slug: p.slug, title: p.title_es, excerpt: p.excerpt_es, category: p.category, published_at: p.published_at, read_time: null, image: p.featured_image }
 }
 
 export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {

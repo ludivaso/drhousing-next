@@ -27,7 +27,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       .update({
         ...body,
         updated_at: new Date().toISOString(),
-        published_at: body.published
+        published_at: body.status === 'published'
           ? (body.published_at ?? new Date().toISOString())
           : null,
       })

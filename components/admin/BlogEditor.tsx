@@ -30,19 +30,19 @@ export default function BlogEditor({ post }: Props) {
   const isNew = !post?.id
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const [slug,       setSlug]       = useState(post?.slug       ?? '')
-  const [title,      setTitle]      = useState(post?.title      ?? '')
-  const [titleEn,    setTitleEn]    = useState(post?.title_en   ?? '')
-  const [excerpt,    setExcerpt]    = useState(post?.excerpt     ?? '')
-  const [excerptEn,  setExcerptEn]  = useState(post?.excerpt_en ?? '')
-  const [content,    setContent]    = useState(post?.content    ?? '')
-  const [contentEn,  setContentEn]  = useState(post?.content_en ?? '')
-  const [category,   setCategory]   = useState(post?.category   ?? '')
-  const [categoryEn, setCategoryEn] = useState(post?.category_en ?? '')
-  const [image,      setImage]      = useState(post?.image      ?? '')
-  const [readTime,   setReadTime]   = useState(post?.read_time  ?? '5 min')
-  const [published,  setPublished]  = useState(post?.published  ?? false)
-  const [featured,   setFeatured]   = useState(post?.featured   ?? false)
+  const [slug,       setSlug]       = useState(post?.slug           ?? '')
+  const [title,      setTitle]      = useState(post?.title_es       ?? '')
+  const [titleEn,    setTitleEn]    = useState(post?.title_en       ?? '')
+  const [excerpt,    setExcerpt]    = useState(post?.excerpt_es     ?? '')
+  const [excerptEn,  setExcerptEn]  = useState(post?.excerpt_en     ?? '')
+  const [content,    setContent]    = useState(post?.body_es        ?? '')
+  const [contentEn,  setContentEn]  = useState(post?.body_en        ?? '')
+  const [category,   setCategory]   = useState(post?.category       ?? '')
+  const [categoryEn, setCategoryEn] = useState('')
+  const [image,      setImage]      = useState(post?.featured_image ?? '')
+  const [readTime,   setReadTime]   = useState('5 min')
+  const [published,  setPublished]  = useState(post?.status === 'published')
+  const [featured,   setFeatured]   = useState(false)
   const [uploading,  setUploading]  = useState(false)
   const [saving,     setSaving]     = useState(false)
   const [deleting,   setDeleting]   = useState(false)
@@ -60,25 +60,22 @@ export default function BlogEditor({ post }: Props) {
 
   const payload = () => ({
     slug,
-    title,
-    title_en:    titleEn   || null,
-    excerpt:     excerpt   || null,
-    excerpt_en:  excerptEn || null,
-    content:     content   || null,
-    content_en:  contentEn || null,
-    category:    category  || 'General',
-    category_en: categoryEn || null,
-    image:       image     || '/hero-costa-rica.jpg',
-    read_time:   readTime  || '5 min',
-    published,
-    featured,
+    title_es:       title     || '',
+    title_en:       titleEn   || null,
+    excerpt_es:     excerpt   || null,
+    excerpt_en:     excerptEn || null,
+    body_es:        content   || null,
+    body_en:        contentEn || null,
+    category:       category  || 'General',
+    featured_image: image     || '/hero-costa-rica.jpg',
+    status:         published ? 'published' : 'draft',
   })
 
   const save = async (pub?: boolean) => {
     if (!slug || !title) { setMsg({ text: 'Slug and Spanish title are required.', ok: false }); return }
     setSaving(true)
     setMsg(null)
-    const data = { ...payload(), published: pub ?? published }
+    const data = { ...payload(), status: (pub ?? published) ? 'published' : 'draft' }
     try {
       const url  = isNew ? '/api/admin/blog' : `/api/admin/blog/${post.id}`
       const method = isNew ? 'POST' : 'PUT'

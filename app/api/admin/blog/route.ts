@@ -7,7 +7,7 @@ export async function GET() {
     const admin = createAdminClient()
     const { data, error } = await (admin as any)
       .from('blog_posts')
-      .select('id,slug,title,title_en,category,published,featured,published_at,created_at,image,read_time')
+      .select('id,slug,title_es,title_en,category,status,published_at,created_at,featured_image')
       .order('created_at', { ascending: false })
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json(data ?? [])
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       .insert([{
         ...body,
         updated_at: new Date().toISOString(),
-        published_at: body.published ? (body.published_at ?? new Date().toISOString()) : null,
+        published_at: body.status === 'published' ? (body.published_at ?? new Date().toISOString()) : null,
       }])
       .select()
       .single()

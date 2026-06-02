@@ -1,19 +1,17 @@
 export type BlogPostRow = {
   id: string
   slug: string
-  title: string
+  title_es: string
   title_en: string | null
-  excerpt: string | null
+  excerpt_es: string | null
   excerpt_en: string | null
-  content: string | null
-  content_en: string | null
+  body_es: string | null
+  body_en: string | null
   category: string
-  category_en: string | null
-  image: string | null
-  author: string | null
-  read_time: string | null
-  published: boolean
-  featured: boolean
+  featured_image: string | null
+  author_name: string | null
+  tags: string[] | null
+  status: string
   published_at: string | null
   created_at: string
   updated_at: string
@@ -30,7 +28,7 @@ export async function getPublishedPosts(): Promise<BlogPostRow[]> {
   if (!url || !key) return []
   try {
     const res = await fetch(
-      `${url}/rest/v1/blog_posts?published=eq.true&order=published_at.desc,created_at.desc`,
+      `${url}/rest/v1/blog_posts?status=eq.published&order=published_at.desc,created_at.desc`,
       {
         headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: 'application/json' },
         cache: 'no-store',
@@ -50,7 +48,7 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPostRow 
   if (!url || !key) return null
   try {
     const res = await fetch(
-      `${url}/rest/v1/blog_posts?slug=eq.${encodeURIComponent(slug)}&published=eq.true&limit=1`,
+      `${url}/rest/v1/blog_posts?slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`,
       {
         headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: 'application/json' },
         cache: 'no-store',
@@ -70,7 +68,7 @@ export async function getPublishedSlugs(): Promise<string[]> {
   if (!url || !key) return []
   try {
     const res = await fetch(
-      `${url}/rest/v1/blog_posts?published=eq.true&select=slug`,
+      `${url}/rest/v1/blog_posts?status=eq.published&select=slug`,
       {
         headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: 'application/json' },
         cache: 'no-store',
