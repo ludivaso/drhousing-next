@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, Trash2, Eye, EyeOff, Upload, AlertCircle, CheckCircle2, Star } from 'lucide-react'
+import { Save, Trash2, Eye, EyeOff, Upload, AlertCircle, CheckCircle2, Star, ChevronDown, ChevronUp, Wand2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { BlogPostRow } from '@/lib/supabase/blog'
 
@@ -47,13 +47,16 @@ export default function BlogEditor({ post }: Props) {
   const [saving,     setSaving]     = useState(false)
   const [deleting,   setDeleting]   = useState(false)
   const [msg,        setMsg]        = useState<{ text: string; ok: boolean } | null>(null)
+  const [aiRaw,      setAiRaw]      = useState('')
+  const [aiOpen,     setAiOpen]     = useState(false)
+  const [aiMsg,      setAiMsg]      = useState<string | null>(null)
   const [contentTab, setContentTab] = useState<Lang>('es')
   const [preview,    setPreview]    = useState(false)
 
-  const handleTitleChange = (v: string) => {
+  const handleTitleChange = useCallback((v: string) => {
     setTitle(v)
     if (isNew) setSlug(slugify(v))
-  }
+  }, [isNew])
 
   const payload = () => ({
     slug,
@@ -127,6 +130,47 @@ export default function BlogEditor({ post }: Props) {
   const activeContent = contentTab === 'es' ? content : contentEn
   const setActiveContent = contentTab === 'es' ? setContent : setContentEn
 
+  const parseAndFill = useCallback(() => {
+    const MARKERS = [
+      'TITLE_EN','TITLE_ES','SLUG','CATEGORY_EN','CATEGORY_ES',
+      'STATUS','EXCERPT_EN','EXCERPT_ES','BODY_EN','BODY_ES','READ_TIME',
+    ]
+    const sections: Record<string, string> = {}
+    let lastMarker: string | null = null
+    let lastIndex = 0
+    const re = new RegExp(`\\[(${MARKERS.join('|')})\\]`, 'g')
+    let match: RegExpExecArray | null
+    while ((match = re.exec(aiRaw)) !== null) {
+      if (lastMarker !== null) {
+        sections[lastMarker] = aiRaw.slice(lastIndex, match.index).trim()
+      }
+      lastMarker = match[1]
+      lastIndex = match.index + match[0].length
+    }
+    if (lastMarker !== null) {
+      sections[lastMarker] = aiRaw.slice(lastIndex).trim()
+    }
+
+    if (Object.keys(sections).length === 0) {
+      setAiMsg('No recognized markers found.')
+      return
+    }
+
+    if (sections.TITLE_ES    !== undefined) handleTitleChange(sections.TITLE_ES)
+    if (sections.TITLE_EN    !== undefined) setTitleEn(sections.TITLE_EN)
+    if (sections.SLUG        !== undefined) setSlug(sections.SLUG)
+    if (sections.CATEGORY_ES !== undefined) setCategory(sections.CATEGORY_ES)
+    if (sections.CATEGORY_EN !== undefined) setCategoryEn(sections.CATEGORY_EN)
+    if (sections.STATUS      !== undefined) setPublished(sections.STATUS.trim().toLowerCase() === 'published')
+    if (sections.EXCERPT_ES  !== undefined) setExcerpt(sections.EXCERPT_ES)
+    if (sections.EXCERPT_EN  !== undefined) setExcerptEn(sections.EXCERPT_EN)
+    if (sections.BODY_ES     !== undefined) setContent(sections.BODY_ES)
+    if (sections.BODY_EN     !== undefined) setContentEn(sections.BODY_EN)
+    if (sections.READ_TIME   !== undefined) setReadTime(sections.READ_TIME)
+
+    setAiMsg('Fields populated — review and save')
+  }, [aiRaw, handleTitleChange])
+
   return (
     <div className="max-w-4xl space-y-8 pb-16">
       {/* Header */}
@@ -176,6 +220,54 @@ export default function BlogEditor({ post }: Props) {
           {msg.text}
         </div>
       )}
+
+      {/* ── AI Quick Fill ── */}
+      <section className="card-elevated overflow-hidden">
+        <button
+          type="button"
+          onClick={() => { setAiOpen(o => !o); setAiMsg(null) }}
+          className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-secondary/50 transition-colors"
+        >
+          <span className="flex items-center gap-2 font-serif text-base font-semibold">
+            <Wand2 className="w-4 h-4 text-primary" />
+            AI Quick Fill
+          </span>
+          {aiOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+        </button>
+        {aiOpen && (
+          <div className="px-6 pb-6 space-y-3 border-t border-border">
+            <p className="text-xs text-muted-foreground pt-4">
+              Paste AI-generated output below. Use markers like <code className="font-mono bg-secondary px-1 rounded">[TITLE_ES]</code> to delimit sections.
+            </p>
+            <textarea
+              className={`${FIELD} min-h-[180px] font-mono text-xs leading-relaxed resize-y`}
+              value={aiRaw}
+              onChange={(e) => { setAiRaw(e.target.value); setAiMsg(null) }}
+              placeholder={'[TITLE_ES]\nTítulo aquí\n\n[TITLE_EN]\nTitle here\n\n[BODY_ES]\n## Contenido…'}
+            />
+            {aiMsg && (
+              <p className="text-xs text-primary font-medium">{aiMsg}</p>
+            )}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={parseAndFill}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90 transition-colors"
+              >
+                <Wand2 className="w-3.5 h-3.5" />
+                Parse &amp; Fill
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAiRaw(''); setAiMsg(null) }}
+                className="px-4 py-2 border border-border rounded text-sm hover:bg-secondary transition-colors"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
 
       {/* ── Meta ── */}
       <section className="card-elevated p-6 space-y-5">
