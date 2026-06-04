@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Phone, Mail, MessageCircle, Search, Archive, Loader2, ChevronDown } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { waLink } from '@/lib/utils/waLink'
 
 type Lead = {
   id: string
@@ -146,26 +147,35 @@ export default function AdminLeads() {
 
                   <div className="flex items-center gap-2 shrink-0">
                     {lead.phone && (
-                      <>
-                        <a
-                          href={`tel:${lead.phone}`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="p-1.5 rounded border border-border text-muted-foreground hover:text-primary hover:border-primary transition-colors"
-                          title="Llamar"
-                        >
-                          <Phone className="w-4 h-4" />
-                        </a>
-                        <a
-                          href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`}
-                          target="_blank"
-                          onClick={(e) => e.stopPropagation()}
-                          className="p-1.5 rounded border border-border text-muted-foreground hover:text-green-600 hover:border-green-400 transition-colors"
-                          title="WhatsApp"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                        </a>
-                      </>
+                      <a
+                        href={`tel:${lead.phone}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="p-1.5 rounded border border-border text-muted-foreground hover:text-primary hover:border-primary transition-colors"
+                        title="Llamar"
+                      >
+                        <Phone className="w-4 h-4" />
+                      </a>
                     )}
+                    {(() => {
+                      const url = waLink(lead.phone)
+                      return url
+                        ? (
+                            <a
+                              href={url}
+                              target="_blank"
+                              onClick={(e) => e.stopPropagation()}
+                              className="p-1.5 rounded border border-border text-muted-foreground hover:text-green-600 hover:border-green-400 transition-colors"
+                              title="WhatsApp"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                            </a>
+                          )
+                        : (
+                            <span className="p-1.5 text-xs text-muted-foreground" title="Sin teléfono">
+                              Sin teléfono
+                            </span>
+                          )
+                    })()}
                     <a
                       href={`mailto:${lead.email}`}
                       onClick={(e) => e.stopPropagation()}

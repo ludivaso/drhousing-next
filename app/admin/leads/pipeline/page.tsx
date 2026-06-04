@@ -18,6 +18,7 @@ import {
   ExternalLink, User, Calendar, DollarSign, MapPin, GripVertical
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { waLink } from '@/lib/utils/waLink'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 type LeadStatus = 'new' | 'contacted' | 'viewing' | 'offer' | 'closed' | 'lost'
@@ -78,7 +79,7 @@ function LeadCard({
     opacity: isDragging ? 0.4 : 1,
   }
 
-  const waText = encodeURIComponent(`Hola ${lead.full_name}, le contactamos de DR Housing en relación a su consulta inmobiliaria.`)
+  const waUrl = waLink(lead.phone, `Hola ${lead.full_name}, le contactamos de DR Housing en relación a su consulta inmobiliaria.`)
 
   return (
     <div
@@ -135,16 +136,19 @@ function LeadCard({
         <a href={`mailto:${lead.email}`} className="text-muted-foreground hover:text-primary transition-colors">
           <Mail className="w-3.5 h-3.5" />
         </a>
-        {lead.phone && (
-          <a
-            href={`https://wa.me/50686540888?text=${waText}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-[#25D366] transition-colors"
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-          </a>
-        )}
+        {waUrl
+          ? (
+              <a
+                href={waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-[#25D366] transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+              </a>
+            )
+          : <span className="text-xs text-muted-foreground">Sin teléfono</span>
+        }
       </div>
     </div>
   )
@@ -176,7 +180,7 @@ function LeadDetailPanel({
     if (data) onUpdate({ ...lead, notes, status })
   }
 
-  const waText = encodeURIComponent(`Hola ${lead.full_name}, le contactamos de DR Housing en relación a su consulta inmobiliaria.`)
+  const waUrl = waLink(lead.phone, `Hola ${lead.full_name}, le contactamos de DR Housing en relación a su consulta inmobiliaria.`)
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-end" onClick={onClose}>
@@ -219,22 +223,30 @@ function LeadDetailPanel({
               {lead.email}
             </a>
             {lead.phone && (
-              <>
-                <a href={`tel:${lead.phone.replace(/\s|-/g,'')}`} className="flex items-center gap-3 text-sm text-foreground hover:text-primary transition-colors">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
-                  {lead.phone}
-                </a>
-                <a
-                  href={`https://wa.me/50686540888?text=${waText}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-sm text-[#25D366] hover:underline"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  WhatsApp
-                </a>
-              </>
+              <a href={`tel:${lead.phone.replace(/\s|-/g,'')}`} className="flex items-center gap-3 text-sm text-foreground hover:text-primary transition-colors">
+                <Phone className="w-4 h-4 text-muted-foreground" />
+                {lead.phone}
+              </a>
             )}
+            {waUrl
+              ? (
+                  <a
+                    href={waUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-sm text-[#25D366] hover:underline"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    WhatsApp
+                  </a>
+                )
+              : (
+                  <span className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <MessageCircle className="w-4 h-4" />
+                    Sin teléfono
+                  </span>
+                )
+            }
           </div>
 
           {/* Lead details */}
