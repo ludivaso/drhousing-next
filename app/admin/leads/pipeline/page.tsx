@@ -7,6 +7,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
   type DragStartEvent,
   type DragEndEvent,
 } from '@dnd-kit/core'
@@ -347,6 +348,56 @@ function LeadDetailPanel({
   )
 }
 
+// ─── Droppable Column ───────────────────────────────────────────────────────
+function DroppableColumn({
+  col,
+  colLeads,
+  activeLead,
+  onCardClick,
+  onMarkSpam,
+}: {
+  col: Column
+  colLeads: Lead[]
+  activeLead: Lead | null
+  onCardClick: (lead: Lead) => void
+  onMarkSpam: (id: string, isSpam: boolean) => void
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: col.id })
+
+  return (
+    <div className="flex-shrink-0 w-64">
+      <div className={`flex items-center justify-between px-3 py-2 rounded-t-lg border ${col.bg} mb-2`}>
+        <span className={`text-xs font-semibold uppercase tracking-wide ${col.color}`}>
+          {col.label}
+        </span>
+        <span className={`text-xs font-bold ${col.color}`}>{colLeads.length}</span>
+      </div>
+
+      <SortableContext items={colLeads.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+        <div
+          ref={setNodeRef}
+          className={`space-y-2 min-h-[200px] rounded-b-lg transition-colors ${isOver ? 'bg-primary/5 ring-1 ring-primary/20' : ''}`}
+        >
+          {colLeads.map((lead) => (
+            <LeadCard
+              key={lead.id}
+              lead={lead}
+              onClick={() => onCardClick(lead)}
+              onMarkSpam={onMarkSpam}
+              isDragging={activeLead?.id === lead.id}
+            />
+          ))}
+          {colLeads.length === 0 && (
+            <div className="border-2 border-dashed border-border rounded-lg h-24 flex items-center justify-center">
+              <span className="text-xs text-muted-foreground">Vacío</span>
+            </div>
+          )}
+        </div>
+      </SortableContext>
+    </div>
+  )
+}
+
 // ─── Main Pipeline Page ──────────────────────────────────────────────────────
 export default function LeadsPipelinePage() {
   const [leads, setLeads] = useState<Lead[]>([])
@@ -382,10 +433,17 @@ export default function LeadsPipelinePage() {
     if (!over) return
 
     const leadId = active.id as string
-    const targetStatus = over.id as LeadStatus
 
-    // Only update if dropped on a column header (a valid status id)
-    if (!COLUMNS.find((c) => c.id === targetStatus)) return
+    // over.id is either a column status (dropped on the column droppable)
+    // or a card UUID (dropped on top of another card — resolve to that card's column)
+    let targetStatus: LeadStatus
+    if (COLUMNS.find((c) => c.id === over.id)) {
+      targetStatus = over.id as LeadStatus
+    } else {
+      const overLead = leads.find((l) => l.id === over.id)
+      if (!overLead) return
+      targetStatus = overLead.status
+    }
 
     const lead = leads.find((l) => l.id === leadId)
     if (!lead || lead.status === targetStatus) return
@@ -450,45 +508,16 @@ export default function LeadsPipelinePage() {
 
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex gap-4 overflow-x-auto pb-6 min-h-[calc(100vh-200px)]">
-          {COLUMNS.map((col) => {
-            const colLeads = grouped[col.id] ?? []
-            return (
-              <div key={col.id} className="flex-shrink-0 w-64">
-                {/* Column header — also a drop target */}
-                <div
-                  id={col.id}
-                  className={`flex items-center justify-between px-3 py-2 rounded-t-lg border ${col.bg} mb-2`}
-                >
-                  <span className={`text-xs font-semibold uppercase tracking-wide ${col.color}`}>
-                    {col.label}
-                  </span>
-                  <span className={`text-xs font-bold ${col.color}`}>{colLeads.length}</span>
-                </div>
-
-                <SortableContext
-                  items={colLeads.map((l) => l.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-2 min-h-[200px]">
-                    {colLeads.map((lead) => (
-                      <LeadCard
-                        key={lead.id}
-                        lead={lead}
-                        onClick={() => setSelectedLead(lead)}
-                        onMarkSpam={handleMarkSpam}
-                        isDragging={activeLead?.id === lead.id}
-                      />
-                    ))}
-                    {colLeads.length === 0 && (
-                      <div className="border-2 border-dashed border-border rounded-lg h-24 flex items-center justify-center">
-                        <span className="text-xs text-muted-foreground">Vacío</span>
-                      </div>
-                    )}
-                  </div>
-                </SortableContext>
-              </div>
-            )
-          })}
+          {COLUMNS.map((col) => (
+            <DroppableColumn
+              key={col.id}
+              col={col}
+              colLeads={grouped[col.id] ?? []}
+              activeLead={activeLead}
+              onCardClick={setSelectedLead}
+              onMarkSpam={handleMarkSpam}
+            />
+          ))}
         </div>
 
         <DragOverlay>
