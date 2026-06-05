@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Phone, Mail, MessageCircle, Search, Archive, Loader2, ChevronDown } from 'lucide-react'
+import { Phone, Mail, MessageCircle, Search, Loader2, ChevronDown, Ban, ShieldCheck } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
-import { waLink } from '@/lib/utils/waLink'
+import { waLink, buildLeadMessage } from '@/lib/utils/waLink'
 
 type Lead = {
   id: string
@@ -21,6 +21,8 @@ type Lead = {
   budget_max: number | null
   created_at: string
   source: string | null
+  is_spam: boolean
+  notes: string | null
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -45,6 +47,7 @@ export default function AdminLeads() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [showSpam, setShowSpam] = useState(false)
 
   useEffect(() => {
     loadLeads()
@@ -64,7 +67,13 @@ export default function AdminLeads() {
     setLeads((prev) => prev.map((l) => l.id === id ? { ...l, status } : l))
   }
 
+  async function handleMarkSpam(id: string, isSpam: boolean) {
+    await (supabase as any).from('leads').update({ is_spam: isSpam }).eq('id', id)
+    setLeads((prev) => prev.map((l) => l.id === id ? { ...l, is_spam: isSpam } : l))
+  }
+
   const filtered = leads.filter((l) => {
+    if (showSpam ? !l.is_spam : l.is_spam) return false
     const matchSearch =
       l.full_name.toLowerCase().includes(search.toLowerCase()) ||
       l.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -78,8 +87,15 @@ export default function AdminLeads() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="font-serif text-3xl font-semibold">Leads</h1>
-          <p className="text-muted-foreground text-sm mt-1">{filtered.length} de {leads.length} leads</p>
+          <p className="text-muted-foreground text-sm mt-1">{filtered.length} de {leads.filter((l) => showSpam ? l.is_spam : !l.is_spam).length} leads{showSpam ? ' (spam)' : ''}</p>
         </div>
+        <button
+          onClick={() => setShowSpam((s) => !s)}
+          className={`flex items-center gap-1.5 text-sm transition-colors ${showSpam ? 'text-red-500 font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          {showSpam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+          {showSpam ? 'Ocultar spam' : 'Ver spam'}
+        </button>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -157,7 +173,7 @@ export default function AdminLeads() {
                       </a>
                     )}
                     {(() => {
-                      const url = waLink(lead.phone)
+                      const url = waLink(lead.phone, buildLeadMessage(lead.full_name, lead.notes))
                       return url
                         ? (
                             <a
@@ -194,6 +210,13 @@ export default function AdminLeads() {
                         <option key={v} value={v}>{label}</option>
                       ))}
                     </select>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleMarkSpam(lead.id, !lead.is_spam) }}
+                      className={`p-1.5 rounded border transition-colors ${lead.is_spam ? 'border-red-300 text-red-500 hover:text-muted-foreground hover:border-border' : 'border-border text-muted-foreground hover:text-red-500 hover:border-red-300'}`}
+                      title={lead.is_spam ? 'Quitar spam' : 'Marcar como spam'}
+                    >
+                      {lead.is_spam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+                    </button>
                     <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expandedId === lead.id ? 'rotate-180' : ''}`} />
                   </div>
                 </div>

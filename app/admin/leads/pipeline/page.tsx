@@ -15,10 +15,10 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
   Phone, Mail, MessageCircle, X, Save, Loader2,
-  ExternalLink, User, Calendar, DollarSign, MapPin, GripVertical
+  ExternalLink, User, Calendar, DollarSign, MapPin, GripVertical, Ban, ShieldCheck
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
-import { waLink } from '@/lib/utils/waLink'
+import { waLink, buildLeadMessage } from '@/lib/utils/waLink'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 type LeadStatus = 'new' | 'contacted' | 'viewing' | 'offer' | 'closed' | 'lost'
@@ -41,6 +41,7 @@ type Lead = {
   created_at: string
   property_id: string | null
   preferred_contact_method: string | null
+  is_spam: boolean
 }
 
 type Column = {
@@ -66,10 +67,12 @@ const fmt = (n: number) =>
 function LeadCard({
   lead,
   onClick,
+  onMarkSpam,
   isDragging = false,
 }: {
   lead: Lead
   onClick: () => void
+  onMarkSpam: (id: string, isSpam: boolean) => void
   isDragging?: boolean
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: lead.id })
@@ -79,7 +82,7 @@ function LeadCard({
     opacity: isDragging ? 0.4 : 1,
   }
 
-  const waUrl = waLink(lead.phone, `Hola ${lead.full_name}, le contactamos de DR Housing en relación a su consulta inmobiliaria.`)
+  const waUrl = waLink(lead.phone, buildLeadMessage(lead.full_name, lead.notes))
 
   return (
     <div
@@ -149,6 +152,13 @@ function LeadCard({
             )
           : <span className="text-xs text-muted-foreground">Sin teléfono</span>
         }
+        <button
+          onClick={(e) => { e.stopPropagation(); onMarkSpam(lead.id, !lead.is_spam) }}
+          className="text-muted-foreground/40 hover:text-red-500 transition-colors"
+          title={lead.is_spam ? 'Quitar spam' : 'Marcar como spam'}
+        >
+          {lead.is_spam ? <ShieldCheck className="w-3.5 h-3.5" /> : <Ban className="w-3.5 h-3.5" />}
+        </button>
       </div>
     </div>
   )
@@ -159,10 +169,12 @@ function LeadDetailPanel({
   lead,
   onClose,
   onUpdate,
+  onMarkSpam,
 }: {
   lead: Lead
   onClose: () => void
   onUpdate: (updated: Lead) => void
+  onMarkSpam: (id: string, isSpam: boolean) => void
 }) {
   const [notes, setNotes] = useState(lead.notes ?? '')
   const [status, setStatus] = useState<LeadStatus>(lead.status)
@@ -180,7 +192,7 @@ function LeadDetailPanel({
     if (data) onUpdate({ ...lead, notes, status })
   }
 
-  const waUrl = waLink(lead.phone, `Hola ${lead.full_name}, le contactamos de DR Housing en relación a su consulta inmobiliaria.`)
+  const waUrl = waLink(lead.phone, buildLeadMessage(lead.full_name, lead.notes))
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-end" onClick={onClose}>
@@ -247,6 +259,13 @@ function LeadDetailPanel({
                   </span>
                 )
             }
+            <button
+              onClick={() => onMarkSpam(lead.id, !lead.is_spam)}
+              className={`flex items-center gap-3 text-sm transition-colors ${lead.is_spam ? 'text-red-500 hover:text-muted-foreground' : 'text-muted-foreground hover:text-red-500'}`}
+            >
+              {lead.is_spam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+              {lead.is_spam ? 'Quitar spam' : 'Marcar como spam'}
+            </button>
           </div>
 
           {/* Lead details */}
@@ -334,6 +353,7 @@ export default function LeadsPipelinePage() {
   const [loading, setLoading] = useState(true)
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [activeLead, setActiveLead] = useState<Lead | null>(null)
+  const [showSpam, setShowSpam] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -381,8 +401,16 @@ export default function LeadsPipelinePage() {
     setSelectedLead(updated)
   }
 
+  const handleMarkSpam = useCallback(async (id: string, isSpam: boolean) => {
+    await supabase.from('leads').update({ is_spam: isSpam }).eq('id', id)
+    setLeads((prev) => prev.map((l) => l.id === id ? { ...l, is_spam: isSpam } : l))
+    setSelectedLead((prev) => prev?.id === id ? { ...prev, is_spam: isSpam } : prev)
+  }, [])
+
+  const visibleLeads = leads.filter((l) => showSpam ? l.is_spam : !l.is_spam)
+
   const grouped = COLUMNS.reduce((acc, col) => {
-    acc[col.id] = leads.filter((l) => l.status === col.id)
+    acc[col.id] = visibleLeads.filter((l) => l.status === col.id)
     return acc
   }, {} as Record<LeadStatus, Lead[]>)
 
@@ -399,14 +427,25 @@ export default function LeadsPipelinePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-serif text-2xl font-semibold text-foreground">Pipeline de Leads</h1>
-          <p className="text-sm text-muted-foreground mt-1">{leads.length} leads · Arrastre para cambiar estado</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {visibleLeads.length} leads{showSpam ? ' (spam)' : ''} · Arrastre para cambiar estado
+          </p>
         </div>
-        <a
-          href="/admin/leads"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-        >
-          <User className="w-4 h-4" /> Vista de tabla
-        </a>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowSpam((s) => !s)}
+            className={`flex items-center gap-1.5 text-sm transition-colors ${showSpam ? 'text-red-500 font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            {showSpam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+            {showSpam ? 'Ocultar spam' : 'Ver spam'}
+          </button>
+          <a
+            href="/admin/leads"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+          >
+            <User className="w-4 h-4" /> Vista de tabla
+          </a>
+        </div>
       </div>
 
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -436,6 +475,7 @@ export default function LeadsPipelinePage() {
                         key={lead.id}
                         lead={lead}
                         onClick={() => setSelectedLead(lead)}
+                        onMarkSpam={handleMarkSpam}
                         isDragging={activeLead?.id === lead.id}
                       />
                     ))}
@@ -454,7 +494,7 @@ export default function LeadsPipelinePage() {
         <DragOverlay>
           {activeLead && (
             <div className="rotate-2 opacity-90 shadow-2xl">
-              <LeadCard lead={activeLead} onClick={() => {}} />
+              <LeadCard lead={activeLead} onClick={() => {}} onMarkSpam={() => {}} />
             </div>
           )}
         </DragOverlay>
@@ -465,6 +505,7 @@ export default function LeadsPipelinePage() {
           lead={selectedLead}
           onClose={() => setSelectedLead(null)}
           onUpdate={handleLeadUpdate}
+          onMarkSpam={handleMarkSpam}
         />
       )}
     </div>
