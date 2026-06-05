@@ -16,7 +16,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
   Phone, Mail, MessageCircle, X, Save, Loader2,
-  ExternalLink, User, Calendar, DollarSign, MapPin, GripVertical, Ban, ShieldCheck
+  ExternalLink, User, Calendar, DollarSign, MapPin, GripVertical, Ban, ShieldCheck, Star, Pencil
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { waLink, buildLeadMessage } from '@/lib/utils/waLink'
@@ -43,6 +43,11 @@ type Lead = {
   property_id: string | null
   preferred_contact_method: string | null
   is_spam: boolean
+  second_full_name: string | null
+  second_email: string | null
+  second_phone: string | null
+  primary_phone: string | null
+  primary_email: string | null
 }
 
 type Column = {
@@ -83,7 +88,8 @@ function LeadCard({
     opacity: isDragging ? 0.4 : 1,
   }
 
-  const waUrl = waLink(lead.phone, buildLeadMessage(lead.full_name, lead.notes))
+  const waPhone = lead.primary_phone === 'second_phone' ? (lead.second_phone ?? lead.phone) : lead.phone
+  const waUrl = waLink(waPhone, buildLeadMessage(lead.full_name, lead.notes))
 
   return (
     <div
@@ -180,20 +186,59 @@ function LeadDetailPanel({
   const [notes, setNotes] = useState(lead.notes ?? '')
   const [status, setStatus] = useState<LeadStatus>(lead.status)
   const [saving, setSaving] = useState(false)
+  const [editMode, setEditMode] = useState(false)
+  const [fullName, setFullName] = useState(lead.full_name)
+  const [email, setEmail] = useState(lead.email)
+  const [phone, setPhone] = useState(lead.phone ?? '')
+  const [secondName, setSecondName] = useState(lead.second_full_name ?? '')
+  const [secondEmail, setSecondEmail] = useState(lead.second_email ?? '')
+  const [secondPhone, setSecondPhone] = useState(lead.second_phone ?? '')
+  const [primaryPhone, setPrimaryPhone] = useState<string | null>(lead.primary_phone ?? null)
+  const [primaryEmail, setPrimaryEmail] = useState<string | null>(lead.primary_email ?? null)
 
   const handleSave = async () => {
     setSaving(true)
+    const patch = {
+      notes,
+      status,
+      full_name: fullName,
+      email,
+      phone: phone || null,
+      second_full_name: secondName || null,
+      second_email: secondEmail || null,
+      second_phone: secondPhone || null,
+    }
     const { data } = await supabase
       .from('leads')
-      .update({ notes, status })
+      .update(patch)
       .eq('id', lead.id)
       .select()
       .single()
     setSaving(false)
-    if (data) onUpdate({ ...lead, notes, status })
+    if (data) {
+      onUpdate({ ...lead, ...patch, primary_phone: primaryPhone, primary_email: primaryEmail })
+      setEditMode(false)
+    }
   }
 
-  const waUrl = waLink(lead.phone, buildLeadMessage(lead.full_name, lead.notes))
+  const handleStarPhone = async (key: 'phone' | 'second_phone') => {
+    const newVal: string | null = primaryPhone === key ? null : key
+    setPrimaryPhone(newVal)
+    await supabase.from('leads').update({ primary_phone: newVal }).eq('id', lead.id)
+    onUpdate({ ...lead, primary_phone: newVal, primary_email: primaryEmail })
+  }
+
+  const handleStarEmail = async (key: 'email' | 'second_email') => {
+    const newVal: string | null = primaryEmail === key ? null : key
+    setPrimaryEmail(newVal)
+    await supabase.from('leads').update({ primary_email: newVal }).eq('id', lead.id)
+    onUpdate({ ...lead, primary_phone: primaryPhone, primary_email: newVal })
+  }
+
+  const waPhone = primaryPhone === 'second_phone' ? (lead.second_phone ?? lead.phone) : lead.phone
+  const waUrl = waLink(waPhone, buildLeadMessage(lead.full_name, lead.notes))
+
+  const inputCls = 'w-full px-3 py-1.5 rounded border border-input bg-background text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring'
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-end" onClick={onClose}>
@@ -203,8 +248,10 @@ function LeadDetailPanel({
       >
         {/* Header */}
         <div className="sticky top-0 bg-card border-b border-border px-6 py-4 flex items-center justify-between">
-          <h2 className="font-serif text-lg font-semibold text-foreground">{lead.full_name}</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
+          <h2 className="font-serif text-lg font-semibold text-foreground truncate">
+            {editMode ? fullName || lead.full_name : lead.full_name}
+          </h2>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -228,45 +275,152 @@ function LeadDetailPanel({
 
           {/* Contact info */}
           <div className="space-y-3">
-            <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">
-              Contacto
-            </label>
-            <a href={`mailto:${lead.email}`} className="flex items-center gap-3 text-sm text-foreground hover:text-primary transition-colors">
-              <Mail className="w-4 h-4 text-muted-foreground" />
-              {lead.email}
-            </a>
-            {lead.phone && (
-              <a href={`tel:${lead.phone.replace(/\s|-/g,'')}`} className="flex items-center gap-3 text-sm text-foreground hover:text-primary transition-colors">
-                <Phone className="w-4 h-4 text-muted-foreground" />
-                {lead.phone}
-              </a>
-            )}
-            {waUrl
-              ? (
-                  <a
-                    href={waUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-sm text-[#25D366] hover:underline"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    WhatsApp
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                Contacto
+              </label>
+              <button
+                type="button"
+                onClick={() => setEditMode((m) => !m)}
+                className={`flex items-center gap-1 text-xs transition-colors ${editMode ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                <Pencil className="w-3 h-3" />
+                {editMode ? 'Editando' : 'Editar'}
+              </button>
+            </div>
+
+            {editMode ? (
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Nombre</p>
+                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} className={inputCls} />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Email</p>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Teléfono</p>
+                  <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputCls} />
+                </div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide border-t border-border pt-3">
+                  Contacto adicional
+                </p>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Nombre</p>
+                  <input value={secondName} onChange={(e) => setSecondName(e.target.value)} placeholder="Nombre" className={inputCls} />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Email</p>
+                  <input type="email" value={secondEmail} onChange={(e) => setSecondEmail(e.target.value)} placeholder="email@ejemplo.com" className={inputCls} />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Teléfono</p>
+                  <input type="tel" value={secondPhone} onChange={(e) => setSecondPhone(e.target.value)} placeholder="+506 0000 0000" className={inputCls} />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {/* Email rows */}
+                <div className="flex items-center gap-2">
+                  <a href={`mailto:${lead.email}`} className="flex items-center gap-3 text-sm text-foreground hover:text-primary transition-colors flex-1 min-w-0">
+                    <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <span className="truncate">{lead.email}</span>
                   </a>
-                )
-              : (
-                  <span className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <MessageCircle className="w-4 h-4" />
-                    Sin teléfono
-                  </span>
-                )
-            }
-            <button
-              onClick={() => onMarkSpam(lead.id, !lead.is_spam)}
-              className={`flex items-center gap-3 text-sm transition-colors ${lead.is_spam ? 'text-red-500 hover:text-muted-foreground' : 'text-muted-foreground hover:text-red-500'}`}
-            >
-              {lead.is_spam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
-              {lead.is_spam ? 'Quitar spam' : 'Marcar como spam'}
-            </button>
+                  <button
+                    type="button"
+                    onClick={() => handleStarEmail('email')}
+                    className={`shrink-0 transition-colors ${primaryEmail === 'email' ? 'text-yellow-400' : 'text-muted-foreground/30 hover:text-yellow-400'}`}
+                    title="Marcar como email favorito"
+                  >
+                    <Star className={`w-3.5 h-3.5 ${primaryEmail === 'email' ? 'fill-yellow-400' : ''}`} />
+                  </button>
+                </div>
+                {lead.second_email && (
+                  <div className="flex items-center gap-2">
+                    <a href={`mailto:${lead.second_email}`} className="flex items-center gap-3 text-sm text-foreground hover:text-primary transition-colors flex-1 min-w-0">
+                      <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
+                      {lead.second_full_name && <span className="text-muted-foreground text-xs shrink-0">{lead.second_full_name.split(' ')[0]}</span>}
+                      <span className="truncate">{lead.second_email}</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleStarEmail('second_email')}
+                      className={`shrink-0 transition-colors ${primaryEmail === 'second_email' ? 'text-yellow-400' : 'text-muted-foreground/30 hover:text-yellow-400'}`}
+                      title="Marcar como email favorito"
+                    >
+                      <Star className={`w-3.5 h-3.5 ${primaryEmail === 'second_email' ? 'fill-yellow-400' : ''}`} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Phone rows */}
+                {lead.phone && (
+                  <div className="flex items-center gap-2">
+                    <a href={`tel:${lead.phone.replace(/\s|-/g, '')}`} className="flex items-center gap-3 text-sm text-foreground hover:text-primary transition-colors flex-1">
+                      <Phone className="w-4 h-4 text-muted-foreground shrink-0" />
+                      {lead.phone}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleStarPhone('phone')}
+                      className={`shrink-0 transition-colors ${primaryPhone === 'phone' ? 'text-yellow-400' : 'text-muted-foreground/30 hover:text-yellow-400'}`}
+                      title="Marcar como teléfono favorito"
+                    >
+                      <Star className={`w-3.5 h-3.5 ${primaryPhone === 'phone' ? 'fill-yellow-400' : ''}`} />
+                    </button>
+                  </div>
+                )}
+                {lead.second_phone && (
+                  <div className="flex items-center gap-2">
+                    <a href={`tel:${lead.second_phone.replace(/\s|-/g, '')}`} className="flex items-center gap-3 text-sm text-foreground hover:text-primary transition-colors flex-1">
+                      <Phone className="w-4 h-4 text-muted-foreground shrink-0" />
+                      {lead.second_full_name && <span className="text-muted-foreground text-xs shrink-0">{lead.second_full_name.split(' ')[0]}</span>}
+                      {lead.second_phone}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleStarPhone('second_phone')}
+                      className={`shrink-0 transition-colors ${primaryPhone === 'second_phone' ? 'text-yellow-400' : 'text-muted-foreground/30 hover:text-yellow-400'}`}
+                      title="Marcar como teléfono favorito"
+                    >
+                      <Star className={`w-3.5 h-3.5 ${primaryPhone === 'second_phone' ? 'fill-yellow-400' : ''}`} />
+                    </button>
+                  </div>
+                )}
+
+                {/* WA link */}
+                {waUrl
+                  ? (
+                    <a
+                      href={waUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 text-sm text-[#25D366] hover:underline"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp
+                    </a>
+                  )
+                  : (
+                    <span className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <MessageCircle className="w-4 h-4" />
+                      Sin teléfono
+                    </span>
+                  )
+                }
+
+                {/* Spam toggle */}
+                <button
+                  type="button"
+                  onClick={() => onMarkSpam(lead.id, !lead.is_spam)}
+                  className={`flex items-center gap-3 text-sm transition-colors ${lead.is_spam ? 'text-red-500 hover:text-muted-foreground' : 'text-muted-foreground hover:text-red-500'}`}
+                >
+                  {lead.is_spam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+                  {lead.is_spam ? 'Quitar spam' : 'Marcar como spam'}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Lead details */}
