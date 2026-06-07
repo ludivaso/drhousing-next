@@ -38,9 +38,15 @@ export default function WhatsAppConversation({
 
   useEffect(() => {
     fetchMessages()
-    const id = setInterval(fetchMessages, 10_000)
-    return () => clearInterval(id)
-  }, [fetchMessages])
+    const channel = supabase
+      .channel('wa-messages-' + leadId)
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'whatsapp_messages', filter: 'lead_id=eq.' + leadId },
+        (payload) => setMessages((prev) => [...prev, payload.new as Message])
+      )
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [fetchMessages, leadId])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

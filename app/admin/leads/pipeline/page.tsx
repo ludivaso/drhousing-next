@@ -609,7 +609,17 @@ export default function LeadsPipelinePage() {
     setLoading(false)
   }, [])
 
-  useEffect(() => { fetchLeads() }, [fetchLeads])
+  useEffect(() => {
+    fetchLeads()
+    const channel = supabase
+      .channel('leads-changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'leads' },
+        () => fetchLeads()
+      )
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [fetchLeads])
 
   const handleDragStart = (event: DragStartEvent) => {
     const lead = leads.find((l) => l.id === event.active.id)
