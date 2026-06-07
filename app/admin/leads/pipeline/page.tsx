@@ -16,10 +16,11 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
   Phone, Mail, MessageCircle, X, Save, Loader2,
-  ExternalLink, User, DollarSign, MapPin, GripVertical, Ban, ShieldCheck, Star, Pencil
+  ExternalLink, User, DollarSign, MapPin, GripVertical, Ban, ShieldCheck, Star, Pencil, ChevronDown
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { waLink, buildLeadMessage, resolveLeadPhone } from '@/lib/utils/waLink'
+import WhatsAppConversation from '@/components/admin/WhatsAppConversation'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 type LeadStatus = 'new' | 'contacted' | 'viewing' | 'offer' | 'closed' | 'lost'
@@ -194,6 +195,7 @@ function LeadDetailPanel({
   const [secondPhone, setSecondPhone] = useState(lead.second_phone ?? '')
   const [primaryPhone, setPrimaryPhone] = useState<string | null>(lead.primary_phone ?? null)
   const [primaryEmail, setPrimaryEmail] = useState<string | null>(lead.primary_email ?? null)
+  const [showWA, setShowWA] = useState(false)
 
   const handleSave = async () => {
     setSaving(true)
@@ -497,6 +499,30 @@ function LeadDetailPanel({
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Guardar
           </button>
+
+          {/* WhatsApp inbox */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowWA((s) => !s)}
+              className="flex items-center justify-between w-full text-xs font-medium text-muted-foreground uppercase tracking-wide"
+            >
+              WhatsApp
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showWA ? 'rotate-180' : ''}`} />
+            </button>
+            {showWA && (
+              <div className="mt-3">
+                <WhatsAppConversation
+                  leadId={lead.id}
+                  leadPhone={resolveLeadPhone({
+                    phone: phone || null,
+                    second_phone: secondPhone || null,
+                    primary_phone: primaryPhone,
+                  })}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
