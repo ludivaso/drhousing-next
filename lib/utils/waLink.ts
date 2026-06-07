@@ -26,3 +26,13 @@ export function buildLeadMessage(
 
   return `${greeting}, soy Diego Vargas de DR Housing. Vi que te interesó ${anuncio} y con gusto te ayudo personalmente. Para mostrarte justo lo que buscás: ¿qué fue lo que más te llamó la atención de esta propiedad?`
 }
+
+/** Resolves the effective phone for a lead, respecting the primary_phone preference. */
+export function resolveLeadPhone(lead: {
+  phone?: string | null
+  second_phone?: string | null
+  primary_phone?: string | null
+}): string | null {
+  const chosen = lead.primary_phone === 'second_phone' ? lead.second_phone : lead.phone
+  return chosen || null
+}

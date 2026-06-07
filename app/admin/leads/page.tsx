@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Phone, Mail, MessageCircle, Search, Loader2, ChevronDown, Ban, ShieldCheck } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
-import { waLink, buildLeadMessage } from '@/lib/utils/waLink'
+import { waLink, buildLeadMessage, resolveLeadPhone } from '@/lib/utils/waLink'
 
 type Lead = {
   id: string
@@ -48,16 +48,24 @@ export default function AdminLeads() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [showSpam, setShowSpam] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
     loadLeads()
   }, [])
 
   async function loadLeads() {
-    const { data } = await (supabase as any)
+    setLoadError(null)
+    const { data, error } = await (supabase as any)
       .from('leads')
       .select('*')
       .order('created_at', { ascending: false })
+    if (error) {
+      console.error('loadLeads:', error)
+      setLoadError('No se pudieron cargar los leads')
+      setLoading(false)
+      return
+    }
     setLeads(data ?? [])
     setLoading(false)
   }
@@ -124,6 +132,10 @@ export default function AdminLeads() {
         <div className="flex items-center justify-center py-16">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
+      ) : loadError ? (
+        <div className="text-center py-12 card-elevated">
+          <p className="text-sm text-destructive">{loadError}</p>
+        </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-12 card-elevated">
           <p className="text-muted-foreground">{leads.length === 0 ? 'Aún no hay leads' : 'No hay resultados'}</p>
@@ -164,7 +176,7 @@ export default function AdminLeads() {
                   <div className="flex items-center gap-2 shrink-0">
                     {lead.phone && (
                       <a
-                        href={`tel:${lead.phone}`}
+                        href={lead.phone ? `tel:${lead.phone.replace(/\s|-/g, '')}` : undefined}
                         onClick={(e) => e.stopPropagation()}
                         className="p-1.5 rounded border border-border text-muted-foreground hover:text-primary hover:border-primary transition-colors"
                         title="Llamar"
@@ -173,7 +185,7 @@ export default function AdminLeads() {
                       </a>
                     )}
                     {(() => {
-                      const url = waLink(lead.phone, buildLeadMessage(lead.full_name, lead.notes))
+                      const url = waLink(resolveLeadPhone(lead), buildLeadMessage(lead.full_name, lead.notes))
                       return url
                         ? (
                             <a

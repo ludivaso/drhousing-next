@@ -16,10 +16,10 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
   Phone, Mail, MessageCircle, X, Save, Loader2,
-  ExternalLink, User, Calendar, DollarSign, MapPin, GripVertical, Ban, ShieldCheck, Star, Pencil
+  ExternalLink, User, DollarSign, MapPin, GripVertical, Ban, ShieldCheck, Star, Pencil
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
-import { waLink, buildLeadMessage } from '@/lib/utils/waLink'
+import { waLink, buildLeadMessage, resolveLeadPhone } from '@/lib/utils/waLink'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 type LeadStatus = 'new' | 'contacted' | 'viewing' | 'offer' | 'closed' | 'lost'
@@ -88,8 +88,7 @@ function LeadCard({
     opacity: isDragging ? 0.4 : 1,
   }
 
-  const waPhone = lead.primary_phone === 'second_phone' ? (lead.second_phone ?? lead.phone) : lead.phone
-  const waUrl = waLink(waPhone, buildLeadMessage(lead.full_name, lead.notes))
+  const waUrl = waLink(resolveLeadPhone(lead), buildLeadMessage(lead.full_name, lead.notes))
 
   return (
     <div
@@ -235,8 +234,10 @@ function LeadDetailPanel({
     onUpdate({ ...lead, primary_phone: primaryPhone, primary_email: newVal })
   }
 
-  const waPhone = primaryPhone === 'second_phone' ? (lead.second_phone ?? lead.phone) : lead.phone
-  const waUrl = waLink(waPhone, buildLeadMessage(lead.full_name, lead.notes))
+  const waUrl = waLink(
+    resolveLeadPhone({ phone: phone || null, second_phone: secondPhone || null, primary_phone: primaryPhone }),
+    buildLeadMessage(lead.full_name, lead.notes)
+  )
 
   const inputCls = 'w-full px-3 py-1.5 rounded border border-input bg-background text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring'
 
@@ -559,6 +560,7 @@ export default function LeadsPipelinePage() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [activeLead, setActiveLead] = useState<Lead | null>(null)
   const [showSpam, setShowSpam] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -566,10 +568,17 @@ export default function LeadsPipelinePage() {
 
   const fetchLeads = useCallback(async () => {
     setLoading(true)
-    const { data } = await supabase
+    setLoadError(null)
+    const { data, error } = await supabase
       .from('leads')
       .select('*')
       .order('created_at', { ascending: false })
+    if (error) {
+      console.error('fetchLeads:', error)
+      setLoadError('No se pudieron cargar los leads')
+      setLoading(false)
+      return
+    }
     setLeads((data as Lead[]) ?? [])
     setLoading(false)
   }, [])
@@ -630,6 +639,14 @@ export default function LeadsPipelinePage() {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-sm text-destructive">{loadError}</p>
       </div>
     )
   }
