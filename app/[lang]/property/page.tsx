@@ -1,6 +1,260 @@
-import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import {
+  getPropertyFeatures,
+} from '@/lib/supabase/queries'
+import { supabase } from '@/lib/supabase/client'
+import type { PropertyRow, AgentRow, FeatureRow } from '@/lib/supabase/queries'
+import PropertyDetailClient from '@/components/PropertyDetailClient'
+import { isPropertyPublic, buildPropertySchema } from '@/lib/seo/helpers'
 
-// The property listing has moved to /propiedades
-export default function PropertyListingRedirect() {
-  redirect('/propiedades')
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const dynamicParams = true
+
+export async function generateStaticParams() {
+  return [] // All paths rendered on demand — no pre-building
+}
+
+// Lookup by slug first; fall back to reference_id so stable ref-links never 404
+async function findProperty(slug: string): Promise<PropertyRow | null> {
+  const { data: bySlug } = await supabase
+    .from('properties')
+    .select('*')
+    .eq('slug', slug)
+    .eq('hidden', false)
+    .neq('visibility', 'hidden')
+    .maybeSingle()
+  if (bySlug) return bySlug
+
+  const { data: byRef } = await supabase
+    .from('properties')
+    .select('*')
+    .ilike('reference_id', slug)
+    .eq('hidden', false)
+    .neq('visibility', 'hidden')
+    .maybeSingle()
+  return byRef ?? null
+}
+
+export async function generateMetadata({ params }: { params: { lang: string; slug: string } }): Promise<Metadata> {
+  const lang = params.lang === 'es' ? 'es' : 'en'
+
+  const property = await findProperty(params.slug)
+  if (!property) return {}
+
+  const isPublic = isPropertyPublic(property)
+
+  const rawImage: string | undefined =
+    property.featured_images?.[0] ?? property.images?.[0]
+
+  const ogImageUrl = rawImage
+    ? rawImage
+    : `https://drhousing.net/og-default.jpg`
+
+  // Price string
+  const monthSuffix = lang === 'en' ? '/month' : '/mes'
+  const price = property.price_sale
+    ? `$${property.price_sale.toLocaleString()}`
+    : property.price_rent_monthly
+    ? `$${property.price_rent_monthly.toLocaleString()}${monthSuffix}`
+    : ''
+
+  // Specs string
+  const bedsWord  = lang === 'en' ? 'beds'   : 'hab'
+  const bathsWord = lang === 'en' ? 'baths'  : 'baños'
+  const specs = [
+    property.bedrooms             ? `${property.bedrooms} ${bedsWord}`    : null,
+    property.bathrooms            ? `${property.bathrooms} ${bathsWord}`   : null,
+    property.construction_size_sqm ? `${property.construction_size_sqm}m²` : null,
+  ].filter(Boolean).join(' · ')
+
+  const title = lang === 'en'
+    ? (property.title_en || property.title_es || property.title || 'Property in Costa Rica')
+    : (property.title_es || property.ai_generated_title_es || property.title_en || property.title || 'Propiedad en Costa Rica')
+
+  const rawDesc = lang === 'en'
+    ? (property.description_en ?? property.description_es ?? property.description ?? '')
+    : (property.description_es ?? property.description_en ?? property.description ?? '')
+  const ogDescription = rawDesc.length > 160
+    ? rawDesc.slice(0, 157).replace(/\s+\S*$/, '') + '...'
+    : rawDesc
+  const description = [price, specs, ogDescription].filter(Boolean).join(' — ')
+
+  const url = `https://drhousing.net/${lang}/property/${property.reference_id}`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description: ogDescription,
+      url,
+      type: 'website',
+      locale: lang === 'en' ? 'en_US' : 'es_CR',
+      siteName: 'DR Housing',
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: ogDescription,
+      images: [ogImageUrl],
+    },
+    alternates: {
+      canonical: url,
+      languages: {
+        'en': `https://drhousing.net/en/property/${property.reference_id}`,
+        'es': `https://drhousing.net/es/property/${property.reference_id}`,
+        'x-default': `https://drhousing.net/en/property/${property.reference_id}`,
+      },
+    },
+    robots: isPublic
+      ? { index: true, follow: true }
+      : { index: false, follow: false, googleBot: { index: false } },
+  }
+}
+
+export default async function PropertyDetailPage({ params }: { params: { lang: string; slug: string } }) {
+  const lang = params.lang === 'es' ? 'es' : 'en'
+
+  const property = await findProperty(params.slug)
+  if (!property) notFound()
+
+  // No redirect — reference_id IS the canonical URL; slug is mutable and must not be exposed
+
+  const propertyFeatures = await getPropertyFeatures(property.id)
+
+  // Fetch listing agent if set
+  let listingAgent: AgentRow | null = null
+  if (property.listing_agent_id) {
+    const { data: agentData } = await supabase
+      .from('agents')
+      .select('*')
+      .eq('id', property.listing_agent_id)
+      .maybeSingle()
+    listingAgent = agentData
+  }
+
+  // ── Related properties — tiered relevance ─────────────────────────────────
+  // The old query (OR on location_name OR tier) was too loose: a single tier
+  // match could drag in completely unrelated listings from other cities.
+  //
+  // Tier 1 (strongest): same zone + same property_type + same transaction
+  //                     kind (sale/rent).
+  // Tier 2: same zone (any type), same transaction kind.
+  // Tier 3: same property_type + similar price band (±40%) — only if we
+  //         still don't have enough to populate the carousel.
+  //
+  // We target up to 8 cards so the carousel has enough swipeable content.
+  const TARGET = 8
+
+  // Transaction-kind filter: if this property has a sale price, match
+  // sale-able listings; if it has a rent price, match rent-able ones.
+  const txStatuses: string[] = []
+  if (property.price_sale)         txStatuses.push('for_sale', 'both', 'presale')
+  if (property.price_rent_monthly) txStatuses.push('for_rent', 'both')
+  const txFilter = txStatuses.length > 0
+    ? txStatuses
+    : ['for_sale', 'for_rent', 'both', 'presale']
+
+  const related: PropertyRow[] = []
+  const seenIds = new Set<string>([property.id])
+  const push = (rows: PropertyRow[] | null | undefined) => {
+    for (const r of rows ?? []) {
+      if (!seenIds.has(r.id)) {
+        related.push(r)
+        seenIds.add(r.id)
+      }
+      if (related.length >= TARGET) break
+    }
+  }
+
+  // Tier 1 — same zone + same type + same transaction kind
+  if (property.location_name && property.property_type) {
+    const { data } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('hidden', false)
+      .or('visibility.eq.public,visibility.is.null')
+      .neq('id', property.id)
+      .eq('location_name', property.location_name)
+      .eq('property_type', property.property_type)
+      .in('status', txFilter)
+      .limit(TARGET)
+    push(data)
+  }
+
+  // Tier 2 — same zone (any type), same transaction kind
+  if (related.length < TARGET && property.location_name) {
+    const { data } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('hidden', false)
+      .or('visibility.eq.public,visibility.is.null')
+      .neq('id', property.id)
+      .eq('location_name', property.location_name)
+      .in('status', txFilter)
+      .limit(TARGET)
+    push(data)
+  }
+
+  // Tier 3 — same property_type + similar price band
+  if (related.length < TARGET && property.property_type) {
+    const refPrice = property.price_sale ?? property.price_rent_monthly
+    let q = supabase
+      .from('properties')
+      .select('*')
+      .eq('hidden', false)
+      .or('visibility.eq.public,visibility.is.null')
+      .neq('id', property.id)
+      .eq('property_type', property.property_type)
+      .in('status', txFilter)
+      .limit(TARGET)
+    if (refPrice && property.price_sale) {
+      q = q.gte('price_sale', Math.round(refPrice * 0.6))
+           .lte('price_sale', Math.round(refPrice * 1.4))
+    } else if (refPrice && property.price_rent_monthly) {
+      q = q.gte('price_rent_monthly', Math.round(refPrice * 0.6))
+           .lte('price_rent_monthly', Math.round(refPrice * 1.4))
+    }
+    const { data } = await q
+    push(data)
+  }
+
+  const relatedProperties: PropertyRow[] = related
+
+  return (
+    <>
+      {isPropertyPublic(property) && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              buildPropertySchema(property, lang, property.reference_id ?? params.slug)
+            ),
+          }}
+        />
+      )}
+      <PropertyDetailClient
+        property={property}
+        relatedProperties={relatedProperties}
+        agent={listingAgent}
+        propertyFeatures={propertyFeatures}
+        lang={lang}
+        titleEn={property.title_en || property.title || ''}
+        titleEs={property.title_es || property.ai_generated_title_es || property.title_en || property.title || ''}
+        subtitleEn={property.subtitle_en || property.subtitle || ''}
+        subtitleEs={property.subtitle || property.subtitle_en || ''}
+        descriptionEn={property.description_en || property.description || ''}
+        descriptionEs={property.description_es || property.ai_generated_description_es || property.description_en || property.description || ''}
+        featuresEn={property.features_en ?? property.features ?? []}
+        featuresEs={property.features_es ?? property.features ?? []}
+        priceSale={property.price_sale ?? null}
+        priceRent={property.price_rent_monthly ?? null}
+        currency={property.currency || 'USD'}
+      />
+    </>
+  )
 }
