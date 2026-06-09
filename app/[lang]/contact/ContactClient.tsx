@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Phone, Mail, MapPin, MessageSquare, Send, Loader2, CheckCircle } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
+import { CENTRAL_PHONE, WHATSAPP_LEADS } from '@/config/contact'
 
 const COSTA_RICA_AREAS = [
   'Escazú', 'Santa Ana', 'Lindora', 'Ciudad Colón', 'Belén',
@@ -143,7 +144,7 @@ export default function ContactoPage() {
               </h2>
 
               <div className="space-y-8 mb-10">
-                <a href="tel:+50686540888" className="flex items-start gap-4 group">
+                <a href={`tel:+${CENTRAL_PHONE}`} className="flex items-start gap-4 group">
                   <div className="w-14 h-14 rounded bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
                     <Phone className="w-6 h-6 text-primary" />
                   </div>
@@ -166,7 +167,7 @@ export default function ContactoPage() {
                 </a>
 
                 <a
-                  href="https://wa.me/50686540888"
+                  href={`https://wa.me/${WHATSAPP_LEADS}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-4 group"
@@ -209,14 +210,14 @@ export default function ContactoPage() {
 
               <div className="space-y-3">
                 <a
-                  href="tel:+50686540888"
+                  href={`tel:+${CENTRAL_PHONE}`}
                   className="flex items-center justify-center gap-2 w-full py-3 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                   {t('common.callNow')}
                 </a>
                 <a
-                  href="https://wa.me/50686540888"
+                  href={`https://wa.me/${WHATSAPP_LEADS}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded border border-border text-foreground text-sm font-medium hover:bg-secondary transition-colors"

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Home, Scale, Building2, Briefcase, ArrowRight, Phone, Palette } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
+import { CENTRAL_PHONE } from '@/config/contact'
 
 const SERVICE_DEFS = [
   { id: 'brokerage',     icon: Home,      image: '/services/real-estate-brokerage.jpg', featureCount: 5 },
@@ -147,7 +148,7 @@ export default function ServiciosPage() {
                 {t('common.scheduleConsultation')}
               </Link>
               <a
-                href="tel:+50686540888"
+                href={`tel:+${CENTRAL_PHONE}`}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded border border-primary-foreground/30 text-primary-foreground text-sm font-medium hover:bg-primary-foreground/10 transition-colors"
               >
                 <Phone className="w-4 h-4" />

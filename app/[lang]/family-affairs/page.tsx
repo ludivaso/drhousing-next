@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Shield, Landmark, TrendingUp, Lock, Phone, Mail, Calendar, ArrowRight } from 'lucide-react'
+import { CENTRAL_PHONE } from '@/config/contact'
 
 export const metadata: Metadata = {
   title: 'Family Affairs',
@@ -99,7 +100,7 @@ export default function FamilyAffairsPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+50686540888"
+              href={`tel:+${CENTRAL_PHONE}`}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               <Phone className="w-4 h-4" />

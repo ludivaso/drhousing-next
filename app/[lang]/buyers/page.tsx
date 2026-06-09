@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { UserCheck, Users, Lock, Network, MapPin, ArrowRight, CheckCircle } from 'lucide-react'
 import { getFeaturedProperties } from '@/lib/supabase/queries'
+import { WHATSAPP_LEADS } from '@/config/contact'
 import PropertyCard from '@/components/PropertyCard'
 import LeadFormMini from '@/components/lead-form-mini'
 import { WhatsAppFAB } from '@/components/WhatsAppCTA'
@@ -210,7 +211,7 @@ export default async function BuyersPage({ params }: { params: { lang: string } 
   const featuredProperties = await getFeaturedProperties()
 
   const waUrl =
-    'https://wa.me/50686540888?text=' +
+    `https://wa.me/${WHATSAPP_LEADS}?text=` +
     encodeURIComponent('Hola, quiero información sobre propiedades en Costa Rica')
 
   return (

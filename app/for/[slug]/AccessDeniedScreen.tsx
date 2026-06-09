@@ -1,11 +1,15 @@
 // Server-renderable — no interactivity needed.
 
+import { WHATSAPP_LEADS } from '@/config/contact'
+
 interface Props {
   reason: 'not_found' | 'invalid_token'
 }
 
 export default function AccessDeniedScreen({ reason }: Props) {
   void reason // both states show the same UI — reason available for future logging
+
+  const whatsappLink = `https://wa.me/${WHATSAPP_LEADS}?text=Hi+Diego%2C+I+need+access+to+my+curated+list`
 
   return (
     <div className="min-h-screen bg-[#F5F2EE] flex items-center justify-center px-6">
@@ -24,7 +28,7 @@ export default function AccessDeniedScreen({ reason }: Props) {
           curated selection.
         </p>
         <a
-          href="https://wa.me/50686540888?text=Hi+Diego%2C+I+need+access+to+my+curated+list"
+          href={whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1FB855]

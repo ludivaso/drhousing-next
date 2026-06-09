@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { MessageCircle } from 'lucide-react'
+import { WHATSAPP_LEADS } from '@/config/contact'
 
 interface Props {
   lang: 'en' | 'es'
@@ -106,7 +107,7 @@ export default function CuratedListHeader({
 
           {/* WhatsApp icon only */}
           <a
-            href={`https://wa.me/50686540888?text=${encodeURIComponent(whatsAppMessage)}`}
+            href={`https://wa.me/${WHATSAPP_LEADS}?text=${encodeURIComponent(whatsAppMessage)}`}
             target="_blank"
             rel="noopener noreferrer"
             className={`w-8 h-8 rounded-full flex items-center justify-center

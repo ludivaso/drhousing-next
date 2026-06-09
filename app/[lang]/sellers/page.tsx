@@ -5,6 +5,7 @@ import { Camera, Globe, Lock, MapPin, ArrowRight, Facebook, MessageCircle, Build
 import { supabase } from '@/lib/supabase/client'
 import type { PropertyRow } from '@/lib/supabase/queries'
 import { getHeroImage } from '@/lib/supabase/queries'
+import { WHATSAPP_LEADS } from '@/config/contact'
 import ValuationForm from '@/components/valuation-form'
 import { WhatsAppFAB } from '@/components/WhatsAppCTA'
 import PageHeroBanner from '@/components/page-hero-banner'
@@ -224,7 +225,7 @@ export default async function SellersPage({ params }: { params: { lang: string }
   }
 
   const waSellerUrl =
-    'https://wa.me/50686540888?text=' +
+    `https://wa.me/${WHATSAPP_LEADS}?text=` +
     encodeURIComponent('Hola, quiero vender mi propiedad')
 
   return (

@@ -6,6 +6,7 @@ import {
   MessageCircle, Loader2, X, GripVertical, ChevronDown, ChevronUp
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { WHATSAPP_LEADS } from '@/config/contact'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 type CuratedList = {
@@ -71,7 +72,7 @@ function WaMessageModal({
   ]
 
   const message = lines.join('\n')
-  const waLink = `https://wa.me/50686540888?text=${encodeURIComponent(message)}`
+  const waLink = `https://wa.me/${WHATSAPP_LEADS}?text=${encodeURIComponent(message)}`
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message)

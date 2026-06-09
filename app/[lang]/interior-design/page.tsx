@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Mail,
 } from 'lucide-react'
+import { CENTRAL_PHONE } from '@/config/contact'
 import WhatsAppCTA from '@/components/WhatsAppCTA'
 import BeforeAfterSlider, { type BeforeAfterPair } from '@/components/interior-design/BeforeAfterSlider'
 import ProjectGallery, { type GalleryImage } from '@/components/interior-design/ProjectGallery'
@@ -468,7 +469,7 @@ export default function InteriorDesignPage({ params }: { params: { lang: string 
       addressRegion: 'San José',
       addressCountry: 'CR',
     },
-    telephone: '+50686540888',
+    telephone: `+${CENTRAL_PHONE}`,
     priceRange: '$$$$',
     areaServed: 'Costa Rica',
     serviceType: [

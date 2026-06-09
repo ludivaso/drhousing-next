@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { PropertyRow, CuratedListRow } from '@/src/integrations/supabase/types'
 import { getHeroImage } from '@/lib/supabase/queries'
+import { WHATSAPP_LEADS } from '@/config/contact'
 import CarouselCard from './PropertyCard'
 import PropertyDetailPanel from './PropertyDetailPanel'
 import ShortlistPill from './ShortlistPill'
@@ -127,7 +128,7 @@ export default function CuratedListView({
           ? `Hola Diego, me interesa la propiedad #${refId} de la lista que preparaste para ${list.client_name ?? 'mi selección'}. ¿Podemos hablar?`
           : `Hi Diego, I'm interested in property #${refId} from the list you prepared for ${list.client_name ?? 'me'}. Can we chat?`
       window.open(
-        `https://wa.me/50686540888?text=${encodeURIComponent(message)}`,
+        `https://wa.me/${WHATSAPP_LEADS}?text=${encodeURIComponent(message)}`,
         '_blank',
         'noopener,noreferrer',
       )

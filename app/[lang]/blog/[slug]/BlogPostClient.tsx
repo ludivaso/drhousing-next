@@ -5,6 +5,7 @@ import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import { Calendar, Clock, ArrowLeft, MessageCircle } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
+import { WHATSAPP_LEADS } from '@/config/contact'
 import type { BlogPost } from '@/content/blog'
 
 export default function BlogPostClient({ post }: { post: BlogPost }) {
@@ -88,7 +89,7 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
                   {lang === 'en' ? 'Schedule a Consultation' : 'Agendar Consulta'}
                 </Link>
                 <a
-                  href="https://wa.me/50686540888"
+                  href={`https://wa.me/${WHATSAPP_LEADS}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-border text-foreground text-sm font-medium hover:bg-secondary transition-colors"
