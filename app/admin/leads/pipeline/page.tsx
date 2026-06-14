@@ -16,7 +16,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
   Phone, Mail, MessageCircle, X, Save, Loader2,
-  ExternalLink, User, DollarSign, MapPin, GripVertical, Ban, ShieldCheck, Star, Pencil, ChevronDown
+  ExternalLink, User, DollarSign, MapPin, GripVertical, Ban, ShieldCheck, Star, Pencil, ChevronDown, Trash2
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { waLink, buildLeadMessage, resolveLeadPhone } from '@/lib/utils/waLink'
@@ -49,6 +49,7 @@ type Lead = {
   second_phone: string | null
   primary_phone: string | null
   primary_email: string | null
+  deleted_at: string | null
 }
 
 type Column = {
@@ -182,6 +183,7 @@ function LeadDetailPanel({
   onClose: () => void
   onUpdate: (updated: Lead) => void
   onMarkSpam: (id: string, isSpam: boolean) => void
+  onTrash: () => void
 }) {
   const [notes, setNotes] = useState(lead.notes ?? '')
   const [status, setStatus] = useState<LeadStatus>(lead.status)
@@ -422,6 +424,15 @@ function LeadDetailPanel({
                   {lead.is_spam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
                   {lead.is_spam ? 'Quitar spam' : 'Marcar como spam'}
                 </button>
+                {/* Trash */}
+                <button
+                  type="button"
+                  onClick={onTrash}
+                  className="flex items-center gap-3 text-sm text-muted-foreground hover:text-red-500 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Mover a papelera
+                </button>
               </div>
             )}
           </div>
@@ -598,6 +609,7 @@ export default function LeadsPipelinePage() {
     const { data, error } = await supabase
       .from('leads')
       .select('*')
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
     if (error) {
       console.error('fetchLeads:', error)
@@ -662,6 +674,16 @@ export default function LeadsPipelinePage() {
     await supabase.from('leads').update({ is_spam: isSpam }).eq('id', id)
     setLeads((prev) => prev.map((l) => l.id === id ? { ...l, is_spam: isSpam } : l))
     setSelectedLead((prev) => prev?.id === id ? { ...prev, is_spam: isSpam } : prev)
+  }, [])
+
+  const handleTrash = useCallback(async (id: string) => {
+    if (!window.confirm('¿Mover este lead a la papelera? Se elimina definitivamente en 30 días.')) return
+    const { error } = await supabase
+      .from('leads').update({ deleted_at: new Date().toISOString() }).eq('id', id)
+    if (!error) {
+      setLeads((prev) => prev.filter((l) => l.id !== id))
+      setSelectedLead(null)
+    }
   }, [])
 
   const visibleLeads = leads.filter((l) => showSpam ? l.is_spam : !l.is_spam)
@@ -742,6 +764,7 @@ export default function LeadsPipelinePage() {
           onClose={() => setSelectedLead(null)}
           onUpdate={handleLeadUpdate}
           onMarkSpam={handleMarkSpam}
+          onTrash={() => handleTrash(selectedLead.id)}
         />
       )}
     </div>

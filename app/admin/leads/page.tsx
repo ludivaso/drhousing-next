@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Phone, Mail, MessageCircle, Search, Loader2, ChevronDown, Ban, ShieldCheck } from 'lucide-react'
+import { Phone, Mail, MessageCircle, Search, Loader2, ChevronDown, Ban, ShieldCheck, Trash2, RotateCcw } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { waLink, buildLeadMessage, resolveLeadPhone } from '@/lib/utils/waLink'
 
@@ -23,6 +23,7 @@ type Lead = {
   source: string | null
   is_spam: boolean
   notes: string | null
+  deleted_at: string | null
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -49,17 +50,22 @@ export default function AdminLeads() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [showSpam, setShowSpam] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<'active' | 'trash'>('active')
 
   useEffect(() => {
-    loadLeads()
-  }, [])
+    loadLeads(viewMode)
+  }, [viewMode])
 
-  async function loadLeads() {
+  async function loadLeads(mode: 'active' | 'trash' = 'active') {
     setLoadError(null)
-    const { data, error } = await (supabase as any)
-      .from('leads')
-      .select('*')
-      .order('created_at', { ascending: false })
+    setLoading(true)
+    let query = (supabase as any).from('leads').select('*')
+    if (mode === 'active') {
+      query = query.is('deleted_at', null).order('created_at', { ascending: false })
+    } else {
+      query = query.not('deleted_at', 'is', null).order('deleted_at', { ascending: false })
+    }
+    const { data, error } = await query
     if (error) {
       console.error('loadLeads:', error)
       setLoadError('No se pudieron cargar los leads')
@@ -80,6 +86,19 @@ export default function AdminLeads() {
     setLeads((prev) => prev.map((l) => l.id === id ? { ...l, is_spam: isSpam } : l))
   }
 
+  async function handleTrash(id: string) {
+    if (!window.confirm('¿Mover este lead a la papelera? Se elimina definitivamente en 30 días.')) return
+    const { error } = await (supabase as any)
+      .from('leads').update({ deleted_at: new Date().toISOString() }).eq('id', id)
+    if (!error) setLeads((prev) => prev.filter((l) => l.id !== id))
+  }
+
+  async function handleRestore(id: string) {
+    const { error } = await (supabase as any)
+      .from('leads').update({ deleted_at: null }).eq('id', id)
+    if (!error) setLeads((prev) => prev.filter((l) => l.id !== id))
+  }
+
   const filtered = leads.filter((l) => {
     if (showSpam ? !l.is_spam : l.is_spam) return false
     const matchSearch =
@@ -95,15 +114,38 @@ export default function AdminLeads() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="font-serif text-3xl font-semibold">Leads</h1>
-          <p className="text-muted-foreground text-sm mt-1">{filtered.length} de {leads.filter((l) => showSpam ? l.is_spam : !l.is_spam).length} leads{showSpam ? ' (spam)' : ''}</p>
+          <p className="text-muted-foreground text-sm mt-1">
+            {viewMode === 'trash'
+              ? `${leads.length} en papelera`
+              : `${filtered.length} de ${leads.filter((l) => showSpam ? l.is_spam : !l.is_spam).length} leads${showSpam ? ' (spam)' : ''}`}
+          </p>
         </div>
-        <button
-          onClick={() => setShowSpam((s) => !s)}
-          className={`flex items-center gap-1.5 text-sm transition-colors ${showSpam ? 'text-red-500 font-medium' : 'text-muted-foreground hover:text-foreground'}`}
-        >
-          {showSpam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
-          {showSpam ? 'Ocultar spam' : 'Ver spam'}
-        </button>
+        <div className="flex items-center gap-3">
+          {viewMode === 'active' && (
+            <button
+              onClick={() => setShowSpam((s) => !s)}
+              className={`flex items-center gap-1.5 text-sm transition-colors ${showSpam ? 'text-red-500 font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              {showSpam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+              {showSpam ? 'Ocultar spam' : 'Ver spam'}
+            </button>
+          )}
+          <div className="flex rounded border border-input overflow-hidden text-sm">
+            <button
+              onClick={() => setViewMode('active')}
+              className={`px-3 py-1.5 transition-colors ${viewMode === 'active' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Activos
+            </button>
+            <button
+              onClick={() => setViewMode('trash')}
+              className={`px-3 py-1.5 border-l border-input transition-colors flex items-center gap-1.5 ${viewMode === 'trash' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Papelera
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -128,7 +170,54 @@ export default function AdminLeads() {
         </select>
       </div>
 
-      {loading ? (
+      {viewMode === 'trash' ? (
+        loading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : loadError ? (
+          <div className="text-center py-12 card-elevated">
+            <p className="text-sm text-destructive">{loadError}</p>
+          </div>
+        ) : leads.length === 0 ? (
+          <div className="text-center py-12 card-elevated">
+            <p className="text-muted-foreground">La papelera está vacía</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {leads.map((lead) => {
+              const daysDeleted = Math.floor((Date.now() - new Date(lead.deleted_at!).getTime()) / 86400000)
+              const daysLeft = Math.max(0, 30 - daysDeleted)
+              return (
+                <div key={lead.id} className="card-elevated p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium">{lead.full_name}</h3>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mt-1">
+                        <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" />{lead.email}</span>
+                        {lead.phone && <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" />{lead.phone}</span>}
+                      </div>
+                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                        <span>Eliminado {new Date(lead.deleted_at!).toLocaleDateString('es-CR')}</span>
+                        <span className={daysLeft <= 5 ? 'text-red-500 font-medium' : ''}>
+                          Se purga en {daysLeft} día{daysLeft !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRestore(lead.id)}
+                      className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded border border-input text-muted-foreground hover:text-primary hover:border-primary transition-colors shrink-0"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      Restaurar
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )
+      ) : loading ? (
         <div className="flex items-center justify-center py-16">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
@@ -228,6 +317,13 @@ export default function AdminLeads() {
                       title={lead.is_spam ? 'Quitar spam' : 'Marcar como spam'}
                     >
                       {lead.is_spam ? <ShieldCheck className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleTrash(lead.id) }}
+                      className="p-1.5 rounded border border-border text-muted-foreground hover:text-red-500 hover:border-red-300 transition-colors"
+                      title="Mover a papelera"
+                    >
+                      <Trash2 className="w-4 h-4" />
                     </button>
                     <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expandedId === lead.id ? 'rotate-180' : ''}`} />
                   </div>
