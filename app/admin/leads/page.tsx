@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { Phone, Mail, MessageCircle, Search, Loader2, ChevronDown, Ban, ShieldCheck, Trash2, RotateCcw } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { getAgents } from '@/lib/supabase/queries'
+import type { AgentRow } from '@/lib/supabase/queries'
 import { waLink, buildLeadMessage, resolveLeadPhone } from '@/lib/utils/waLink'
 
 type Lead = {
@@ -51,10 +53,21 @@ export default function AdminLeads() {
   const [showSpam, setShowSpam] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<'active' | 'trash'>('active')
+  const [agents, setAgents] = useState<AgentRow[]>([])
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [bulkAction, setBulkAction] = useState(false)
 
   useEffect(() => {
     loadLeads(viewMode)
   }, [viewMode])
+
+  useEffect(() => {
+    getAgents().then(setAgents)
+  }, [])
+
+  useEffect(() => {
+    setSelected(new Set())
+  }, [viewMode, showSpam, search, statusFilter])
 
   async function loadLeads(mode: 'active' | 'trash' = 'active') {
     setLoadError(null)
@@ -97,6 +110,52 @@ export default function AdminLeads() {
     const { error } = await (supabase as any)
       .from('leads').update({ deleted_at: null }).eq('id', id)
     if (!error) setLeads((prev) => prev.filter((l) => l.id !== id))
+  }
+
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  function toggleSelectAll() {
+    if (selected.size === filtered.length) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(filtered.map((l) => l.id)))
+    }
+  }
+
+  async function bulkAssignAgent(agentId: string) {
+    if (!agentId || selected.size === 0) return
+    setBulkAction(true)
+    const value = agentId === '__unassigned__' ? null : agentId
+    await (supabase as any).from('leads').update({ assigned_agent_id: value }).in('id', [...selected])
+    setSelected(new Set())
+    await loadLeads(viewMode)
+    setBulkAction(false)
+  }
+
+  async function bulkChangeStatus(status: string) {
+    if (!status || selected.size === 0) return
+    setBulkAction(true)
+    await (supabase as any).from('leads').update({ status }).in('id', [...selected])
+    setSelected(new Set())
+    await loadLeads(viewMode)
+    setBulkAction(false)
+  }
+
+  async function bulkTrash() {
+    if (selected.size === 0) return
+    if (!window.confirm(`¿Mover ${selected.size} lead${selected.size !== 1 ? 's' : ''} a la papelera? Se eliminan definitivamente en 30 días.`)) return
+    setBulkAction(true)
+    await (supabase as any)
+      .from('leads').update({ deleted_at: new Date().toISOString() }).in('id', [...selected])
+    setSelected(new Set())
+    await loadLeads(viewMode)
+    setBulkAction(false)
   }
 
   const filtered = leads.filter((l) => {
@@ -147,6 +206,52 @@ export default function AdminLeads() {
           </div>
         </div>
       </div>
+
+      {selected.size > 0 && (
+        <div className="sticky top-0 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 mb-4 bg-card border-b border-border shadow-sm flex flex-wrap items-center gap-3">
+          <span className="text-sm font-medium text-foreground shrink-0">
+            {selected.size} seleccionado{selected.size !== 1 ? 's' : ''}
+          </span>
+          {bulkAction && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+          <select
+            disabled={bulkAction}
+            defaultValue=""
+            onChange={(e) => { if (e.target.value) { bulkAssignAgent(e.target.value); e.target.value = '' } }}
+            className="text-sm border border-input rounded px-2 py-1.5 bg-background focus:outline-none disabled:opacity-50"
+          >
+            <option value="" disabled>Asignar agente…</option>
+            <option value="__unassigned__">Sin agente</option>
+            {agents.map((a) => (
+              <option key={a.id} value={a.id}>{a.full_name}</option>
+            ))}
+          </select>
+          <select
+            disabled={bulkAction}
+            defaultValue=""
+            onChange={(e) => { if (e.target.value) { bulkChangeStatus(e.target.value); e.target.value = '' } }}
+            className="text-sm border border-input rounded px-2 py-1.5 bg-background focus:outline-none disabled:opacity-50"
+          >
+            <option value="" disabled>Cambiar estado…</option>
+            {Object.entries(STATUS_LABELS).map(([v, label]) => (
+              <option key={v} value={v}>{label}</option>
+            ))}
+          </select>
+          <button
+            disabled={bulkAction}
+            onClick={bulkTrash}
+            className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded border border-red-300 text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Mover a papelera
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="ml-auto text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Limpiar selección
+          </button>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
@@ -230,14 +335,34 @@ export default function AdminLeads() {
           <p className="text-muted-foreground">{leads.length === 0 ? 'Aún no hay leads' : 'No hay resultados'}</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {filtered.map((lead) => (
+        <div>
+          <label className="flex items-center gap-2 px-1 pb-2 text-xs text-muted-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={filtered.length > 0 && selected.size === filtered.length}
+              ref={(el: HTMLInputElement | null) => { if (el) el.indeterminate = selected.size > 0 && selected.size < filtered.length }}
+              onChange={toggleSelectAll}
+              className="rounded border-input"
+            />
+            {selected.size === 0
+              ? `Seleccionar todos (${filtered.length})`
+              : `${selected.size} de ${filtered.length} seleccionados`}
+          </label>
+          <div className="space-y-3">
+            {filtered.map((lead) => (
             <div key={lead.id} className="card-elevated">
               <div
                 className="p-4 cursor-pointer"
                 onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(lead.id)}
+                    onChange={() => toggleSelect(lead.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="shrink-0 rounded border-input self-start mt-1"
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-medium truncate">{lead.full_name}</h3>
@@ -368,6 +493,7 @@ export default function AdminLeads() {
               )}
             </div>
           ))}
+          </div>
         </div>
       )}
     </div>
