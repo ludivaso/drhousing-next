@@ -178,6 +178,7 @@ function LeadDetailPanel({
   onClose,
   onUpdate,
   onMarkSpam,
+  onTrash,
 }: {
   lead: Lead
   onClose: () => void

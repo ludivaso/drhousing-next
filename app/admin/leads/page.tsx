@@ -132,7 +132,7 @@ export default function AdminLeads() {
     if (!agentId || selected.size === 0) return
     setBulkAction(true)
     const value = agentId === '__unassigned__' ? null : agentId
-    await (supabase as any).from('leads').update({ assigned_agent_id: value }).in('id', [...selected])
+    await (supabase as any).from('leads').update({ assigned_agent_id: value }).in('id', Array.from(selected))
     setSelected(new Set())
     await loadLeads(viewMode)
     setBulkAction(false)
@@ -141,7 +141,7 @@ export default function AdminLeads() {
   async function bulkChangeStatus(status: string) {
     if (!status || selected.size === 0) return
     setBulkAction(true)
-    await (supabase as any).from('leads').update({ status }).in('id', [...selected])
+    await (supabase as any).from('leads').update({ status }).in('id', Array.from(selected))
     setSelected(new Set())
     await loadLeads(viewMode)
     setBulkAction(false)
@@ -152,7 +152,7 @@ export default function AdminLeads() {
     if (!window.confirm(`¿Mover ${selected.size} lead${selected.size !== 1 ? 's' : ''} a la papelera? Se eliminan definitivamente en 30 días.`)) return
     setBulkAction(true)
     await (supabase as any)
-      .from('leads').update({ deleted_at: new Date().toISOString() }).in('id', [...selected])
+      .from('leads').update({ deleted_at: new Date().toISOString() }).in('id', Array.from(selected))
     setSelected(new Set())
     await loadLeads(viewMode)
     setBulkAction(false)
