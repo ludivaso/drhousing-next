@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LayoutDashboard } from 'lucide-react'
+
 import { usePathname } from 'next/navigation'
 
 export default function Footer() {
@@ -104,14 +104,6 @@ export default function Footer() {
             </Link>
             <Link href={lang === 'en' ? '/en/terms' : '/es/terminos'} className="hover:text-primary-foreground/50 transition-colors">
               {lang === 'en' ? 'Terms' : 'Términos'}
-            </Link>
-            <Link
-              href="/admin"
-              className="flex items-center gap-1.5 hover:text-gold/40 transition-colors duration-300"
-              title="Admin"
-            >
-              <LayoutDashboard className="w-3 h-3" />
-              <span>Admin</span>
             </Link>
           </div>
         </div>

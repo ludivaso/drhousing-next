@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Menu, X, Phone, Mail, ChevronDown,
-  BookOpen, Calculator, MapPin, Building2,
+  BookOpen, Calculator, MapPin, Building2, Lock,
 } from 'lucide-react'
 
 export default function Navbar() {
@@ -213,9 +213,23 @@ export default function Navbar() {
               ES
             </button>
           </div>
+          {/* Admin access — always visible, subtle */}
+          <div className="relative group">
+            <Link
+              href="/admin"
+              rel="nofollow"
+              aria-label="Acceso"
+              className={`p-1.5 transition-colors ${solid ? 'text-[#6B6B6B] hover:text-[#C9A96E]' : 'text-white/50 hover:text-[#C9A96E]'}`}
+            >
+              <Lock className="w-[18px] h-[18px]" />
+            </Link>
+            <div className="absolute top-full right-0 mt-2 px-2.5 py-1.5 bg-foreground text-background text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+              Acceso
+            </div>
+          </div>
         </div>
 
-        {/* Mobile right: lang + hamburger */}
+        {/* Mobile right: lang + admin + hamburger */}
         <div className="lg:hidden flex items-center gap-2">
           <div className="flex items-center rounded-full border border-[#E8E3DC] overflow-hidden text-xs font-medium">
             <button
@@ -239,6 +253,15 @@ export default function Navbar() {
               ES
             </button>
           </div>
+          {/* Admin — 44px touch target on mobile */}
+          <Link
+            href="/admin"
+            rel="nofollow"
+            aria-label="Acceso"
+            className={`flex items-center justify-center w-11 h-11 transition-colors ${solid ? 'text-[#6B6B6B] hover:text-[#C9A96E]' : 'text-white/50 hover:text-[#C9A96E]'}`}
+          >
+            <Lock className="w-[18px] h-[18px]" />
+          </Link>
           <button
             type="button"
             className={`p-2 transition-colors ${solid ? 'text-muted-foreground hover:text-foreground' : 'text-white hover:text-white/80'}`}
