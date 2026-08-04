@@ -256,6 +256,51 @@ export function buildOrganizationSchema(): Record<string, unknown> {
   }
 }
 
+// ─── buildPersonSchema ────────────────────────────────────────────────────────
+
+interface AgentForSchema {
+  full_name: string
+  photo_url?: string | null
+  phone?: string | null
+  email?: string | null
+  languages?: string[] | null
+  service_areas?: string[] | null
+}
+
+/**
+ * Builds a Schema.org Person JSON-LD for an advisor profile page.
+ * `sameAs` must already be resolved to full URLs by the caller (see
+ * lib/agents/social.ts) — this function does no jsonb parsing of its own.
+ */
+export function buildPersonSchema(
+  agent: AgentForSchema,
+  role: string | null,
+  sameAs: string[],
+  slug: string,
+  lang: string
+): Record<string, unknown> {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: agent.full_name,
+    jobTitle: role ?? undefined,
+    image: agent.photo_url ?? undefined,
+    telephone: agent.phone ?? undefined,
+    email: agent.email ?? undefined,
+    url: `https://drhousing.net/${lang}/agents/${slug}`,
+    ...(sameAs.length > 0 ? { sameAs } : {}),
+    ...(agent.languages && agent.languages.length > 0 ? { knowsLanguage: agent.languages } : {}),
+    ...(agent.service_areas && agent.service_areas.length > 0 ? { areaServed: agent.service_areas } : {}),
+    worksFor: {
+      '@type': 'Organization',
+      name: 'DR Housing',
+      url: 'https://drhousing.net',
+    },
+  }
+
+  return removeNullish(schema)
+}
+
 // ─── buildItemListSchema ─────────────────────────────────────────────────────
 
 /**

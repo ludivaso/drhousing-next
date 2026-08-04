@@ -91,10 +91,29 @@
     }
   },
   "agents": {
-    "title": "Our Advisors",
+    "title": "Our Team",
     "description": "Meet the dedicated professionals who make your Costa Rica real estate experience seamless and successful.",
     "joinTeam": "Join Our Team",
-    "joinTeamDesc": "We are always seeking talented professionals who share our commitment to excellence."
+    "joinTeamDesc": "We are always seeking talented professionals who share our commitment to excellence.",
+    "specialties": {
+      "luxury_residential": "Luxury Residential",
+      "investment_properties": "Investment Properties",
+      "developments": "Developments",
+      "interior_design": "Interior Design",
+      "property_management": "Property Management",
+      "relocation": "Relocation"
+    },
+    "profile": {
+      "whatsapp": "WhatsApp",
+      "call": "Call",
+      "email": "Email",
+      "saveContact": "Save Contact",
+      "viewProperties": "View Properties",
+      "whatsappMessage": "Hi, I'd like more information about DR Housing properties.",
+      "specialtiesHeading": "Specialties",
+      "areasHeading": "Areas Served",
+      "orgTagline": "Private Real Estate Advisory — Costa Rica"
+    }
   },
   "services": {
     "title": "Solutions",

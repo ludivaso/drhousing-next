@@ -91,10 +91,29 @@
     }
   },
   "agents": {
-    "title": "Nuestros Asesores",
+    "title": "Nuestro Equipo",
     "description": "Conozca al equipo de asesores inmobiliarios que acompaña a familias e inversionistas en su experiencia en Costa Rica.",
     "joinTeam": "Únase a Nuestro Equipo",
-    "joinTeamDesc": "Siempre buscamos profesionales talentosos que compartan nuestro compromiso con la excelencia."
+    "joinTeamDesc": "Siempre buscamos profesionales talentosos que compartan nuestro compromiso con la excelencia.",
+    "specialties": {
+      "luxury_residential": "Residencial de Lujo",
+      "investment_properties": "Propiedades de Inversión",
+      "developments": "Desarrollos",
+      "interior_design": "Diseño de Interiores",
+      "property_management": "Administración de Propiedades",
+      "relocation": "Reubicación"
+    },
+    "profile": {
+      "whatsapp": "WhatsApp",
+      "call": "Llamar",
+      "email": "Correo",
+      "saveContact": "Guardar Contacto",
+      "viewProperties": "Ver Propiedades",
+      "whatsappMessage": "Hola, quisiera más información sobre las propiedades de DR Housing.",
+      "specialtiesHeading": "Especialidades",
+      "areasHeading": "Zonas de Cobertura",
+      "orgTagline": "Asesoría Inmobiliaria Privada — Costa Rica"
+    }
   },
   "services": {
     "title": "Nuestros Servicios",

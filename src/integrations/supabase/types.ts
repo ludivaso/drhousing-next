@@ -334,6 +334,18 @@ export type Database = {
           service_areas: string[] | null
           created_at: string
           updated_at: string
+          slug: string | null
+          is_team_member: boolean
+          display_order: number | null
+          role_en: string | null
+          role_es: string | null
+          bio_en: string | null
+          bio_es: string | null
+          intro_en: string | null
+          intro_es: string | null
+          specialties: string[] | null
+          whatsapp: string | null
+          social: Json | null
         }
         Insert: {
           id?: string
@@ -347,6 +359,18 @@ export type Database = {
           service_areas?: string[] | null
           created_at?: string
           updated_at?: string
+          slug?: string | null
+          is_team_member?: boolean
+          display_order?: number | null
+          role_en?: string | null
+          role_es?: string | null
+          bio_en?: string | null
+          bio_es?: string | null
+          intro_en?: string | null
+          intro_es?: string | null
+          specialties?: string[] | null
+          whatsapp?: string | null
+          social?: Json | null
         }
         Update: {
           id?: string
@@ -360,6 +384,18 @@ export type Database = {
           service_areas?: string[] | null
           created_at?: string
           updated_at?: string
+          slug?: string | null
+          is_team_member?: boolean
+          display_order?: number | null
+          role_en?: string | null
+          role_es?: string | null
+          bio_en?: string | null
+          bio_es?: string | null
+          intro_en?: string | null
+          intro_es?: string | null
+          specialties?: string[] | null
+          whatsapp?: string | null
+          social?: Json | null
         }
         Relationships: []
       }
@@ -997,7 +1033,18 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      agents_profile_status: {
+        Row: {
+          id: string
+          full_name: string
+          slug: string | null
+          is_team_member: boolean
+          display_order: number | null
+          missing_fields: string[] | null
+          completion_pct: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_admin: {
@@ -1036,6 +1083,11 @@ export type Database = {
 
 export type Tables<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Row']
+
+export type Views<T extends keyof Database['public']['Views']> =
+  Database['public']['Views'][T]['Row']
+
+export type AgentProfileStatusRow = Views<'agents_profile_status'>
 
 export type PropertyRow = Tables<'properties'>
 export type AgentRow = Tables<'agents'>

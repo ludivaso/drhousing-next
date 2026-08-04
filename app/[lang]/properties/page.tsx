@@ -97,6 +97,7 @@ interface PageProps {
     camas?:     string
     zona?:      string  // comma-separated zone values for multi-select
     comunidad?: string
+    agent?:     string  // listing_agent_id, from an advisor profile's "View properties" link
   }
 }
 
@@ -126,6 +127,7 @@ export default async function PropiedadesPage({ params, searchParams }: PageProp
   if (searchParams.min)      query = query.gte('price_sale', Number(searchParams.min))
   if (searchParams.max)      query = query.lte('price_sale', Number(searchParams.max))
   if (searchParams.camas)    query = query.gte('bedrooms', Number(searchParams.camas))
+  if (searchParams.agent)   query = query.eq('listing_agent_id', searchParams.agent)
 
   // Support multi-select zones: comma-separated DB zone values
   if (searchParams.zona) {

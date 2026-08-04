@@ -58,6 +58,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]
   })
 
+  // ── Agent profile URLs ────────────────────────────────────────────────────
+  const { data: agents } = await supabase
+    .from('agents')
+    .select('slug, updated_at')
+    .eq('is_team_member', true)
+    .not('slug', 'is', null)
+    .order('updated_at', { ascending: false })
+
+  const agentUrls: MetadataRoute.Sitemap = (agents ?? []).flatMap((a) => {
+    if (!a.slug) return []
+    const lastMod = a.updated_at ? new Date(a.updated_at) : new Date()
+    return [
+      {
+        url: `${BASE_URL}/en/agents/${a.slug}`,
+        lastModified: lastMod,
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+        alternates: {
+          languages: {
+            en: `${BASE_URL}/en/agents/${a.slug}`,
+            es: `${BASE_URL}/es/agents/${a.slug}`,
+            'x-default': `${BASE_URL}/en/agents/${a.slug}`,
+          },
+        },
+      },
+      {
+        url: `${BASE_URL}/es/agents/${a.slug}`,
+        lastModified: lastMod,
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+        alternates: {
+          languages: {
+            en: `${BASE_URL}/en/agents/${a.slug}`,
+            es: `${BASE_URL}/es/agents/${a.slug}`,
+            'x-default': `${BASE_URL}/en/agents/${a.slug}`,
+          },
+        },
+      },
+    ]
+  })
+
   // ── Zone landing pages ────────────────────────────────────────────────────
   const zoneModes = [
     { esPath: 'alquiler', enPath: 'rentals' },
@@ -140,5 +181,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ])
 
-  return [...staticRoutes, ...zoneRoutes, ...propertyUrls]
+  return [...staticRoutes, ...zoneRoutes, ...propertyUrls, ...agentUrls]
 }
