@@ -29,6 +29,29 @@ const SPECIALTY_ICONS = {
 
 type SpecialtyKey = keyof typeof SPECIALTY_ICONS
 
+/**
+ * Canonical render order. The DB array's own order is arbitrary and is never
+ * used — specialties always appear in this sequence.
+ */
+const SPECIALTY_ORDER: SpecialtyKey[] = [
+  'luxury_residential',
+  'investment_properties',
+  'developments',
+  'interior_design',
+  'property_management',
+  'relocation',
+]
+
+/** Keeps only known keys, in canonical order. Unknown keys are logged, never shown. */
+function orderSpecialties(raw: string[] | null, slug: string): SpecialtyKey[] {
+  const present = new Set<string>()
+  for (const key of raw ?? []) {
+    if (key in SPECIALTY_ICONS) present.add(key)
+    else console.warn(`[agents] unknown specialty key "${key}" on agent "${slug}" — skipped`)
+  }
+  return SPECIALTY_ORDER.filter((key) => present.has(key))
+}
+
 // Matches React's Booleanish so lucide's own icon components stay assignable.
 type IconProps = { className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }
 
@@ -74,17 +97,15 @@ function translateLanguage(lang: Lang, value: string): string {
 function Eyebrow({
   children,
   tone = 'gray',
-  center = false,
 }: {
   children: React.ReactNode
   tone?: 'gray' | 'ink'
-  center?: boolean
 }) {
   return (
     <p
       className={`text-[11px] font-medium uppercase tracking-[0.2em] after:mt-3 after:block after:h-[2px] after:w-8 after:bg-[#A48B4F] after:content-[''] ${
         tone === 'ink' ? 'text-[#1F2023]' : 'text-[#7D7D7D]'
-      } ${center ? 'after:mx-auto' : ''}`}
+      }`}
     >
       {children}
     </p>
@@ -155,9 +176,7 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
   const intro = (lang === 'es' ? agent.intro_es : agent.intro_en)?.trim() || null
   const bio = withFallback(lang === 'es' ? agent.bio_es : agent.bio_en, agent.bio)
 
-  const specialties = (agent.specialties ?? []).filter(
-    (key): key is SpecialtyKey => key in SPECIALTY_ICONS
-  )
+  const specialties = orderSpecialties(agent.specialties, agent.slug ?? agent.id)
   const serviceAreas = agent.service_areas ?? []
   const languages = agent.languages ?? []
   const socialLinks = getSocialLinks(agent.social)
@@ -277,6 +296,38 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
                 </a>
               )}
             </div>
+
+            {/* Social — sits with the actions, not at the foot of the page.
+                Nothing renders (and no vertical space is reserved) when the
+                `social` column is null or has no populated key. */}
+            {socialLinks.length > 0 && (
+              <div className="mt-6">
+                <Eyebrow>{t(lang, 'agents.profile.socialHeading')}</Eyebrow>
+                {/* 44px hit areas centre a 22px glyph, so an 11px inset pulls
+                    the first icon flush with the button edge, and a 2px gap
+                    leaves 24px between the glyphs themselves. */}
+                <div className="-ml-[11px] mt-4 flex flex-wrap gap-[2px]">
+                  {socialLinks.map(({ platform, url }) => {
+                    const Icon = SOCIAL_ICONS[platform]
+                    return (
+                      <a
+                        key={platform}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={t(lang, 'agents.profile.socialAria', {
+                          network: SOCIAL_LABELS[platform],
+                          name: agent.full_name,
+                        })}
+                        className="flex h-11 w-11 items-center justify-center text-[#7D7D7D] transition-colors hover:text-[#A48B4F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A48B4F]"
+                      >
+                        <Icon className="h-[22px] w-[22px]" aria-hidden="true" />
+                      </a>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -355,36 +406,6 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
         </p>
       </div>
 
-      {/* ── Social ────────────────────────────────────────────────────── */}
-      {socialLinks.length > 0 && (
-        <>
-          <div className={rule} />
-          <div className="text-center">
-            <div className="inline-block">
-              <Eyebrow center>{t(lang, 'agents.profile.socialHeading')}</Eyebrow>
-            </div>
-            <div className="mt-7 flex justify-center gap-10 sm:gap-14">
-              {socialLinks.map(({ platform, url }) => {
-                const Icon = SOCIAL_ICONS[platform]
-                return (
-                  <a
-                    key={platform}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-3 text-[#7D7D7D] transition-colors hover:text-[#A48B4F]"
-                  >
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                    <span className="text-[9.5px] uppercase tracking-[0.16em]">
-                      {SOCIAL_LABELS[platform]}
-                    </span>
-                  </a>
-                )
-              })}
-            </div>
-          </div>
-        </>
-      )}
     </div>
   )
 }

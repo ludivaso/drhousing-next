@@ -107,12 +107,12 @@
       "portugués": "Portugués"
     },
     "specialties": {
-      "luxury_residential": "Residencial de Lujo",
-      "investment_properties": "Propiedades de Inversión",
-      "developments": "Desarrollos",
-      "interior_design": "Diseño de Interiores",
-      "property_management": "Administración de Propiedades",
-      "relocation": "Reubicación"
+      "luxury_residential": "Residencias de lujo",
+      "investment_properties": "Propiedades de inversión",
+      "developments": "Desarrollos inmobiliarios",
+      "interior_design": "Diseño de interiores",
+      "property_management": "Administración de propiedades",
+      "relocation": "Relocación"
     },
     "profile": {
       "whatsapp": "WhatsApp",
@@ -126,6 +126,7 @@
       "languagesHeading": "Idiomas",
       "aboutHeading": "Sobre mí",
       "socialHeading": "Sígueme en",
+      "socialAria": "{{network}} de {{name}}",
       "orgDescription": "En DR Housing acompañamos a nuestros clientes a comprar, vender e invertir en bienes raíces con un enfoque basado en confianza, criterio profesional y atención personalizada."
     }
   },

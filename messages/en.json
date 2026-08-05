@@ -107,11 +107,11 @@
       "portugués": "Portuguese"
     },
     "specialties": {
-      "luxury_residential": "Luxury Residential",
-      "investment_properties": "Investment Properties",
+      "luxury_residential": "Luxury residential",
+      "investment_properties": "Investment properties",
       "developments": "Developments",
-      "interior_design": "Interior Design",
-      "property_management": "Property Management",
+      "interior_design": "Interior design",
+      "property_management": "Property management",
       "relocation": "Relocation"
     },
     "profile": {
@@ -125,7 +125,8 @@
       "areasHeading": "Areas Served",
       "languagesHeading": "Languages",
       "aboutHeading": "About",
-      "socialHeading": "Follow",
+      "socialHeading": "Follow me",
+      "socialAria": "{{name}} on {{network}}",
       "orgDescription": "At DR Housing we guide our clients to buy, sell and invest in real estate with an approach built on trust, professional judgment and personalized attention."
     }
   },
