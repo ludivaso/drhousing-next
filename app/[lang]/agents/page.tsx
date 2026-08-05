@@ -61,7 +61,7 @@ export default async function AgentsIndexPage({ params }: { params: { lang: stri
               className="group block"
             >
               <div
-                className="relative w-full overflow-hidden bg-[#F7F5F2]"
+                className="relative w-full overflow-hidden rounded-xl bg-[#F7F5F2]"
                 style={{ aspectRatio: '1 / 2' }}
               >
                 {agent.photo_url && (

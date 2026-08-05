@@ -45,6 +45,18 @@ function withFallback(primary: string | null | undefined, fallback: string | nul
   return null
 }
 
+/**
+ * `languages` is stored as free text in the DB (historically English: "English",
+ * "Spanish"). Translate through i18n so an ES page doesn't render English
+ * labels; an unrecognised value falls through unchanged rather than showing a
+ * raw key.
+ */
+function translateLanguage(lang: Lang, value: string): string {
+  const key = `agents.languages.${value.trim().toLowerCase()}`
+  const translated = t(lang, key)
+  return translated === key ? value.trim() : translated
+}
+
 /** Section label: uppercase, letterspaced, with the short gold rule beneath. */
 function Eyebrow({
   children,
@@ -158,12 +170,15 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
   )
 
   const btnBase =
-    'flex items-center gap-3 rounded-sm px-6 py-[17px] text-[12.5px] font-medium uppercase tracking-[0.14em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A48B4F]'
+    'flex items-center gap-3 rounded-lg px-6 py-[17px] text-[12.5px] font-medium uppercase tracking-[0.14em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A48B4F]'
   const btnQuiet = `${btnBase} border border-[#E7E2DA] bg-white text-[#444444] hover:bg-[#F7F5F2]`
   const rule = 'my-12 h-px bg-[#E7E2DA]'
   // Running text stays inside a comfortable measure even though the shell is
   // wider than the old 700px column.
   const prose = 'max-w-[68ch]'
+  // Intro and the action stack share one measure so the buttons end flush with
+  // the paragraph above them instead of running past it.
+  const heroMeasure = 'max-w-[440px]'
 
   return (
     <div className="mx-auto w-full max-w-[980px] px-6 py-14 sm:px-8 sm:py-20">
@@ -176,7 +191,7 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
       <div className="flex flex-col gap-8 min-[640px]:flex-row min-[640px]:items-start min-[640px]:gap-12">
         {/* Portrait — 1:2 vertical. Empty surface-colored frame when no photo. */}
         <div
-          className="relative w-[210px] flex-none overflow-hidden bg-[#F7F5F2] min-[640px]:w-[270px]"
+          className="relative w-[210px] flex-none overflow-hidden rounded-xl bg-[#F7F5F2] min-[640px]:w-[270px]"
           style={{ aspectRatio: '1 / 2' }}
         >
           {agent.photo_url && (
@@ -200,50 +215,52 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
           </h1>
 
           {role && (
-            <p className="mb-6 text-[12px] font-medium uppercase tracking-[0.18em] text-[#7D7D7D]">
+            <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-[#7D7D7D] after:mt-3 after:block after:h-[2px] after:w-8 after:bg-[#A48B4F] after:content-['']">
               {role}
             </p>
           )}
 
-          {/* No fallback for intro — the paragraph is dropped, not left blank. */}
-          {intro && (
-            <p className="mb-8 max-w-[58ch] text-[17px] leading-[1.65] text-[#555555]">{intro}</p>
-          )}
+          <div className={`mt-8 ${heroMeasure}`}>
+            {/* No fallback for intro — the paragraph is dropped, not left blank. */}
+            {intro && (
+              <p className="mb-8 text-[17px] leading-[1.65] text-[#555555]">{intro}</p>
+            )}
 
-          <div className="flex flex-col gap-3">
-            {waHref && (
-              <a
-                href={waHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${btnBase} bg-[#1F2023] text-white hover:bg-[#34363B]`}
-              >
-                <MessageCircle className="h-4 w-4 flex-none" aria-hidden="true" />
-                {t(lang, 'agents.profile.whatsapp')}
+            <div className="flex flex-col gap-3">
+              {waHref && (
+                <a
+                  href={waHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${btnBase} bg-[#1F2023] text-white hover:bg-[#34363B]`}
+                >
+                  <MessageCircle className="h-4 w-4 flex-none" aria-hidden="true" />
+                  {t(lang, 'agents.profile.whatsapp')}
+                </a>
+              )}
+              {telHref && (
+                <a href={telHref} className={`${btnBase} bg-[#A48B4F] text-[#1F2023] hover:bg-[#B89B5D]`}>
+                  <Phone className="h-4 w-4 flex-none" aria-hidden="true" />
+                  {t(lang, 'agents.profile.call')}
+                </a>
+              )}
+              {mailHref && (
+                <a href={mailHref} className={btnQuiet}>
+                  <Mail className="h-4 w-4 flex-none" aria-hidden="true" />
+                  {t(lang, 'agents.profile.email')}
+                </a>
+              )}
+              <a href={vcardHref} className={btnQuiet}>
+                <User className="h-4 w-4 flex-none" aria-hidden="true" />
+                {t(lang, 'agents.profile.saveContact')}
               </a>
-            )}
-            {telHref && (
-              <a href={telHref} className={`${btnBase} bg-[#A48B4F] text-[#1F2023] hover:bg-[#B89B5D]`}>
-                <Phone className="h-4 w-4 flex-none" aria-hidden="true" />
-                {t(lang, 'agents.profile.call')}
-              </a>
-            )}
-            {mailHref && (
-              <a href={mailHref} className={btnQuiet}>
-                <Mail className="h-4 w-4 flex-none" aria-hidden="true" />
-                {t(lang, 'agents.profile.email')}
-              </a>
-            )}
-            <a href={vcardHref} className={btnQuiet}>
-              <User className="h-4 w-4 flex-none" aria-hidden="true" />
-              {t(lang, 'agents.profile.saveContact')}
-            </a>
-            {propertiesHref && (
-              <a href={propertiesHref} className={btnQuiet}>
-                <Home className="h-4 w-4 flex-none" aria-hidden="true" />
-                {t(lang, 'agents.profile.viewProperties')}
-              </a>
-            )}
+              {propertiesHref && (
+                <a href={propertiesHref} className={btnQuiet}>
+                  <Home className="h-4 w-4 flex-none" aria-hidden="true" />
+                  {t(lang, 'agents.profile.viewProperties')}
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -277,7 +294,7 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
                   {serviceAreas.map((area) => (
                     <span
                       key={area}
-                      className="rounded-full bg-[#F7F5F2] px-4 py-2 text-[13px] text-[#555555] transition-colors hover:bg-[#A48B4F] hover:text-white"
+                      className="rounded-full border border-[#E7E2DA] bg-[#F7F5F2] px-4 py-2 text-[13px] text-[#555555] shadow-[0_1px_2px_rgba(31,32,35,0.06)] transition-colors hover:border-[#A48B4F] hover:bg-[#A48B4F] hover:text-white"
                     >
                       {area}
                     </span>
@@ -289,7 +306,9 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
             {languages.length > 0 && (
               <div>
                 <Eyebrow>{t(lang, 'agents.profile.languagesHeading')}</Eyebrow>
-                <p className="mt-6 text-[15px] text-[#555555]">{languages.join(' · ')}</p>
+                <p className="mt-6 text-[15px] text-[#555555]">
+                  {languages.map((l) => translateLanguage(lang, l)).join(' · ')}
+                </p>
               </div>
             )}
           </div>

@@ -95,6 +95,17 @@
     "description": "Conozca al equipo de asesores inmobiliarios que acompaña a familias e inversionistas en su experiencia en Costa Rica.",
     "joinTeam": "Únase a Nuestro Equipo",
     "joinTeamDesc": "Siempre buscamos profesionales talentosos que compartan nuestro compromiso con la excelencia.",
+    "languages": {
+      "english": "Inglés",
+      "spanish": "Español",
+      "portuguese": "Portugués",
+      "french": "Francés",
+      "italian": "Italiano",
+      "german": "Alemán",
+      "inglés": "Inglés",
+      "español": "Español",
+      "portugués": "Portugués"
+    },
     "specialties": {
       "luxury_residential": "Residencial de Lujo",
       "investment_properties": "Propiedades de Inversión",

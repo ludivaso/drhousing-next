@@ -95,6 +95,17 @@
     "description": "Meet the dedicated professionals who make your Costa Rica real estate experience seamless and successful.",
     "joinTeam": "Join Our Team",
     "joinTeamDesc": "We are always seeking talented professionals who share our commitment to excellence.",
+    "languages": {
+      "english": "English",
+      "spanish": "Spanish",
+      "portuguese": "Portuguese",
+      "french": "French",
+      "italian": "Italian",
+      "german": "German",
+      "inglés": "English",
+      "español": "Spanish",
+      "portugués": "Portuguese"
+    },
     "specialties": {
       "luxury_residential": "Luxury Residential",
       "investment_properties": "Investment Properties",
