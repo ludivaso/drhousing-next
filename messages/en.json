@@ -91,10 +91,54 @@
     }
   },
   "agents": {
-    "title": "Our Advisors",
+    "title": "Our Team",
     "description": "Meet the dedicated professionals who make your Costa Rica real estate experience seamless and successful.",
     "joinTeam": "Join Our Team",
-    "joinTeamDesc": "We are always seeking talented professionals who share our commitment to excellence."
+    "joinTeamDesc": "We are always seeking talented professionals who share our commitment to excellence.",
+    "languages": {
+      "english": "English",
+      "spanish": "Spanish",
+      "portuguese": "Portuguese",
+      "french": "French",
+      "italian": "Italian",
+      "german": "German",
+      "inglés": "English",
+      "español": "Spanish",
+      "portugués": "Portuguese"
+    },
+    "specialties": {
+      "luxury_residential": "Luxury residential",
+      "commercial": "Commercial",
+      "industrial": "Industrial & warehousing",
+      "land_farms": "Land & farms",
+      "beachfront": "Beachfront properties",
+      "developments": "Developments",
+      "new_construction": "Pre-construction & new builds",
+      "investment_properties": "Investment properties",
+      "short_term_rentals": "Short-term rentals",
+      "long_term_rentals": "Long-term rentals",
+      "corporate_housing": "Corporate housing",
+      "property_management": "Property management",
+      "interior_design": "Interior design",
+      "renovation": "Renovation & repositioning",
+      "relocation": "Relocation",
+      "wellness_properties": "Wellness properties"
+    },
+    "profile": {
+      "whatsapp": "WhatsApp",
+      "call": "Call",
+      "email": "Email",
+      "saveContact": "Save Contact",
+      "viewProperties": "View Properties",
+      "whatsappMessage": "Hi, I'd like more information about DR Housing properties.",
+      "specialtiesHeading": "Specialties",
+      "areasHeading": "Areas Served",
+      "languagesHeading": "Languages",
+      "aboutHeading": "About",
+      "socialHeading": "Follow me",
+      "socialAria": "{{name}} on {{network}}",
+      "orgDescription": "At DR Housing we guide our clients to buy, sell and invest in real estate with an approach built on trust, professional judgment and personalized attention."
+    }
   },
   "services": {
     "title": "Solutions",

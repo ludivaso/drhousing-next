@@ -91,10 +91,54 @@
     }
   },
   "agents": {
-    "title": "Nuestros Asesores",
+    "title": "Nuestro Equipo",
     "description": "Conozca al equipo de asesores inmobiliarios que acompaña a familias e inversionistas en su experiencia en Costa Rica.",
     "joinTeam": "Únase a Nuestro Equipo",
-    "joinTeamDesc": "Siempre buscamos profesionales talentosos que compartan nuestro compromiso con la excelencia."
+    "joinTeamDesc": "Siempre buscamos profesionales talentosos que compartan nuestro compromiso con la excelencia.",
+    "languages": {
+      "english": "Inglés",
+      "spanish": "Español",
+      "portuguese": "Portugués",
+      "french": "Francés",
+      "italian": "Italiano",
+      "german": "Alemán",
+      "inglés": "Inglés",
+      "español": "Español",
+      "portugués": "Portugués"
+    },
+    "specialties": {
+      "luxury_residential": "Residencias de lujo",
+      "commercial": "Comercial",
+      "industrial": "Industrial y bodegas",
+      "land_farms": "Terrenos y fincas",
+      "beachfront": "Propiedades costeras",
+      "developments": "Desarrollos inmobiliarios",
+      "new_construction": "Preventa y obra nueva",
+      "investment_properties": "Propiedades de inversión",
+      "short_term_rentals": "Alquiler de corto plazo",
+      "long_term_rentals": "Alquiler de largo plazo",
+      "corporate_housing": "Vivienda corporativa",
+      "property_management": "Administración de propiedades",
+      "interior_design": "Diseño de interiores",
+      "renovation": "Remodelación y repotenciación",
+      "relocation": "Relocación",
+      "wellness_properties": "Propiedades wellness"
+    },
+    "profile": {
+      "whatsapp": "WhatsApp",
+      "call": "Llamar",
+      "email": "Correo",
+      "saveContact": "Guardar Contacto",
+      "viewProperties": "Ver Propiedades",
+      "whatsappMessage": "Hola, quisiera más información sobre las propiedades de DR Housing.",
+      "specialtiesHeading": "Especialidades",
+      "areasHeading": "Zonas de Cobertura",
+      "languagesHeading": "Idiomas",
+      "aboutHeading": "Sobre mí",
+      "socialHeading": "Sígueme en",
+      "socialAria": "{{network}} de {{name}}",
+      "orgDescription": "En DR Housing acompañamos a nuestros clientes a comprar, vender e invertir en bienes raíces con un enfoque basado en confianza, criterio profesional y atención personalizada."
+    }
   },
   "services": {
     "title": "Nuestros Servicios",

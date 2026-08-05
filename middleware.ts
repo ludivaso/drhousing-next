@@ -7,6 +7,12 @@ import {
   isPathPrivate,
 } from '@/lib/visibility'
 import { PREVIEW_COOKIE } from '@/lib/visibility/pin'
+import {
+  getVanityEntries,
+  isUuid,
+  resolveAgentSlugById,
+  RESERVED_VANITY_PATHS,
+} from '@/lib/agents/vanity'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -93,6 +99,21 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // ── Legacy UUID agent links → canonical slug (301) ──────────────────────────
+  // Old links to /{lang}/agents/{uuid} must keep working. Published advisors only.
+  const agentUuidMatch = pathname.match(/^\/(en|es)\/agents\/([^/]+)$/)
+  if (agentUuidMatch && isUuid(agentUuidMatch[2])) {
+    try {
+      const supabase = createMiddlewareSupabase(() => request.cookies.getAll())
+      const slug = await resolveAgentSlugById(supabase, agentUuidMatch[2])
+      if (slug) {
+        return NextResponse.redirect(new URL(`/${agentUuidMatch[1]}/agents/${slug}`, request.url), 301)
+      }
+    } catch {
+      // Fail open — let the [slug] page 404 normally.
+    }
+  }
+
   // ── Lang-prefixed routes — pass through ──────────────────────────────────────
   if (
     pathname.startsWith('/en/') ||
@@ -138,6 +159,28 @@ export async function middleware(request: NextRequest) {
   // Legacy /property/[slug] → /en/property/[slug]
   if (pathname.startsWith('/property/')) {
     return NextResponse.redirect(new URL(`/en${pathname}`, request.url))
+  }
+
+  // ── Vanity URLs: /{firstName} → /es/agents/{slug} for published advisors ────
+  // Only single, dot-free, non-reserved segments are considered — every real
+  // site route wins over a same-named advisor slug.
+  const vanitySegment = pathname.slice(1)
+  if (
+    vanitySegment &&
+    !vanitySegment.includes('/') &&
+    !vanitySegment.includes('.') &&
+    !RESERVED_VANITY_PATHS.has(vanitySegment)
+  ) {
+    try {
+      const supabase = createMiddlewareSupabase(() => request.cookies.getAll())
+      const entries = await getVanityEntries(supabase)
+      const match = entries.find((e) => e.firstNameSlug === vanitySegment.toLowerCase())
+      if (match) {
+        return NextResponse.redirect(new URL(`/es/agents/${match.slug}`, request.url), 301)
+      }
+    } catch {
+      // Fail open — no vanity match, continue to normal 404 handling.
+    }
   }
 
   return NextResponse.next()
