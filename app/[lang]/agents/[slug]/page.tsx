@@ -1,7 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-import { MessageCircle, Phone, Mail, Download, Home, Instagram, Facebook, Linkedin } from 'lucide-react'
+import {
+  MessageCircle, Phone, Mail, User, Home,
+  TrendingUp, Building2, Sofa, Landmark, Globe,
+  Instagram, Facebook, Linkedin,
+  type LucideIcon,
+} from 'lucide-react'
 import { getAgentBySlug, getAgentActiveListingsCount, getTeamAgents } from '@/lib/agents/queries'
 import { getSocialLinks, type SocialPlatform } from '@/lib/agents/social'
 import { waLink } from '@/lib/utils/waLink'
@@ -11,19 +16,23 @@ import { t, type Lang } from '@/lib/i18n/dictionary'
 export const revalidate = 3600
 export const dynamicParams = true
 
-const VALID_SPECIALTIES = [
-  'luxury_residential',
-  'investment_properties',
-  'developments',
-  'interior_design',
-  'property_management',
-  'relocation',
-] as const
+// Doubles as the whitelist of valid specialty keys — a stray value in the DB
+// is dropped rather than rendered as a raw key.
+const SPECIALTY_ICONS = {
+  luxury_residential:    Home,
+  investment_properties: TrendingUp,
+  developments:          Building2,
+  interior_design:       Sofa,
+  property_management:   Landmark,
+  relocation:            Globe,
+} satisfies Record<string, LucideIcon>
 
-const SOCIAL_ICONS: Record<SocialPlatform, typeof Instagram> = {
+type SpecialtyKey = keyof typeof SPECIALTY_ICONS
+
+const SOCIAL_ICONS: Record<SocialPlatform, LucideIcon> = {
   instagram: Instagram,
-  facebook: Facebook,
-  linkedin: Linkedin,
+  facebook:  Facebook,
+  linkedin:  Linkedin,
 }
 
 function resolveLang(lang: string): Lang {
@@ -34,6 +43,27 @@ function withFallback(primary: string | null | undefined, fallback: string | nul
   if (primary && primary.trim()) return primary.trim()
   if (fallback && fallback.trim()) return fallback.trim()
   return null
+}
+
+/** Section label: uppercase, letterspaced, with the short gold rule beneath. */
+function Eyebrow({
+  children,
+  tone = 'gray',
+  center = false,
+}: {
+  children: React.ReactNode
+  tone?: 'gray' | 'ink'
+  center?: boolean
+}) {
+  return (
+    <p
+      className={`text-[9px] font-medium uppercase tracking-[0.2em] after:mt-[9px] after:block after:h-[1.5px] after:w-[26px] after:bg-[#A48B4F] after:content-[''] ${
+        tone === 'ink' ? 'text-[#1F2023]' : 'text-[#7D7D7D]'
+      } ${center ? 'after:mx-auto' : ''}`}
+    >
+      {children}
+    </p>
+  )
 }
 
 export async function generateStaticParams() {
@@ -100,8 +130,8 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
   const intro = (lang === 'es' ? agent.intro_es : agent.intro_en)?.trim() || null
   const bio = withFallback(lang === 'es' ? agent.bio_es : agent.bio_en, agent.bio)
 
-  const specialties = (agent.specialties ?? []).filter((key): key is (typeof VALID_SPECIALTIES)[number] =>
-    (VALID_SPECIALTIES as readonly string[]).includes(key)
+  const specialties = (agent.specialties ?? []).filter(
+    (key): key is SpecialtyKey => key in SPECIALTY_ICONS
   )
   const serviceAreas = agent.service_areas ?? []
   const languages = agent.languages ?? []
@@ -115,6 +145,10 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
   const vcardHref = `/${lang}/agents/${agent.slug}/vcard`
   const propertiesHref = activeListingsCount > 0 ? `/${lang}/properties?agent=${agent.id}` : null
 
+  // How many of the three info blocks carry data — a lone block spans the full
+  // width instead of sitting in a half-empty two-column row.
+  const infoBlocks = [specialties.length, serviceAreas.length, languages.length].filter(Boolean).length
+
   const schema = buildPersonSchema(
     agent,
     role,
@@ -123,6 +157,11 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
     lang
   )
 
+  const btnBase =
+    'flex items-center gap-[10px] rounded-sm px-[18px] py-[13px] text-[10.5px] font-medium uppercase tracking-[0.14em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A48B4F]'
+  const btnQuiet = `${btnBase} border border-[#E7E2DA] bg-white text-[#444444] hover:bg-[#F7F5F2]`
+  const rule = 'my-[34px] h-px bg-[#E7E2DA]'
+
   return (
     <div className="mx-auto w-full max-w-[700px] px-5 py-12 sm:py-16">
       <script
@@ -130,193 +169,177 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      {/* Portrait — 1:2 vertical frame, empty surface-colored when no photo */}
-      <div
-        className="relative mx-auto w-full max-w-[280px] overflow-hidden bg-[#F7F5F2]"
-        style={{ aspectRatio: '1 / 2' }}
-      >
-        {agent.photo_url && (
-          <Image
-            src={agent.photo_url}
-            alt={agent.full_name}
-            fill
-            priority
-            sizes="(max-width: 700px) 60vw, 280px"
-            className="object-cover object-center"
-          />
-        )}
-      </div>
-
-      {/* Name + role */}
-      <div className="mt-7 text-center">
-        <h1
-          className="text-[28px] font-semibold leading-tight text-[#1F2023] sm:text-3xl"
-          style={{ fontFamily: 'var(--font-agent-lora)' }}
+      {/* ── Header: portrait left, text right ─────────────────────────── */}
+      <div className="flex flex-col gap-5 min-[520px]:flex-row min-[520px]:items-start min-[520px]:gap-[26px]">
+        {/* Portrait — 1:2 vertical. Empty surface-colored frame when no photo. */}
+        <div
+          className="relative w-[150px] flex-none overflow-hidden bg-[#F7F5F2] min-[520px]:w-[186px]"
+          style={{ aspectRatio: '1 / 2' }}
         >
-          {agent.full_name}
-        </h1>
-        {role && (
-          <p className="mt-2 text-xs font-medium uppercase tracking-[0.15em] text-[#7D7D7D]">
-            {role}
-          </p>
-        )}
-      </div>
+          {agent.photo_url && (
+            <Image
+              src={agent.photo_url}
+              alt={agent.full_name}
+              fill
+              priority
+              sizes="(max-width: 520px) 150px, 186px"
+              className="object-cover object-center"
+            />
+          )}
+        </div>
 
-      {/* Intro — omitted entirely when missing, never a blank paragraph */}
-      {intro && (
-        <p className="mx-auto mt-6 max-w-[520px] text-center text-[15px] leading-relaxed text-[#555555]">
-          {intro}
-        </p>
-      )}
-
-      {/* Actions */}
-      <div className="mt-8 flex flex-col gap-3">
-        {waHref && (
-          <a
-            href={waHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-sm bg-[#1F2023] px-6 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#34363B]"
+        <div className="min-w-0 flex-1">
+          <h1
+            className="mb-3 text-[31px] font-semibold leading-[1.08] tracking-[-0.015em] text-[#1F2023] min-[520px]:text-[38px]"
+            style={{ fontFamily: 'var(--font-agent-lora)', textWrap: 'balance' }}
           >
-            <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            {t(lang, 'agents.profile.whatsapp')}
-          </a>
-        )}
-        {telHref && (
-          <a
-            href={telHref}
-            className="flex items-center justify-center gap-2 rounded-sm bg-[#A48B4F] px-6 py-3.5 text-sm font-medium text-[#1F2023] transition-colors hover:bg-[#B89B5D]"
-          >
-            <Phone className="h-4 w-4" aria-hidden="true" />
-            {t(lang, 'agents.profile.call')}
-          </a>
-        )}
+            {agent.full_name}
+          </h1>
 
-        {(mailHref || vcardHref || propertiesHref) && (
-          <div className="flex flex-wrap gap-3">
-            {mailHref && (
+          {role && (
+            <p className="mb-[18px] text-[9.5px] font-medium uppercase tracking-[0.18em] text-[#7D7D7D]">
+              {role}
+            </p>
+          )}
+
+          {/* No fallback for intro — the paragraph is dropped, not left blank. */}
+          {intro && (
+            <p className="mb-[22px] text-[13.5px] leading-[1.62] text-[#555555]">{intro}</p>
+          )}
+
+          <div className="flex flex-col gap-[9px]">
+            {waHref && (
               <a
-                href={mailHref}
-                className="flex min-w-[140px] flex-1 items-center justify-center gap-2 rounded-sm border border-[#E7E2DA] bg-white px-4 py-3 text-sm text-[#444444] transition-colors hover:bg-[#F7F5F2]"
+                href={waHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${btnBase} bg-[#1F2023] text-white hover:bg-[#34363B]`}
               >
-                <Mail className="h-4 w-4" aria-hidden="true" />
+                <MessageCircle className="h-[14px] w-[14px] flex-none" aria-hidden="true" />
+                {t(lang, 'agents.profile.whatsapp')}
+              </a>
+            )}
+            {telHref && (
+              <a href={telHref} className={`${btnBase} bg-[#A48B4F] text-[#1F2023] hover:bg-[#B89B5D]`}>
+                <Phone className="h-[14px] w-[14px] flex-none" aria-hidden="true" />
+                {t(lang, 'agents.profile.call')}
+              </a>
+            )}
+            {mailHref && (
+              <a href={mailHref} className={btnQuiet}>
+                <Mail className="h-[14px] w-[14px] flex-none" aria-hidden="true" />
                 {t(lang, 'agents.profile.email')}
               </a>
             )}
-            <a
-              href={vcardHref}
-              className="flex min-w-[140px] flex-1 items-center justify-center gap-2 rounded-sm border border-[#E7E2DA] bg-white px-4 py-3 text-sm text-[#444444] transition-colors hover:bg-[#F7F5F2]"
-            >
-              <Download className="h-4 w-4" aria-hidden="true" />
+            <a href={vcardHref} className={btnQuiet}>
+              <User className="h-[14px] w-[14px] flex-none" aria-hidden="true" />
               {t(lang, 'agents.profile.saveContact')}
             </a>
             {propertiesHref && (
-              <a
-                href={propertiesHref}
-                className="flex min-w-[140px] flex-1 items-center justify-center gap-2 rounded-sm border border-[#E7E2DA] bg-white px-4 py-3 text-sm text-[#444444] transition-colors hover:bg-[#F7F5F2]"
-              >
-                <Home className="h-4 w-4" aria-hidden="true" />
+              <a href={propertiesHref} className={btnQuiet}>
+                <Home className="h-[14px] w-[14px] flex-none" aria-hidden="true" />
                 {t(lang, 'agents.profile.viewProperties')}
               </a>
             )}
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Bio */}
-      {bio && (
-        <div className="mt-10 border-t border-[#E7E2DA] pt-8">
-          <p className="whitespace-pre-line text-[15px] leading-relaxed text-[#555555]">{bio}</p>
-        </div>
-      )}
-
-      {/* Specialties + Areas served */}
-      {(specialties.length > 0 || serviceAreas.length > 0) && (
-        <div className="mt-10 grid grid-cols-1 gap-8 border-t border-[#E7E2DA] pt-8 sm:grid-cols-2">
-          {specialties.length > 0 && (
-            <div>
-              <h2
-                className="text-xs font-semibold uppercase tracking-[0.15em] text-[#1F2023]"
-                style={{ fontFamily: 'var(--font-agent-lora)' }}
-              >
-                {t(lang, 'agents.profile.specialtiesHeading')}
-              </h2>
-              <ul className="mt-4 space-y-2">
-                {specialties.map((key) => (
-                  <li key={key} className="text-sm text-[#555555]">
-                    {t(lang, `agents.specialties.${key}`)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {serviceAreas.length > 0 && (
-            <div>
-              <h2
-                className="text-xs font-semibold uppercase tracking-[0.15em] text-[#1F2023]"
-                style={{ fontFamily: 'var(--font-agent-lora)' }}
-              >
-                {t(lang, 'agents.profile.areasHeading')}
-              </h2>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {serviceAreas.map((area) => (
-                  <span
-                    key={area}
-                    className="rounded-full bg-[#F7F5F2] px-3 py-1 text-xs text-[#555555] transition-colors hover:bg-[#A48B4F] hover:text-white"
-                  >
-                    {area}
-                  </span>
-                ))}
+      {/* ── Specialties · Areas · Languages ───────────────────────────── */}
+      {infoBlocks > 0 && (
+        <>
+          <div className={rule} />
+          <div className={infoBlocks > 1 ? 'grid gap-[30px] sm:grid-cols-2' : ''}>
+            {specialties.length > 0 && (
+              <div>
+                <Eyebrow>{t(lang, 'agents.profile.specialtiesHeading')}</Eyebrow>
+                <ul className="mt-4 flex flex-col gap-[11px]">
+                  {specialties.map((key) => {
+                    const Icon = SPECIALTY_ICONS[key]
+                    return (
+                      <li key={key} className="flex items-center gap-[10px] text-[12.5px] text-[#555555]">
+                        <Icon className="h-[15px] w-[15px] flex-none text-[#A48B4F]" aria-hidden="true" />
+                        {t(lang, `agents.specialties.${key}`)}
+                      </li>
+                    )
+                  })}
+                </ul>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+
+            {serviceAreas.length > 0 && (
+              <div>
+                <Eyebrow>{t(lang, 'agents.profile.areasHeading')}</Eyebrow>
+                <div className="mt-4 flex flex-wrap gap-[7px]">
+                  {serviceAreas.map((area) => (
+                    <span
+                      key={area}
+                      className="rounded-full bg-[#F7F5F2] px-3 py-1.5 text-[11px] text-[#555555] transition-colors hover:bg-[#A48B4F] hover:text-white"
+                    >
+                      {area}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {languages.length > 0 && (
+              <div>
+                <Eyebrow>{t(lang, 'agents.profile.languagesHeading')}</Eyebrow>
+                <p className="mt-4 text-[12.5px] text-[#555555]">{languages.join(' · ')}</p>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
-      {/* Languages */}
-      {languages.length > 0 && (
-        <p className="mt-8 text-center text-xs text-[#7D7D7D]">{languages.join(' · ')}</p>
+      {/* ── Bio ───────────────────────────────────────────────────────── */}
+      {bio && (
+        <>
+          <div className={rule} />
+          <div>
+            <Eyebrow>{t(lang, 'agents.profile.aboutHeading')}</Eyebrow>
+            <p className="mt-4 whitespace-pre-line text-[13px] leading-[1.72] text-[#555555]">{bio}</p>
+          </div>
+        </>
       )}
 
-      {/* Social */}
-      {socialLinks.length > 0 && (
-        <div className="mt-8 flex justify-center gap-5 border-t border-[#E7E2DA] pt-8">
-          {socialLinks.map(({ platform, url }) => {
-            const Icon = SOCIAL_ICONS[platform]
-            return (
-              <a
-                key={platform}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={platform}
-                className="text-[#7D7D7D] transition-colors hover:text-[#A48B4F]"
-              >
-                <Icon className="h-5 w-5" aria-hidden="true" />
-              </a>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Institutional footer */}
-      <div className="mt-12 rounded-sm bg-[#F7F5F2] p-6 text-center">
-        <p
-          className="text-lg font-semibold text-[#1F2023]"
-          style={{ fontFamily: 'var(--font-agent-lora)' }}
-        >
-          DR Housing
+      {/* ── Institutional block ───────────────────────────────────────── */}
+      <div className="mt-[34px] bg-[#F7F5F2] p-[26px]">
+        <Eyebrow tone="ink">DR Housing</Eyebrow>
+        <p className="mt-4 text-[12.5px] leading-[1.72] text-[#555555]">
+          {t(lang, 'agents.profile.orgDescription')}
         </p>
-        <p className="mt-1 text-xs text-[#7D7D7D]">{t(lang, 'agents.profile.orgTagline')}</p>
-        {mailHref && (
-          <a
-            href={mailHref}
-            className="mt-3 inline-block text-xs text-[#A48B4F] transition-colors hover:underline"
-          >
-            {agent.email}
-          </a>
-        )}
       </div>
+
+      {/* ── Social ────────────────────────────────────────────────────── */}
+      {socialLinks.length > 0 && (
+        <>
+          <div className={rule} />
+          <div className="text-center">
+            <div className="inline-block">
+              <Eyebrow center>{t(lang, 'agents.profile.socialHeading')}</Eyebrow>
+            </div>
+            <div className="mt-5 flex justify-center gap-8 sm:gap-11">
+              {socialLinks.map(({ platform, url }) => {
+                const Icon = SOCIAL_ICONS[platform]
+                return (
+                  <a
+                    key={platform}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-[9px] text-[#7D7D7D] transition-colors hover:text-[#A48B4F]"
+                  >
+                    <Icon className="h-[17px] w-[17px]" aria-hidden="true" />
+                    <span className="text-[8px] uppercase tracking-[0.16em]">{platform}</span>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
