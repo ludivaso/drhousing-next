@@ -8,7 +8,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { getAgentBySlug, getAgentActiveListingsCount, getTeamAgents } from '@/lib/agents/queries'
-import { getSocialLinks, type SocialPlatform } from '@/lib/agents/social'
+import { getSocialLinks, SOCIAL_LABELS, type SocialPlatform } from '@/lib/agents/social'
 import { waLink } from '@/lib/utils/waLink'
 import { buildPersonSchema } from '@/lib/seo/helpers'
 import { t, type Lang } from '@/lib/i18n/dictionary'
@@ -29,9 +29,22 @@ const SPECIALTY_ICONS = {
 
 type SpecialtyKey = keyof typeof SPECIALTY_ICONS
 
-const SOCIAL_ICONS: Record<SocialPlatform, LucideIcon> = {
-  instagram: Instagram,
+// Matches React's Booleanish so lucide's own icon components stay assignable.
+type IconProps = { className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }
+
+/** lucide has no X mark — its Twitter icon is the retired bird. */
+function XLogo({ className, ...rest }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} {...rest}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  )
+}
+
+const SOCIAL_ICONS: Record<SocialPlatform, React.ComponentType<IconProps>> = {
   facebook:  Facebook,
+  instagram: Instagram,
+  x:         XLogo,
   linkedin:  Linkedin,
 }
 
@@ -157,9 +170,12 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
   const vcardHref = `/${lang}/agents/${agent.slug}/vcard`
   const propertiesHref = activeListingsCount > 0 ? `/${lang}/properties?agent=${agent.id}` : null
 
-  // How many of the three info blocks carry data — a lone block spans the full
-  // width instead of sitting in a half-empty two-column row.
-  const infoBlocks = [specialties.length, serviceAreas.length, languages.length].filter(Boolean).length
+  // Specialties and coverage areas hold the two-column row; a lone block spans
+  // the full width instead of sitting in a half-empty row. Languages are
+  // deliberately not part of this grid — they render as a quiet line further
+  // down, so an advisor without specialties never has languages slide up into
+  // the column that specialties should occupy.
+  const infoBlocks = [specialties.length, serviceAreas.length].filter(Boolean).length
 
   const schema = buildPersonSchema(
     agent,
@@ -265,7 +281,7 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
         </div>
       </div>
 
-      {/* ── Specialties · Areas · Languages ───────────────────────────── */}
+      {/* ── Specialties · Coverage areas ──────────────────────────────── */}
       {infoBlocks > 0 && (
         <>
           <div className={rule} />
@@ -303,16 +319,21 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
               </div>
             )}
 
-            {languages.length > 0 && (
-              <div>
-                <Eyebrow>{t(lang, 'agents.profile.languagesHeading')}</Eyebrow>
-                <p className="mt-6 text-[15px] text-[#555555]">
-                  {languages.map((l) => translateLanguage(lang, l)).join(' · ')}
-                </p>
-              </div>
-            )}
           </div>
         </>
+      )}
+
+      {/* ── Languages — a quiet footnote, not a column ─────────────────── */}
+      {languages.length > 0 && (
+        <p className="mt-10 text-[12px] text-[#7D7D7D]">
+          <span className="uppercase tracking-[0.16em]">
+            {t(lang, 'agents.profile.languagesHeading')}
+          </span>
+          <span className="mx-2.5 text-[#C9B27A]" aria-hidden="true">
+            ·
+          </span>
+          {languages.map((l) => translateLanguage(lang, l)).join(' · ')}
+        </p>
       )}
 
       {/* ── Bio ───────────────────────────────────────────────────────── */}
@@ -354,7 +375,9 @@ export default async function AgentProfilePage({ params }: { params: { lang: str
                     className="flex flex-col items-center gap-3 text-[#7D7D7D] transition-colors hover:text-[#A48B4F]"
                   >
                     <Icon className="h-5 w-5" aria-hidden="true" />
-                    <span className="text-[9.5px] uppercase tracking-[0.16em]">{platform}</span>
+                    <span className="text-[9.5px] uppercase tracking-[0.16em]">
+                      {SOCIAL_LABELS[platform]}
+                    </span>
                   </a>
                 )
               })}
