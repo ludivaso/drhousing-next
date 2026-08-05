@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import {
-  MessageCircle, Phone, Mail, User, Home,
-  TrendingUp, Building2, Sofa, Landmark, Globe,
+  MessageCircle, Phone, Mail, User,
+  Home, Store, Warehouse, Trees, Waves, Building2, HardHat, TrendingUp,
+  BedDouble, KeyRound, Briefcase, Landmark, Sofa, Hammer, Globe, Leaf,
   Instagram, Facebook, Linkedin,
   type LucideIcon,
 } from 'lucide-react'
@@ -16,31 +17,35 @@ import { t, type Lang } from '@/lib/i18n/dictionary'
 export const revalidate = 3600
 export const dynamicParams = true
 
-// Doubles as the whitelist of valid specialty keys — a stray value in the DB
-// is dropped rather than rendered as a raw key.
+/**
+ * The specialty catalogue: whitelist, icon map and canonical render order all
+ * at once. Declaration order IS the render order — the DB array's own order is
+ * arbitrary and never used. Keeping one list rather than a parallel order array
+ * means the two can't drift apart as the catalogue grows.
+ */
 const SPECIALTY_ICONS = {
   luxury_residential:    Home,
-  investment_properties: TrendingUp,
+  commercial:            Store,
+  industrial:            Warehouse,
+  land_farms:            Trees,
+  beachfront:            Waves,
   developments:          Building2,
-  interior_design:       Sofa,
+  new_construction:      HardHat,
+  investment_properties: TrendingUp,
+  short_term_rentals:    BedDouble,
+  long_term_rentals:     KeyRound,
+  corporate_housing:     Briefcase,
   property_management:   Landmark,
+  interior_design:       Sofa,
+  renovation:            Hammer,
   relocation:            Globe,
+  wellness_properties:   Leaf,
 } satisfies Record<string, LucideIcon>
 
 type SpecialtyKey = keyof typeof SPECIALTY_ICONS
 
-/**
- * Canonical render order. The DB array's own order is arbitrary and is never
- * used — specialties always appear in this sequence.
- */
-const SPECIALTY_ORDER: SpecialtyKey[] = [
-  'luxury_residential',
-  'investment_properties',
-  'developments',
-  'interior_design',
-  'property_management',
-  'relocation',
-]
+// Non-numeric string keys keep insertion order, so this is the canonical order.
+const SPECIALTY_ORDER = Object.keys(SPECIALTY_ICONS) as SpecialtyKey[]
 
 /** Keeps only known keys, in canonical order. Unknown keys are logged, never shown. */
 function orderSpecialties(raw: string[] | null, slug: string): SpecialtyKey[] {

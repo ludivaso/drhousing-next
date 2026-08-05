@@ -108,11 +108,21 @@
     },
     "specialties": {
       "luxury_residential": "Residencias de lujo",
-      "investment_properties": "Propiedades de inversión",
+      "commercial": "Comercial",
+      "industrial": "Industrial y bodegas",
+      "land_farms": "Terrenos y fincas",
+      "beachfront": "Propiedades costeras",
       "developments": "Desarrollos inmobiliarios",
-      "interior_design": "Diseño de interiores",
+      "new_construction": "Preventa y obra nueva",
+      "investment_properties": "Propiedades de inversión",
+      "short_term_rentals": "Alquiler de corto plazo",
+      "long_term_rentals": "Alquiler de largo plazo",
+      "corporate_housing": "Vivienda corporativa",
       "property_management": "Administración de propiedades",
-      "relocation": "Relocación"
+      "interior_design": "Diseño de interiores",
+      "renovation": "Remodelación y repotenciación",
+      "relocation": "Relocación",
+      "wellness_properties": "Propiedades wellness"
     },
     "profile": {
       "whatsapp": "WhatsApp",

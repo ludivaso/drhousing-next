@@ -108,11 +108,21 @@
     },
     "specialties": {
       "luxury_residential": "Luxury residential",
-      "investment_properties": "Investment properties",
+      "commercial": "Commercial",
+      "industrial": "Industrial & warehousing",
+      "land_farms": "Land & farms",
+      "beachfront": "Beachfront properties",
       "developments": "Developments",
-      "interior_design": "Interior design",
+      "new_construction": "Pre-construction & new builds",
+      "investment_properties": "Investment properties",
+      "short_term_rentals": "Short-term rentals",
+      "long_term_rentals": "Long-term rentals",
+      "corporate_housing": "Corporate housing",
       "property_management": "Property management",
-      "relocation": "Relocation"
+      "interior_design": "Interior design",
+      "renovation": "Renovation & repositioning",
+      "relocation": "Relocation",
+      "wellness_properties": "Wellness properties"
     },
     "profile": {
       "whatsapp": "WhatsApp",
