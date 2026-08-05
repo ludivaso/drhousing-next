@@ -38,20 +38,20 @@ export default async function AgentsIndexPage({ params }: { params: { lang: stri
   const agents = await getTeamAgents()
 
   return (
-    <div className="mx-auto w-full max-w-[700px] px-5 py-12 sm:py-16">
+    <div className="mx-auto w-full max-w-[980px] px-6 py-14 sm:px-8 sm:py-20">
       <div className="text-center">
         <h1
-          className="text-[28px] font-semibold leading-tight text-[#1F2023] sm:text-3xl"
-          style={{ fontFamily: 'var(--font-agent-lora)' }}
+          className="text-[36px] font-semibold leading-[1.06] tracking-[-0.015em] text-[#1F2023] sm:text-[52px]"
+          style={{ fontFamily: 'var(--font-agent-lora)', textWrap: 'balance' }}
         >
           {t(lang, 'agents.title')}
         </h1>
-        <p className="mx-auto mt-3 max-w-[480px] text-[15px] leading-relaxed text-[#555555]">
+        <p className="mx-auto mt-5 max-w-[58ch] text-[17px] leading-[1.65] text-[#555555]">
           {t(lang, 'agents.description')}
         </p>
       </div>
 
-      <div className="mt-10 grid grid-cols-2 gap-6 sm:gap-8">
+      <div className="mt-14 grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-10">
         {agents.map((agent) => {
           const role = withFallback(lang === 'es' ? agent.role_es : agent.role_en, agent.role)
           return (
@@ -69,20 +69,20 @@ export default async function AgentsIndexPage({ params }: { params: { lang: stri
                     src={agent.photo_url}
                     alt={agent.full_name}
                     fill
-                    sizes="(max-width: 700px) 40vw, 320px"
+                    sizes="(max-width: 640px) 45vw, 300px"
                     className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.03]"
                   />
                 )}
               </div>
-              <div className="mt-3 text-center">
+              <div className="mt-5 text-center">
                 <p
-                  className="text-sm font-semibold text-[#1F2023]"
+                  className="text-[19px] font-semibold leading-snug text-[#1F2023]"
                   style={{ fontFamily: 'var(--font-agent-lora)' }}
                 >
                   {agent.full_name}
                 </p>
                 {role && (
-                  <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#7D7D7D]">
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#7D7D7D]">
                     {role}
                   </p>
                 )}
